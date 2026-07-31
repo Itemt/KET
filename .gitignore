@@ -1,0 +1,17 @@
+# Dependencias
+node_modules/
+
+# Archivos de base de datos local y temporales
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Archivos cargados por estudiantes (opcional: ignorar audios locales pesados)
+uploads/speaking/*
+!uploads/speaking/.gitkeep
+
+# Archivos de entorno y logs
+.env
+*.log
+.DS_Store

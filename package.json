@@ -1,0 +1,28 @@
+{
+  "name": "ket-a2-mock-exam",
+  "version": "1.0.0",
+  "description": "Simulacro de Examen Cambridge KET (A2 Key) para estudiantes de 6to Grado en Arquitectura MVC",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "cambridge",
+    "ket",
+    "a2-key",
+    "mvc",
+    "express",
+    "sqlite",
+    "speaking-recorder"
+  ],
+  "author": "Antigravity AI",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}

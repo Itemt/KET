@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examen KET A2 Key en Vivo - 6to Grado</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✍️</text></svg>">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="container header-content">
+      <a href="/" class="logo-badge">
+        <div class="logo-icon">KET</div>
+        <div class="logo-text">
+          <h1>Cambridge English: A2 Key</h1>
+          <p>Examen de Simulacro Oficial</p>
+        </div>
+      </a>
+      <div id="student-badge-container" class="student-info-tag">
+        <div class="student-avatar" id="avatar-initials">--</div>
+        <div>
+          <div class="student-name" id="student-display-name">Cargando...</div>
+          <div class="student-grade" id="student-display-grade">Grado --</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <!-- Barra de Metadatos y Temporizador -->
+    <div class="exam-meta-bar">
+      <div>
+        <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--dark);" id="exam-title-text">
+          Cambridge A2 Key for Schools
+        </h2>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Completa todas las secciones antes de que termine el tiempo.</span>
+      </div>
+
+      <div class="timer-box" id="timer-display">
+        ⏱️ <span id="timer-clock">90:00</span>
+      </div>
+    </div>
+
+    <!-- Navegación por Secciones -->
+    <nav class="section-tabs">
+      <button class="tab-btn active" data-tab="tab-reading-writing">
+        📘 Reading & Writing <span class="badge">Partes 1-7</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-listening">
+        🎧 Listening <span class="badge">Partes 1-5</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-speaking">
+        🎙️ Speaking <span class="badge">Grabación de Voz</span>
+      </button>
+    </nav>
+
+    <!-- FORMULARIO CONTENEDOR DEL EXAMEN -->
+    <form id="ket-exam-form">
+
+      <!-- SECCIÓN 1: READING & WRITING -->
+      <section id="tab-reading-writing" class="exam-section-content active">
+        <div id="reading-writing-container">
+          <div style="text-align: center; padding: 40px; color: var(--text-muted);">Cargando preguntas de Reading & Writing...</div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 2: LISTENING -->
+      <section id="tab-listening" class="exam-section-content">
+        <div id="listening-container">
+          <div style="text-align: center; padding: 40px; color: var(--text-muted);">Cargando preguntas de Listening...</div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 3: SPEAKING -->
+      <section id="tab-speaking" class="exam-section-content">
+        <div class="card">
+          <div class="part-header">
+            <h3 class="part-title">🎙️ Speaking Section (Grabación de Voz)</h3>
+            <p class="instructions">Escucha/lee las preguntas y graba tu respuesta usando tu micrófono.</p>
+          </div>
+
+          <div class="question-block">
+            <h4 style="font-weight: 700; color: var(--dark); margin-bottom: 8px;">Part 1: Personal Questions</h4>
+            <ul style="padding-left: 20px; font-size: 1rem; color: var(--text-main); margin-bottom: 16px; line-height: 1.8;">
+              <li>1. What is your name and how old are you?</li>
+              <li>2. Tell me about your favorite subject at school and why you like it.</li>
+              <li>3. What do you usually do with your family on weekends?</li>
+            </ul>
+
+            <h4 style="font-weight: 700; color: var(--dark); margin-bottom: 8px; margin-top: 20px;">Part 2: Topic & Picture Discussion</h4>
+            <p class="context-box">
+              <strong>Topic: SPORTS AND HOBBIES</strong><br>
+              Describe your favorite hobby or sport. Do you prefer playing sports inside or outside? Why?
+            </p>
+          </div>
+
+          <!-- WIDGET DE GRABACIÓN DE MICRÓFONO -->
+          <div class="speaking-widget">
+            <button type="button" id="btn-record" class="mic-btn-large">🎙️</button>
+            <div id="speaking-status" class="speaking-status">Presiona el micrófono para comenzar a grabar</div>
+            <div id="recording-timer" style="font-weight: 700; color: var(--accent); font-size: 1.2rem; display: none;">00:00</div>
+            
+            <div style="margin-top: 14px; display: flex; justify-content: center; gap: 10px;">
+              <button type="button" id="btn-stop" class="btn btn-danger" style="display: none;">🛑 Detener Grabación</button>
+            </div>
+
+            <!-- Previsualización de Audio Grabado -->
+            <div id="audio-preview-container" class="audio-preview-container">
+              <p style="font-weight: 600; color: var(--success); margin-bottom: 8px;">✅ ¡Grabación completada! Escucha tu respuesta:</p>
+              <audio id="audio-player" controls style="width: 100%; max-width: 450px; margin-top: 6px;"></audio>
+              <div style="margin-top: 8px;">
+                <input type="hidden" id="speaking_audio_url" name="speaking_audio_url" value="">
+                <span id="upload-status-text" style="font-size: 0.85rem; color: var(--text-muted);"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Botón de Envío Global -->
+      <div style="margin-top: 30px; text-align: center;">
+        <button type="submit" class="btn btn-primary" style="padding: 16px 36px; font-size: 1.15rem; width: 100%; max-width: 400px;">
+          📥 Enviar Examen Final
+        </button>
+      </div>
+
+    </form>
+
+  </main>
+
+  <!-- Modal de Resultados post-envío -->
+  <div id="results-modal" class="modal-overlay">
+    <div class="modal-card" style="text-align: center; padding: 40px 30px;">
+      <div style="font-size: 3.5rem; margin-bottom: 10px;">🎉</div>
+      <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--dark); margin-bottom: 10px;">
+        ¡Examen Completado y Enviado!
+      </h2>
+      <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 24px;">
+        Tus respuestas y grabación de audio han sido registradas en la plataforma.
+      </p>
+
+      <div style="background: var(--primary-light); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px; text-align: left;">
+        <h3 style="font-size: 1.1rem; color: var(--primary); margin-bottom: 12px;">Resumen de Puntaje Automático:</h3>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600;">
+          <span>📘 Reading & Writing:</span>
+          <span id="res-rw-score">0/0</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600;">
+          <span>🎧 Listening:</span>
+          <span id="res-lis-score">0/0</span>
+        </div>
+        <hr style="border: none; border-top: 1px solid var(--border-color); margin: 12px 0;">
+        <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.1rem; color: var(--dark);">
+          <span>Puntaje Selección Múltiple:</span>
+          <span id="res-total-score">0/0</span>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
+          * Las secciones de Writing (Partes 6 y 7) y Speaking serán revisadas y calificadas por tu profesor en el Panel Docente.
+        </p>
+      </div>
+
+      <a href="/" class="btn btn-primary btn-block" onclick="localStorage.removeItem('ket_student');">
+        Regresar al Inicio
+      </a>
+    </div>
+  </div>
+
+  <script src="/js/exam.js"></script>
+</body>
+</html>
