@@ -422,14 +422,19 @@ document.addEventListener('DOMContentLoaded', () => {
         answersObj[key] = value;
       });
 
+      const audioElem = document.getElementById('speaking_audio_url');
+      const speakingUrl = audioElem ? audioElem.value : '';
+
       const payload = {
         student: {
-          firstName: student.firstName,
-          lastName: student.lastName,
-          grade: student.grade
+          firstName: student.firstName || student.first_name,
+          lastName: student.lastName || student.last_name || '',
+          grade: student.grade || '6to',
+          username: student.username || ''
         },
-        speaking_audio_url: document.getElementById('speaking_audio_url').value,
-        answers: answersObj
+        speaking_audio_url: speakingUrl,
+        answers: answersObj,
+        attempt_time: student.attemptTime || student.startTime || new Date().toISOString()
       };
 
       try {
