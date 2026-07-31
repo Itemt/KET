@@ -44,69 +44,13 @@
       </div>
     </div>
 
-    <!-- Navegación por Secciones -->
-    <nav class="section-tabs">
-      <button class="tab-btn active" data-tab="tab-reading-writing">
-        📘 Reading & Writing <span class="badge">Partes 1-7</span>
-      </button>
-      <button class="tab-btn" data-tab="tab-speaking">
-        🎙️ Speaking <span class="badge">Grabación de Voz</span>
-      </button>
-    </nav>
-
     <!-- FORMULARIO CONTENEDOR DEL EXAMEN -->
     <form id="ket-exam-form">
 
-      <!-- SECCIÓN 1: READING & WRITING -->
+      <!-- SECCIÓN ÚNICA: READING & WRITING -->
       <section id="tab-reading-writing" class="exam-section-content active">
         <div id="reading-writing-container">
           <div style="text-align: center; padding: 40px; color: var(--text-muted);">Cargando preguntas de Reading & Writing...</div>
-        </div>
-      </section>
-
-      <!-- SECCIÓN 3: SPEAKING -->
-      <section id="tab-speaking" class="exam-section-content">
-        <div class="card">
-          <div class="part-header">
-            <h3 class="part-title">🎙️ Speaking Section (Grabación de Voz)</h3>
-            <p class="instructions">Escucha/lee las preguntas y graba tu respuesta usando tu micrófono.</p>
-          </div>
-
-          <div class="question-block">
-            <h4 style="font-weight: 700; color: var(--dark); margin-bottom: 8px;">Part 1: Personal Questions</h4>
-            <ul style="padding-left: 20px; font-size: 1rem; color: var(--text-main); margin-bottom: 16px; line-height: 1.8;">
-              <li>1. What is your name and how old are you?</li>
-              <li>2. Tell me about your favorite subject at school and why you like it.</li>
-              <li>3. What do you usually do with your family on weekends?</li>
-            </ul>
-
-            <h4 style="font-weight: 700; color: var(--dark); margin-bottom: 8px; margin-top: 20px;">Part 2: Topic & Picture Discussion</h4>
-            <p class="context-box">
-              <strong>Topic: SPORTS AND HOBBIES</strong><br>
-              Describe your favorite hobby or sport. Do you prefer playing sports inside or outside? Why?
-            </p>
-          </div>
-
-          <!-- WIDGET DE GRABACIÓN DE MICRÓFONO -->
-          <div class="speaking-widget">
-            <button type="button" id="btn-record" class="mic-btn-large">🎙️</button>
-            <div id="speaking-status" class="speaking-status">Presiona el micrófono para comenzar a grabar</div>
-            <div id="recording-timer" style="font-weight: 700; color: var(--accent); font-size: 1.2rem; display: none;">00:00</div>
-            
-            <div style="margin-top: 14px; display: flex; justify-content: center; gap: 10px;">
-              <button type="button" id="btn-stop" class="btn btn-danger" style="display: none;">🛑 Detener Grabación</button>
-            </div>
-
-            <!-- Previsualización de Audio Grabado -->
-            <div id="audio-preview-container" class="audio-preview-container">
-              <p style="font-weight: 600; color: var(--success); margin-bottom: 8px;">✅ ¡Grabación completada! Escucha tu respuesta:</p>
-              <audio id="audio-player" controls style="width: 100%; max-width: 450px; margin-top: 6px;"></audio>
-              <div style="margin-top: 8px;">
-                <input type="hidden" id="speaking_audio_url" name="speaking_audio_url" value="">
-                <span id="upload-status-text" style="font-size: 0.85rem; color: var(--text-muted);"></span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 

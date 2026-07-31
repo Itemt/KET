@@ -1,13 +1,13 @@
 /**
  * MODELO DE EXAMEN KET (A2 Key) - CAMBRIDGE ENGLISH FOR 6TH GRADE
- * Contiene el banco completo de preguntas oficial de simulacro (Reading & Writing + Speaking).
+ * Examen enfocado exclusivamente en Reading & Writing (Partes 1-7).
  */
 
 class ExamModel {
   static getFullExamData() {
     return {
       title: "Cambridge KET (A2 Key) for Schools - Mock Exam 6th Grade",
-      timeAllowedMinutes: 90,
+      timeAllowedMinutes: 60,
       sections: {
         reading_writing: {
           title: "Reading & Writing Section",
@@ -280,42 +280,11 @@ class ExamModel {
               fieldName: "writing_part7"
             }
           ]
-        },
-
-        /* ==========================================================================
-           SPEAKING SECTION - COMPLETE 2 PARTS
-           ========================================================================== */
-        speaking: {
-          title: "Speaking Section",
-          timeLimit: "10-15 minutes",
-          totalParts: 2,
-          instructions: "Use the microphone button below to record your voice answering the questions. You can listen to your recording before sending.",
-          parts: [
-            {
-              part: 1,
-              title: "Part 1: Personal Questions (Phase 1 & Phase 2)",
-              questions: [
-                "• Phase 1: What is your full name and how old are you?",
-                "• Phase 1: Where do you live and who do you live with?",
-                "• Phase 2: Tell me about your favorite subject at school and why you like it.",
-                "• Phase 2: What do you usually do with your family or friends on weekends?"
-              ]
-            },
-            {
-              part: 2,
-              title: "Part 2: Topic Discussion & Guided Questions",
-              prompt: "Topic: 'SPORTS, HOBBIES AND FREE TIME'\n\nAnswer the following prompts clearly into the microphone:\n1. Do you prefer playing sports inside (like swimming or gym) or outside (like soccer or biking)? Why?\n2. Describe a favorite hobby you enjoy doing after school or during vacations.\n3. Do you think it is important for young people to do sports every week? Give your opinion.",
-              recordingTarget: "speaking_audio"
-            }
-          ]
         }
       }
     };
   }
 
-  /**
-   * Retorna los datos del examen excluyendo las respuestas correctas.
-   */
   static getSanitizedExamData() {
     const fullData = JSON.parse(JSON.stringify(this.getFullExamData()));
     
@@ -331,16 +300,11 @@ class ExamModel {
     return fullData;
   }
 
-  /**
-   * Evalúa las respuestas de Reading & Writing y calcula la puntuación automática.
-   * @param {object} studentAnswers Objeto con las respuestas por ID
-   */
   static evaluateAnswers(studentAnswers) {
     const fullData = this.getFullExamData();
     let scoreRW = 0;
     let maxRW = 0;
 
-    // Evaluar Reading & Writing
     fullData.sections.reading_writing.parts.forEach(part => {
       if (part.questions) {
         part.questions.forEach(q => {

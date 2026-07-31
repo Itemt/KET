@@ -92,22 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('stat-total-submissions').textContent = list.length;
 
     let totalScore = 0;
-    let maxScoreSum = 0;
-    let speakingCount = 0;
-
     list.forEach(sub => {
       totalScore += sub.total_auto_score;
-      maxScoreSum += sub.max_auto_score;
-      if (sub.speaking_audio_url && sub.speaking_audio_url.trim() !== '') {
-        speakingCount++;
-      }
     });
 
     const avg = list.length > 0 ? (totalScore / list.length).toFixed(1) : 0;
     const maxSample = list.length > 0 ? list[0].max_auto_score : 0;
 
-    document.getElementById('stat-avg-score').textContent = `${avg} / ${maxSample}`;
-    document.getElementById('stat-speaking-count').textContent = speakingCount;
+    const avgElem = document.getElementById('stat-avg-score');
+    if (avgElem) avgElem.textContent = `${avg} / ${maxSample}`;
   }
 
   /* --- Renderizar Tabla de Entregas --- */
@@ -206,30 +199,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-student-meta').textContent = `Grado: ${sub.grade} | Enviado: ${new Date(sub.submitted_at).toLocaleString()}`;
         document.getElementById('modal-student-avatar').textContent = (sub.first_name.charAt(0) + sub.last_name.charAt(0)).toUpperCase();
 
-        document.getElementById('modal-score-rw').textContent = `${sub.score_reading_writing}`;
-        document.getElementById('modal-score-lis').textContent = `${sub.score_listening}`;
-        document.getElementById('modal-score-total').textContent = `${sub.total_auto_score} / ${sub.max_auto_score}`;
+        const scoreRwElem = document.getElementById('modal-score-rw');
+        if (scoreRwElem) scoreRwElem.textContent = `${sub.score_reading_writing}`;
+        
+        const scoreTotalElem = document.getElementById('modal-score-total');
+        if (scoreTotalElem) scoreTotalElem.textContent = `${sub.total_auto_score} / ${sub.max_auto_score}`;
 
-        document.getElementById('modal-writing-p6').textContent = sub.writing_part6 || 'Sin respuesta redactada.';
-        document.getElementById('modal-writing-p7').textContent = sub.writing_part7 || 'Sin respuesta redactada.';
+        const p6Elem = document.getElementById('modal-writing-p6');
+        if (p6Elem) p6Elem.textContent = sub.writing_part6 || 'Sin respuesta redactada.';
 
-        // Renderizar reproductor de audio de Speaking
-        const speakingContainer = document.getElementById('modal-speaking-container');
-        if (sub.speaking_audio_url && sub.speaking_audio_url.trim() !== '') {
-          speakingContainer.innerHTML = `
-            <div style="background: linear-gradient(135deg, #fdf4ff, #eef2ff); border: 1.5px solid var(--accent); border-radius: var(--radius-md); padding: 16px; text-align: center;">
-              <p style="font-weight: 700; color: var(--dark); margin-bottom: 8px;">🎙️ Grabación de voz transmitida por el alumno:</p>
-              <audio controls src="${sub.speaking_audio_url}" style="width: 100%; max-width: 500px; margin-top: 6px;"></audio>
-              <div style="margin-top: 6px;">
-                <a href="${sub.speaking_audio_url}" download="speaking_student_${sub.student_id}.webm" style="font-size: 0.85rem; color: var(--primary); font-weight: 600; text-decoration: none;">
-                  ⬇️ Descargar archivo de audio (.webm)
-                </a>
-              </div>
-            </div>
-          `;
-        } else {
-          speakingContainer.innerHTML = `<div style="color: var(--text-muted); font-style: italic;">No se grabó ningún audio para la sección de Speaking.</div>`;
-        }
+        const p7Elem = document.getElementById('modal-writing-p7');
+        if (p7Elem) p7Elem.textContent = sub.writing_part7 || 'Sin respuesta redactada.';
 
         detailModal.classList.add('active');
       } else {
