@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentStudent = null;
   let bonusExamData = null;
 
-  // Cargar lista de estudiantes para el dropdown del bonus
   loadStudentsList();
 
   async function loadStudentsList() {
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Autenticar alumno para el Bonus
   authForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = usernameInput.value.trim();
@@ -72,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('student-avatar').textContent = initials;
   }
 
-  // Cargar preguntas del Bonus Exam
   async function fetchBonusExam() {
     try {
       const res = await fetch('/api/bonus/exam');
@@ -99,11 +96,15 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
       `;
 
+      if (part.passage) {
+        html += `<div class="context-box" style="line-height: 2; font-size: 1.05rem; white-space: pre-wrap; margin-bottom: 20px;">${part.passage}</div>`;
+      }
+
       if (part.type === 'multiple_choice') {
         part.questions.forEach(q => {
           html += `
             <div class="question-block">
-              <div class="context-box">${q.context}</div>
+              ${q.context ? `<div class="context-box">${q.context}</div>` : ''}
               <p style="font-weight: 700; margin-bottom: 12px;">${q.question}</p>
               <div class="options-group">
                 ${Object.entries(q.options).map(([key, val]) => `
@@ -143,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
           `;
         });
       } else if (part.type === 'multiple_choice_cloze') {
-        html += `<div class="context-box" style="line-height: 2.2; font-size: 1.05rem;">${part.passage}</div>`;
         part.questions.forEach(q => {
           html += `
             <div class="question-block">
@@ -159,11 +159,24 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           `;
         });
-      } else if (part.type === 'text_production') {
+      } else if (part.type === 'open_cloze') {
+        part.questions.forEach(q => {
+          html += `
+            <div class="question-block" style="display: flex; align-items: center; gap: 12px;">
+              <label style="font-weight: 700; min-width: 90px;">Gap (${q.gapNumber}):</label>
+              <input type="text" name="${q.id}" class="input-field" placeholder="Write 1 word..." style="max-width: 250px;">
+            </div>
+          `;
+        });
+      } else if (part.type === 'text_production_double') {
         html += `
+          <div class="question-block" style="margin-bottom: 20px;">
+            <label class="form-label" style="font-weight: 700; font-size: 1.05rem; color: #7c3aed;">✍️ Task 6A: Camping Email Reply (Min 30 words):</label>
+            <textarea name="${part.fieldNameA}" class="input-field" rows="5" placeholder="Write your email reply in English..." style="resize: vertical;"></textarea>
+          </div>
           <div class="question-block">
-            <label class="form-label" style="font-weight: 700; font-size: 1.05rem;">Escribe tu respuesta aquí:</label>
-            <textarea name="${part.fieldName}" class="input-field" rows="6" placeholder="Escribe tu texto en inglés..." style="resize: vertical;"></textarea>
+            <label class="form-label" style="font-weight: 700; font-size: 1.05rem; color: #7c3aed;">✍️ Task 6B: Mysterious Sound Story Continuation (Min 40 words):</label>
+            <textarea name="${part.fieldNameB}" class="input-field" rows="6" placeholder="Continue the mysterious story in English..." style="resize: vertical;"></textarea>
           </div>
         `;
       }
@@ -174,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = html;
   }
 
-  // Envío del Bonus Exam
   const btnSubmit = document.getElementById('btn-submit-bonus');
   btnSubmit.addEventListener('click', async () => {
     if (!currentStudent) return alert('Por favor inicia sesión.');
