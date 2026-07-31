@@ -21,11 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalCloseBtn = document.getElementById('modal-close-btn');
   const btnLogout = document.getElementById('btn-admin-logout');
 
-  // Check login previo en sessionStorage
-  const savedPasscode = sessionStorage.getItem('admin_passcode');
-  if (savedPasscode) {
-    attemptLogin(savedPasscode);
-  }
+  // Limpiar credenciales guardadas para exigir siempre el PIN de acceso al docente
+  sessionStorage.removeItem('admin_passcode');
 
   // Manejar Cerrar Sesión
   if (btnLogout) {

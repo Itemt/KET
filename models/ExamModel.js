@@ -1,6 +1,6 @@
 /**
  * MODELO DE EXAMEN KET (A2 Key) - CAMBRIDGE ENGLISH FOR 6TH GRADE
- * Contiene el banco completo de preguntas oficial de simulacro (100% texto, sin imágenes), claves de respuesta y evaluación.
+ * Contiene el banco completo de preguntas oficial de simulacro (Reading & Writing + Speaking).
  */
 
 class ExamModel {
@@ -262,7 +262,7 @@ class ExamModel {
               ]
             },
 
-            /* --- PART 6: WRITING AN EMAIL (25+ Words - Text Only) --- */
+            /* --- PART 6: WRITING AN EMAIL (25+ Words) --- */
             {
               part: 6,
               instructions: "WRITING PART 6: Read the note from your friend Sam:\n\n'Hi! I would love to hang out this weekend. Which movie should we watch at your house? What time can I come over, and what snacks will we eat?'\n\nWrite an email answering Sam's three questions (write at least 25 words in English).",
@@ -271,7 +271,7 @@ class ExamModel {
               fieldName: "writing_part6"
             },
 
-            /* --- PART 7: WRITING A STORY (35+ Words - Text Prompt Only, No Pictures) --- */
+            /* --- PART 7: WRITING A STORY (35+ Words) --- */
             {
               part: 7,
               instructions: "WRITING PART 7: Read the story scenario below and write a short story in English (at least 35 words).\n\nStory Scenario:\n1. Scene 1: Last Saturday morning, Tom and Laura packed their backpacks and traveled by bus to the sunny countryside.\n2. Scene 2: They spent the afternoon exploring a green forest, climbing a small hill, and having a picnic near a clear river.\n3. Scene 3: In the evening, they watched the sunset, felt tired but very happy, and traveled back home.\n\nWrite your story describing what happened, what the weather was like, and how they felt.",
@@ -283,191 +283,7 @@ class ExamModel {
         },
 
         /* ==========================================================================
-           LISTENING SECTION - COMPLETE 5 PARTS (100% TEXT TRANSCRIPTS)
-           ========================================================================== */
-        listening: {
-          title: "Listening Section",
-          timeLimit: "30 minutes",
-          totalParts: 5,
-          audioPlaceholderNote: "Click '▶️ Play Audio Track' on each question to listen to the dialogue in clear British English.",
-          parts: [
-            {
-              part: 1,
-              instructions: "For questions 1-5, listen to five short conversations. Choose the correct answer (A, B, or C).",
-              type: "listening_multiple_choice",
-              questions: [
-                {
-                  id: "lis_p1_q1",
-                  audioScript: "Girl: What time does the school bus leave in the morning? Boy: Usually at quarter to eight, but tomorrow morning it will arrive ten minutes early at seven thirty-five. Girl: Great, thanks for telling me!",
-                  question: "1. What time will the school bus arrive tomorrow morning?",
-                  options: { A: "7:35 am", B: "7:45 am", C: "8:00 am" },
-                  correctAnswer: "A"
-                },
-                {
-                  id: "lis_p1_q2",
-                  audioScript: "Boy: Where did you go on your holiday, Emma? Girl: We wanted to go camping in the mountains, but it rained every single day. So we visited my grandparents at their cottage near the beach instead! Boy: Sounds fun anyway!",
-                  question: "2. Where did Emma spend her holiday?",
-                  options: { A: "In the mountains", B: "At the beach", C: "At a campsite" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "lis_p1_q3",
-                  audioScript: "Girl: How much did your new school backpack cost, Jack? Boy: Well, the regular price was twenty-five pounds, but it was on sale for fifteen pounds! Girl: Wow, what a bargain!",
-                  question: "3. How much did Jack pay for his new backpack?",
-                  options: { A: "£25", B: "£20", C: "£15" },
-                  correctAnswer: "C"
-                },
-                {
-                  id: "lis_p1_q4",
-                  audioScript: "Boy: What is the weather going to be like for our P.E. lesson this afternoon? Girl: The weather forecast said it will stop raining at noon and we will have sunshine all afternoon! Boy: Awesome!",
-                  question: "4. What will the weather be like this afternoon?",
-                  options: { A: "Rainy", B: "Sunny", C: "Snowy" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "lis_p1_q5",
-                  audioScript: "Girl: Which present did you buy for your sister's birthday? Boy: I thought about buying a pair of roller skates, but she really wanted a digital watch, so I got her the watch!",
-                  question: "5. What present did the boy buy for his sister?",
-                  options: { A: "A digital watch", B: "Roller skates", C: "A bicycle" },
-                  correctAnswer: "A"
-                }
-              ]
-            },
-            {
-              part: 2,
-              instructions: "Listen to a teacher giving information about a school trip to the Science Museum. Fill in the missing information for questions 6-10.",
-              type: "listening_gap_fill",
-              audioScript: "Attention all 6th grade students! Here are the details for our upcoming school trip to the Science Museum. We are going on Thursday next week. The bus leaves school at eight thirty sharp. The museum entrance ticket costs six pounds per student. Please remember to bring your own packed lunch and a bottle of water. We will return to school at four o'clock in the afternoon.",
-              questions: [
-                { id: "lis_p2_q6", label: "6. Day of the school trip:", hint: "e.g., Thursday", acceptableAnswers: ["thursday"], correctAnswer: "Thursday" },
-                { id: "lis_p2_q7", label: "7. Departure time from school:", hint: "e.g., 8:30 am", acceptableAnswers: ["8:30", "8:30 am", "8:30am", "eight thirty"], correctAnswer: "8:30 am" },
-                { id: "lis_p2_q8", label: "8. Ticket price (£):", hint: "Number only, e.g., 6", acceptableAnswers: ["6", "six", "6 pounds"], correctAnswer: "6" },
-                { id: "lis_p2_q9", label: "9. What to bring for lunch:", hint: "e.g., packed lunch", acceptableAnswers: ["packed lunch", "lunch"], correctAnswer: "packed lunch" },
-                { id: "lis_p2_q10", label: "10. Return time to school:", hint: "e.g., 4:00 pm", acceptableAnswers: ["4:00", "4:00 pm", "4 pm", "4 o'clock", "4"], correctAnswer: "4:00 pm" }
-              ]
-            },
-            {
-              part: 3,
-              instructions: "Listen to Oliver talking to his friend Maria about his new video game console. For questions 11-15, choose A, B, or C.",
-              type: "listening_multiple_choice",
-              audioScript: "Maria: Hey Oliver, is your new video game console fun? Oliver: It's fantastic! It was tricky to set up at first, but after practicing with my older brother, we played for hours! Maria: Who bought it for you? Oliver: My aunt gave it to me as a gift for my 12th birthday. Maria: What kind of games do you like playing most? Oliver: I love racing games! Driving virtual sports cars around international tracks is super cool. Maria: Can I come over on Friday to play? Oliver: Sure, come after 4:00 pm, after we finish our art project!",
-              questions: [
-                {
-                  id: "lis_p3_q11",
-                  question: "11. Who helped Oliver set up his video game console?",
-                  options: { A: "His aunt", B: "His older brother", C: "His friend Maria" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "lis_p3_q12",
-                  question: "12. Why did Oliver get the new console?",
-                  options: { A: "As a birthday gift from his aunt", B: "He bought it with his pocket money", C: "He won a school raffle" },
-                  correctAnswer: "A"
-                },
-                {
-                  id: "lis_p3_q13",
-                  question: "13. What is Oliver's favorite genre of video games?",
-                  options: { A: "Puzzle games", B: "Racing games", C: "Soccer games" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "lis_p3_q14",
-                  question: "14. When is Maria going to visit Oliver's house?",
-                  options: { A: "On Thursday", B: "On Friday", C: "On Saturday" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "lis_p3_q15",
-                  question: "15. What will Oliver finish before Maria arrives?",
-                  options: { A: "His art project", B: "His science homework", C: "His dinner" },
-                  correctAnswer: "A"
-                }
-              ]
-            },
-            {
-              part: 4,
-              instructions: "Listen to five short recordings. For questions 16-20, choose the main idea or correct option (A, B, or C).",
-              type: "listening_multiple_choice",
-              questions: [
-                {
-                  id: "lis_p4_q16",
-                  audioScript: "Teacher: Hello students! Please remember that tomorrow is Sports Day. You must wear your white P.E. shirt and bring a hat because we will be outdoors on the field all morning.",
-                  question: "16. What must students wear for Sports Day tomorrow?",
-                  options: { A: "Their regular school uniform", B: "Their white P.E. shirt", C: "A yellow sweater" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "lis_p4_q17",
-                  audioScript: "Girl: I love going to the city library on weekends. It's so quiet and cozy. I can read my favorite fantasy novels for hours in the comfortable armchairs.",
-                  question: "17. Why does the girl enjoy going to the city library?",
-                  options: { A: "Because it is quiet and comfortable", B: "Because she meets her classmates there", C: "Because there are computer games" },
-                  correctAnswer: "A"
-                },
-                {
-                  id: "lis_p4_q18",
-                  audioScript: "Boy: Mum, can we make pancakes for breakfast? We have eggs, flour, and milk in the fridge, and we can add fresh strawberries on top!",
-                  question: "18. What does the boy want to prepare for breakfast?",
-                  options: { A: "Omelet", B: "Pancakes", C: "Toast with jam" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "lis_p4_q19",
-                  audioScript: "Announcer: Attention shoppers! The bookstore on the second floor is offering a twenty percent discount on all children's comic books and storybooks today only!",
-                  question: "19. What item is on discount at the bookstore today?",
-                  options: { A: "Board games", B: "Children's books and comics", C: "School notebooks" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "lis_p4_q20",
-                  audioScript: "Girl: My dog Toby got so dirty after playing in the muddy garden. Now I have to give him a bath in the tub before dad comes home!",
-                  question: "20. What is the girl going to do next?",
-                  options: { A: "Take the dog for a walk", B: "Give her dog a bath", C: "Feed the dog dinner" },
-                  correctAnswer: "B"
-                }
-              ]
-            },
-            {
-              part: 5,
-              instructions: "Listen to Sophie talking to her brother about what her friends like doing in their free time. For questions 21-25, match each person to their favorite activity.",
-              type: "listening_multiple_choice",
-              questions: [
-                {
-                  id: "lis_p5_q21",
-                  question: "21. David's favorite activity:",
-                  options: { A: "Playing guitar", B: "Baking cupcakes", C: "Skateboarding" },
-                  correctAnswer: "A"
-                },
-                {
-                  id: "lis_p5_q22",
-                  question: "22. Chloe's favorite activity:",
-                  options: { A: "Photography", B: "Baking cupcakes", C: "Reading comics" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "lis_p5_q23",
-                  question: "23. Ethan's favorite activity:",
-                  options: { A: "Skateboarding", B: "Playing guitar", C: "Swimming" },
-                  correctAnswer: "A"
-                },
-                {
-                  id: "lis_p5_q24",
-                  question: "24. Hannah's favorite activity:",
-                  options: { A: "Painting", B: "Taking photographs", C: "Dancing" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "lis_p5_q25",
-                  question: "25. Daniel's favorite activity:",
-                  options: { A: "Reading comic books", B: "Baking cupcakes", C: "Playing guitar" },
-                  correctAnswer: "A"
-                }
-              ]
-            }
-          ]
-        },
-
-        /* ==========================================================================
-           SPEAKING SECTION - COMPLETE 2 PARTS (TEXT ONLY)
+           SPEAKING SECTION - COMPLETE 2 PARTS
            ========================================================================== */
         speaking: {
           title: "Speaking Section",
@@ -498,23 +314,12 @@ class ExamModel {
   }
 
   /**
-   * Retorna los datos del examen excluyendo las respuestas correctas para enviarlo de forma segura al estudiante.
+   * Retorna los datos del examen excluyendo las respuestas correctas.
    */
   static getSanitizedExamData() {
     const fullData = JSON.parse(JSON.stringify(this.getFullExamData()));
     
-    // Limpiar claves de respuesta de Reading & Writing
     fullData.sections.reading_writing.parts.forEach(part => {
-      if (part.questions) {
-        part.questions.forEach(q => {
-          delete q.correctAnswer;
-          delete q.acceptableAnswers;
-        });
-      }
-    });
-
-    // Limpiar claves de respuesta de Listening
-    fullData.sections.listening.parts.forEach(part => {
       if (part.questions) {
         part.questions.forEach(q => {
           delete q.correctAnswer;
@@ -527,15 +332,13 @@ class ExamModel {
   }
 
   /**
-   * Evalúa las respuestas enviadas por el alumno y calcula la puntuación automática.
+   * Evalúa las respuestas de Reading & Writing y calcula la puntuación automática.
    * @param {object} studentAnswers Objeto con las respuestas por ID
    */
   static evaluateAnswers(studentAnswers) {
     const fullData = this.getFullExamData();
     let scoreRW = 0;
     let maxRW = 0;
-    let scoreLis = 0;
-    let maxLis = 0;
 
     // Evaluar Reading & Writing
     fullData.sections.reading_writing.parts.forEach(part => {
@@ -556,32 +359,13 @@ class ExamModel {
       }
     });
 
-    // Evaluar Listening
-    fullData.sections.listening.parts.forEach(part => {
-      if (part.questions) {
-        part.questions.forEach(q => {
-          if (q.correctAnswer || q.acceptableAnswers) {
-            maxLis++;
-            const given = (studentAnswers[q.id] || "").toString().trim().toLowerCase();
-            
-            if (q.correctAnswer && given === q.correctAnswer.toLowerCase()) {
-              scoreLis++;
-            } else if (q.acceptableAnswers) {
-              const isOk = q.acceptableAnswers.some(ans => ans.toLowerCase() === given);
-              if (isOk) scoreLis++;
-            }
-          }
-        });
-      }
-    });
-
     return {
       score_reading_writing: scoreRW,
       max_reading_writing: maxRW,
-      score_listening: scoreLis,
-      max_listening: maxLis,
-      total_auto_score: scoreRW + scoreLis,
-      max_auto_score: maxRW + maxLis
+      score_listening: 0,
+      max_listening: 0,
+      total_auto_score: scoreRW,
+      max_auto_score: maxRW
     };
   }
 }
