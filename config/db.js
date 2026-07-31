@@ -3,30 +3,50 @@ const fs = require('fs');
 
 let db = null;
 
-// Intentar cargar SQLite con better-sqlite3
+// Archivo de respaldo en /tmp para entornos Serverless (Vercel)
+const tmpJsonPath = '/tmp/ket_data.json';
+
+function loadTmpStore() {
+  try {
+    if (fs.existsSync(tmpJsonPath)) {
+      const raw = fs.readFileSync(tmpJsonPath, 'utf8');
+      return JSON.parse(raw);
+    }
+  } catch (e) {
+    console.warn('Error leyendo /tmp/ket_data.json:', e.message);
+  }
+  return { students: [], submissions: [] };
+}
+
+function saveTmpStore(store) {
+  try {
+    fs.writeFileSync(tmpJsonPath, JSON.stringify(store, null, 2), 'utf8');
+  } catch (e) {
+    console.warn('Error guardando en /tmp/ket_data.json:', e.message);
+  }
+}
+
+// Intentar cargar SQLite con better-sqlite3 (Entorno Local / Railway)
 try {
   const Database = require('better-sqlite3');
 
-  // Crear carpeta de uploads solo si es entorno local / con escritura
   try {
     const uploadsDir = path.join(__dirname, '../uploads/speaking');
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
   } catch (e) {
-    console.warn('Directorio /uploads no editable en Serverless.');
+    // Silencioso en Serverless
   }
 
-  // En Vercel o entorno Serverless, usar base de datos en memoria o archivo temporal
   const isVercel = process.env.VERCEL || process.env.NOW_BUILDER;
-  const dbPath = isVercel ? ':memory:' : path.join(__dirname, '../ket_exam.db');
+  const dbPath = isVercel ? '/tmp/ket_exam.db' : path.join(__dirname, '../ket_exam.db');
   
   db = new Database(dbPath);
   if (!isVercel) {
     db.pragma('journal_mode = WAL');
   }
 
-  // Inicializar tablas
   db.exec(`
     CREATE TABLE IF NOT EXISTS students (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,13 +75,10 @@ try {
   console.log('✅ Base de Datos SQLite inicializada correctamente.');
 
 } catch (err) {
-  console.warn('⚠️ SQLite nativo no disponible en este entorno Serverless. Activando almacenamiento en memoria fallback:', err.message);
+  console.warn('⚠️ Activando motor de datos resiliente para Serverless:', err.message);
 
-  // Fallback DB en memoria para entornos Serverless como Vercel
-  const memoryStore = {
-    students: [],
-    submissions: []
-  };
+  global.memoryStore = global.memoryStore || loadTmpStore();
+  const memoryStore = global.memoryStore;
 
   db = {
     memory: true,
@@ -71,13 +88,23 @@ try {
       return {
         run: (...args) => {
           if (q.includes('insert into students')) {
+            const existing = memoryStore.students.find(s => 
+              s.first_name.toLowerCase() === args[0].toLowerCase() &&
+              s.last_name.toLowerCase() === args[1].toLowerCase() &&
+              s.grade === args[2]
+            );
+            if (existing) {
+              return { lastInsertRowid: existing.id };
+            }
             const id = memoryStore.students.length + 1;
-            memoryStore.students.push({ id, first_name: args[0], last_name: args[1], grade: args[2], created_at: new Date().toISOString() });
+            const newStudent = { id, first_name: args[0], last_name: args[1], grade: args[2], created_at: new Date().toISOString() };
+            memoryStore.students.push(newStudent);
+            saveTmpStore(memoryStore);
             return { lastInsertRowid: id };
           }
           if (q.includes('insert into submissions')) {
             const id = memoryStore.submissions.length + 1;
-            memoryStore.submissions.push({
+            const newSub = {
               id,
               student_id: args[0],
               score_reading_writing: args[1],
@@ -89,11 +116,14 @@ try {
               speaking_audio_url: args[7],
               raw_answers_json: args[8],
               submitted_at: new Date().toISOString()
-            });
+            };
+            memoryStore.submissions.push(newSub);
+            saveTmpStore(memoryStore);
             return { lastInsertRowid: id };
           }
           if (q.includes('delete from submissions')) {
-            memoryStore.submissions = memoryStore.submissions.filter(s => s.id !== args[0]);
+            memoryStore.submissions = memoryStore.submissions.filter(s => s.id !== parseInt(args[0], 10));
+            saveTmpStore(memoryStore);
             return { changes: 1 };
           }
           return { lastInsertRowid: 1, changes: 0 };
@@ -107,10 +137,16 @@ try {
             ) || null;
           }
           if (q.includes('from submissions')) {
-            const sub = memoryStore.submissions.find(s => s.id === parseInt(args[0], 10));
+            const subId = parseInt(args[0], 10);
+            const sub = memoryStore.submissions.find(s => s.id === subId);
             if (sub) {
               const st = memoryStore.students.find(s => s.id === sub.student_id) || {};
-              return { ...sub, first_name: st.first_name || 'Estudiante', last_name: st.last_name || '', grade: st.grade || '6to' };
+              return {
+                ...sub,
+                first_name: st.first_name || 'Estudiante',
+                last_name: st.last_name || '',
+                grade: st.grade || '6to'
+              };
             }
             return null;
           }
