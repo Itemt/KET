@@ -1,12 +1,26 @@
 const path = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
 
 let db = null;
 
 // Archivo de respaldo en /tmp para entornos Serverless (Vercel)
 const tmpJsonPath = '/tmp/ket_data.json';
+const CLOUD_STORE_URL = 'https://jsonblob.com/api/jsonBlob/019fb8a2-b355-7175-8959-772dcddae5ca';
 
 function loadTmpStore() {
+  // 1. Intentar cargar desde el Cloud Sync en vivo
+  try {
+    const output = execSync(`curl -s "${CLOUD_STORE_URL}"`, { encoding: 'utf8', timeout: 3000 });
+    const parsed = JSON.parse(output);
+    if (parsed && Array.isArray(parsed.students) && Array.isArray(parsed.submissions)) {
+      return parsed;
+    }
+  } catch (e) {
+    console.warn('Advertencia al sincronizar con Cloud Store:', e.message);
+  }
+
+  // 2. Fallback a /tmp local
   try {
     if (fs.existsSync(tmpJsonPath)) {
       const raw = fs.readFileSync(tmpJsonPath, 'utf8');
@@ -15,14 +29,24 @@ function loadTmpStore() {
   } catch (e) {
     console.warn('Error leyendo /tmp/ket_data.json:', e.message);
   }
+
   return { students: [], submissions: [] };
 }
 
 function saveTmpStore(store) {
+  // 1. Guardar en /tmp local
   try {
     fs.writeFileSync(tmpJsonPath, JSON.stringify(store, null, 2), 'utf8');
   } catch (e) {
     console.warn('Error guardando en /tmp/ket_data.json:', e.message);
+  }
+
+  // 2. Sincronizar en la nube para Vercel Serverless
+  try {
+    const payload = JSON.stringify(store);
+    execSync(`curl -s -X PUT -H "Content-Type: application/json" -d '${payload.replace(/'/g, "'\\''")}' "${CLOUD_STORE_URL}"`, { timeout: 3000 });
+  } catch (e) {
+    console.warn('Error enviando a Cloud Store:', e.message);
   }
 }
 
@@ -80,7 +104,7 @@ try {
 } catch (err) {
   console.warn('⚠️ Activando motor de datos resiliente para Serverless:', err.message);
 
-  global.memoryStore = global.memoryStore || loadTmpStore();
+  global.memoryStore = loadTmpStore();
   const memoryStore = global.memoryStore;
 
   db = {
@@ -90,24 +114,27 @@ try {
       
       return {
         run: (...args) => {
+          // Refrescar estado antes de guardar
+          const store = loadTmpStore();
+          
           if (q.includes('insert into students')) {
-            const existing = memoryStore.students.find(s => 
+            const existing = store.students.find(s => 
               (s.username && args[3] && s.username.toLowerCase() === args[3].toLowerCase()) ||
               (s.first_name.toLowerCase() === args[0].toLowerCase() && s.last_name.toLowerCase() === args[1].toLowerCase())
             );
             if (existing) {
               existing.last_login_at = new Date().toISOString();
-              saveTmpStore(memoryStore);
+              saveTmpStore(store);
               return { lastInsertRowid: existing.id };
             }
-            const id = memoryStore.students.length + 1;
+            const id = store.students.length + 1;
             const newStudent = { id, first_name: args[0], last_name: args[1], grade: args[2], username: args[3] || '', last_login_at: new Date().toISOString(), created_at: new Date().toISOString() };
-            memoryStore.students.push(newStudent);
-            saveTmpStore(memoryStore);
+            store.students.push(newStudent);
+            saveTmpStore(store);
             return { lastInsertRowid: id };
           }
           if (q.includes('insert into submissions')) {
-            const id = memoryStore.submissions.length + 1;
+            const id = store.submissions.length + 1;
             const newSub = {
               id,
               student_id: args[0],
@@ -122,26 +149,27 @@ try {
               raw_answers_json: args[9],
               submitted_at: new Date().toISOString()
             };
-            memoryStore.submissions.push(newSub);
-            saveTmpStore(memoryStore);
+            store.submissions.push(newSub);
+            saveTmpStore(store);
             return { lastInsertRowid: id };
           }
           if (q.includes('delete from submissions')) {
-            memoryStore.submissions = memoryStore.submissions.filter(s => s.id !== parseInt(args[0], 10));
-            saveTmpStore(memoryStore);
+            store.submissions = store.submissions.filter(s => s.id !== parseInt(args[0], 10));
+            saveTmpStore(store);
             return { changes: 1 };
           }
           return { lastInsertRowid: 1, changes: 0 };
         },
         get: (...args) => {
+          const store = loadTmpStore();
           if (q.includes('from students')) {
-            if (args.length === 1) { // Buscar por username o ID
-              return memoryStore.students.find(s => 
+            if (args.length === 1) {
+              return store.students.find(s => 
                 (s.username && s.username.toLowerCase() === args[0].toString().toLowerCase()) ||
                 s.id === parseInt(args[0], 10)
               ) || null;
             }
-            return memoryStore.students.find(s => 
+            return store.students.find(s => 
               s.first_name.toLowerCase() === args[0].toLowerCase() &&
               s.last_name.toLowerCase() === args[1].toLowerCase() &&
               s.grade === args[2]
@@ -149,9 +177,9 @@ try {
           }
           if (q.includes('from submissions')) {
             const subId = parseInt(args[0], 10);
-            const sub = memoryStore.submissions.find(s => s.id === subId);
+            const sub = store.submissions.find(s => s.id === subId);
             if (sub) {
-              const st = memoryStore.students.find(s => s.id === sub.student_id) || {};
+              const st = store.students.find(s => s.id === sub.student_id) || {};
               return {
                 ...sub,
                 first_name: st.first_name || 'Estudiante',
@@ -165,9 +193,10 @@ try {
           return null;
         },
         all: () => {
+          const store = loadTmpStore();
           if (q.includes('from submissions')) {
-            return memoryStore.submissions.map(sub => {
-              const st = memoryStore.students.find(s => s.id === sub.student_id) || {};
+            return store.submissions.map(sub => {
+              const st = store.students.find(s => s.id === sub.student_id) || {};
               return {
                 submission_id: sub.id,
                 student_id: sub.student_id,
