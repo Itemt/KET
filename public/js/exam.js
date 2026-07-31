@@ -27,7 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchExamData();
   setupTabNavigation();
   startGlobalTimer();
-  setupSpeakingRecorder();
+  if (document.getElementById('btn-record')) {
+    setupSpeakingRecorder();
+  }
   setupFormSubmission(student);
 
   /* --- Cargar Datos del Examen desde Backend --- */
@@ -38,8 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (data.success) {
         examData = data.exam;
-        renderReadingWritingSection(examData.sections.reading_writing);
-        renderListeningSection(examData.sections.listening);
+        if (examData.sections && examData.sections.reading_writing) {
+          renderReadingWritingSection(examData.sections.reading_writing);
+        }
+        if (examData.sections && examData.sections.listening) {
+          renderListeningSection(examData.sections.listening);
+        }
       } else {
         alert('Error al cargar el contenido del examen.');
       }
@@ -408,9 +414,10 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Envío Final del Examen --- */
   function setupFormSubmission(student) {
     const form = document.getElementById('ket-exam-form');
+    const btnSubmit = document.getElementById('btn-submit-exam');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    const handleSubmission = async (e) => {
+      if (e) e.preventDefault();
 
       const confirmSubmit = confirm('¿Estás seguro de enviar tu Examen KET A2? Revisa bien antes de enviar.');
       if (!confirmSubmit) return;
@@ -456,16 +463,21 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error al enviar el examen:', err);
         alert('Ocurrió un error de red al intentar enviar tu examen.');
       }
-    });
+    };
+
+    if (btnSubmit) btnSubmit.addEventListener('click', handleSubmission);
+    if (form) form.addEventListener('submit', handleSubmission);
   }
 
   /* --- Mostrar Modal de Resultados --- */
   function showResultsModal(score) {
-    document.getElementById('res-rw-score').textContent = `${score.reading_writing}`;
-    document.getElementById('res-lis-score').textContent = `${score.listening}`;
-    document.getElementById('res-total-score').textContent = `${score.total} / ${score.max}`;
+    const rwElem = document.getElementById('res-rw-score');
+    if (rwElem) rwElem.textContent = `${score.reading_writing}`;
+
+    const totalElem = document.getElementById('res-total-score');
+    if (totalElem) totalElem.textContent = `${score.total || score.reading_writing} / ${score.max || score.max_reading_writing || 30}`;
 
     const modal = document.getElementById('results-modal');
-    modal.classList.add('active');
+    if (modal) modal.classList.add('active');
   }
 });
