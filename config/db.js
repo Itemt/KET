@@ -98,6 +98,9 @@ try {
     );
   `);
 
+  try { db.exec(`ALTER TABLE students ADD COLUMN username TEXT;`); } catch (e) {}
+  try { db.exec(`ALTER TABLE submissions ADD COLUMN attempt_time DATETIME;`); } catch (e) {}
+
   console.log('✅ Base de Datos SQLite nativa cargada.');
 
 } catch (err) {
