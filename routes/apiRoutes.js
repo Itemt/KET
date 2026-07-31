@@ -3,34 +3,29 @@ const router = express.Router();
 const ExamController = require('../controllers/ExamController');
 const AudioController = require('../controllers/AudioController');
 const AdminController = require('../controllers/AdminController');
+const BonusController = require('../controllers/BonusController');
 
-// --- Rutas públicas de estudiante ---
-// Lista de estudiantes pre-cargados
+// --- Rutas públicas de estudiante (Examen Principal) ---
 router.get('/students/list', ExamController.getStudentsList);
-
-// Login de estudiante con nombreapellido
 router.post('/students/login', ExamController.loginStudent);
-
-// Obtener el examen (sanitizado)
 router.get('/exam', ExamController.getExamData);
-
-// Subida del audio grabado de Speaking
 router.post('/speaking/upload', AudioController.uploadMiddleware, AudioController.handleUpload);
-
-// Envío final del examen para procesar y calificar
 router.post('/submit', ExamController.submitExam);
 
-// --- Rutas privadas del panel de administración ---
-// Login de Administrador
+// --- Rutas del panel docente (Examen Principal) ---
 router.post('/admin/login', AdminController.login);
-
-// Obtener todas las entregas
 router.get('/admin/submissions', AdminController.getSubmissions);
-
-// Obtener detalle de una entrega específica
 router.get('/admin/submissions/:id', AdminController.getSubmissionDetail);
-
-// Eliminar un envío
 router.delete('/admin/submissions/:id', AdminController.deleteSubmission);
+
+// --- Rutas del Examen Bonus (Completamente aisladas) ---
+router.post('/bonus/login', BonusController.loginStudent);
+router.get('/bonus/exam', BonusController.getBonusExamData);
+router.post('/bonus/submit', BonusController.submitBonusExam);
+
+// --- Rutas del panel docente Bonus ---
+router.get('/bonus/submissions', BonusController.getBonusSubmissions);
+router.get('/bonus/submissions/:id', BonusController.getBonusSubmissionDetail);
+router.delete('/bonus/submissions/:id', BonusController.deleteBonusSubmission);
 
 module.exports = router;
