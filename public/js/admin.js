@@ -114,9 +114,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (percentage >= 70) badgeClass = 'score-high';
       else if (percentage < 50) badgeClass = 'score-low';
 
+      const formattedAttempt = sub.attempt_time ? new Date(sub.attempt_time).toLocaleString('es-ES', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      }) : 'No registrada';
+
       const formattedDate = new Date(sub.submitted_at).toLocaleString('es-ES', {
         day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
       });
 
       const hasAudio = sub.speaking_audio_url && sub.speaking_audio_url.trim() !== '';
@@ -137,8 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
               P7: ${sub.writing_part7 ? '✅ Escrito' : '❌ Vacío'}
             </span>
           </td>
-          <td>
-            ${hasAudio ? '<span style="color: var(--success); font-weight: 700;">🎙️ Audio listo</span>' : '<span style="color: var(--text-muted);">Sin audio</span>'}
+          <td style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">
+            🕒 ${formattedAttempt}
           </td>
           <td style="font-size: 0.85rem; color: var(--text-muted);">${formattedDate}</td>
           <td>

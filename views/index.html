@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulacro Cambridge KET (A2 Key) - 6to Grado</title>
+  <title>Acceso Estudiantes - Simulacro Cambridge KET (A2 Key)</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
 </head>
@@ -24,57 +24,58 @@
     </div>
   </header>
 
-  <main class="container" style="margin-top: 40px;">
+  <main class="container" style="margin-top: 30px;">
     <div style="max-width: 650px; margin: 0 auto;">
       
-      <div class="card" style="text-align: center; padding: 40px 30px;">
-        <div style="font-size: 3rem; margin-bottom: 12px;">🇬🇧 📝</div>
-        <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--dark); margin-bottom: 10px;">
-          Bienvenido al Simulacro KET A2 Key
-        </h2>
-        <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 30px;">
-          Este examen evalúa tus habilidades en <strong>Reading & Writing</strong>, <strong>Listening</strong> y <strong>Speaking</strong>. Por favor completa tus datos para empezar.
-        </p>
+      <div class="card" style="padding: 40px 30px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 3rem; margin-bottom: 10px;">🇬🇧 📝</div>
+          <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--dark); margin-bottom: 8px;">
+            Ingreso de Alumnos
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">
+            Ingresa tu usuario y contraseña (ambos son <strong>nombreapellido</strong> sin espacios ni acentos).
+          </p>
+        </div>
 
-        <form id="student-register-form" style="text-align: left;">
+        <form id="student-login-form" style="text-align: left;">
+          <!-- Selector rápido de estudiante -->
           <div style="margin-bottom: 20px;">
-            <label for="firstName" style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--dark);">
-              Nombre(s) *
+            <label for="studentSelect" style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--dark);">
+              Selecciona tu Nombre:
             </label>
-            <input type="text" id="firstName" class="input-field" placeholder="Ej. Mateo" required>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <label for="lastName" style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--dark);">
-              Apellido(s) *
-            </label>
-            <input type="text" id="lastName" class="input-field" placeholder="Ej. González" required>
-          </div>
-
-          <div style="margin-bottom: 30px;">
-            <label for="grade" style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--dark);">
-              Grado / Sección *
-            </label>
-            <select id="grade" class="input-field" required style="cursor: pointer;">
-              <option value="">Selecciona tu sección...</option>
-              <option value="6to A">6to Grado "A"</option>
-              <option value="6to B">6to Grado "B"</option>
-              <option value="6to C">6to Grado "C"</option>
-              <option value="6to D">6to Grado "D"</option>
+            <select id="studentSelect" class="input-field" style="cursor: pointer;">
+              <option value="">-- Buscar mi nombre en la lista --</option>
             </select>
           </div>
 
+          <div style="margin-bottom: 20px;">
+            <label for="username" style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--dark);">
+              Usuario (nombreapellido) *
+            </label>
+            <input type="text" id="username" class="input-field" placeholder="Ej. thiagoalvarez" required autocomplete="username">
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <label for="password" style="display: block; font-weight: 600; margin-bottom: 6px; color: var(--dark);">
+              Contraseña (nombreapellido) *
+            </label>
+            <input type="password" id="password" class="input-field" placeholder="Ej. thiagoalvarez" required autocomplete="current-password">
+          </div>
+
+          <div id="login-error-msg" style="color: var(--danger); font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; display: none; text-align: center;"></div>
+
           <button type="submit" class="btn btn-primary btn-block" style="padding: 16px; font-size: 1.1rem;">
-            🚀 Iniciar Examen Ahora
+            🚀 Iniciar Examen KET A2
           </button>
         </form>
 
         <div style="margin-top: 30px; padding: 16px; background: var(--primary-light); border-radius: var(--radius-md); font-size: 0.85rem; color: var(--primary); text-align: left;">
-          ℹ️ <strong>Instrucciones importantes:</strong>
-          <ul style="margin-top: 6px; padding-left: 20px; line-height: 1.5;">
-            <li>Tendrás <strong>90 minutos</strong> para completar todo el simulacro.</li>
-            <li>Asegúrate de permitir el acceso al <strong>micrófono</strong> en la sección de Speaking.</li>
-            <li>Al finalizar todas las secciones, presiona <strong>"Enviar Examen Final"</strong>.</li>
+          ℹ️ <strong>Información importante:</strong>
+          <ul style="margin-top: 6px; padding-left: 20px; line-height: 1.6;">
+            <li>Tus credenciales son tu primer nombre y primer apellido en minúsculas (ej. <code>thiagoalvarez</code>).</li>
+            <li>Al iniciar sesión se registrará la <strong>hora de intento</strong> de tu examen.</li>
+            <li>Tendrás <strong>90 minutos</strong> para completar Reading & Writing, Listening y Speaking.</li>
           </ul>
         </div>
 
@@ -84,23 +85,79 @@
   </main>
 
   <script>
-    document.getElementById('student-register-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const firstName = document.getElementById('firstName').value.trim();
-      const lastName = document.getElementById('lastName').value.trim();
-      const grade = document.getElementById('grade').value;
+    document.addEventListener('DOMContentLoaded', async () => {
+      const studentSelect = document.getElementById('studentSelect');
+      const usernameInput = document.getElementById('username');
+      const passwordInput = document.getElementById('password');
+      const loginForm = document.getElementById('student-login-form');
+      const errorMsg = document.getElementById('login-error-msg');
 
-      if (!firstName || !lastName || !grade) {
-        alert('Por favor completa todos los campos requeridos.');
-        return;
+      // Cargar lista de estudiantes pre-cargados
+      try {
+        const res = await fetch('/api/students/list');
+        const data = await res.json();
+        if (data.success && data.students) {
+          data.students.forEach(st => {
+            const opt = document.createElement('option');
+            opt.value = st.username;
+            opt.textContent = `${st.fullName} (${st.username})`;
+            studentSelect.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.error('Error cargando lista:', err);
       }
 
-      // Guardar información del alumno en localStorage
-      const studentData = { firstName, lastName, grade, startTime: Date.now() };
-      localStorage.setItem('ket_student', JSON.stringify(studentData));
+      // Al seleccionar de la lista, auto-completar usuario y clave
+      studentSelect.addEventListener('change', () => {
+        const selected = studentSelect.value;
+        if (selected) {
+          usernameInput.value = selected;
+          passwordInput.value = selected;
+        }
+      });
 
-      // Redirigir a la interfaz del examen
-      window.location.href = '/exam';
+      // Procesar inicio de sesión
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorMsg.style.display = 'none';
+
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        try {
+          const res = await fetch('/api/students/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+            const studentData = {
+              id: data.student.id,
+              firstName: data.student.first_name || data.student.firstName,
+              lastName: data.student.last_name || data.student.lastName,
+              fullName: data.student.fullName || `${data.student.first_name} ${data.student.last_name}`,
+              grade: data.student.grade || '6to',
+              username: data.student.username,
+              startTime: new Date().toISOString(),
+              attemptTime: data.student.attemptTime || new Date().toISOString()
+            };
+
+            localStorage.setItem('ket_student', JSON.stringify(studentData));
+            window.location.href = '/exam';
+          } else {
+            errorMsg.textContent = data.message || 'Usuario o contraseña incorrectos.';
+            errorMsg.style.display = 'block';
+          }
+        } catch (err) {
+          console.error('Error en login:', err);
+          errorMsg.textContent = 'Error de conexión al intentar ingresar.';
+          errorMsg.style.display = 'block';
+        }
+      });
     });
   </script>
 

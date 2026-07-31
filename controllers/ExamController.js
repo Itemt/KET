@@ -4,23 +4,48 @@ const ExamModel = require('../models/ExamModel');
 const SubmissionModel = require('../models/SubmissionModel');
 
 class ExamController {
-  /**
-   * Renderiza o sirve la página de inicio (Registro de estudiante)
-   */
   static renderIndex(req, res) {
     res.sendFile(path.join(__dirname, '../views/index.html'));
   }
 
-  /**
-   * Renderiza la vista principal del examen
-   */
   static renderExam(req, res) {
     res.sendFile(path.join(__dirname, '../views/exam.html'));
   }
 
   /**
-   * Endpoint API: Entrega el examen sanitized (sin respuestas correctas expuestas)
+   * Endpoint API: Obtener lista de estudiantes autorizados para el selector (opcional)
    */
+  static getStudentsList(req, res) {
+    const list = StudentModel.getAuthorizedList();
+    res.json({ success: true, students: list });
+  }
+
+  /**
+   * Endpoint API: Autenticar estudiante con nombreapellido y clave
+   */
+  static loginStudent(req, res) {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ success: false, message: 'Por favor ingresa tu usuario y contraseña.' });
+    }
+
+    const studentRecord = StudentModel.authenticate(username, password);
+
+    if (!studentRecord) {
+      return res.status(401).json({
+        success: false,
+        message: 'Usuario o contraseña incorrectos. Recuerda que es tu nombreapellido (ej. thiagoalvarez).'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: '¡Bienvenido(a) al examen!',
+      student: studentRecord
+    });
+  }
+
   static getExamData(req, res) {
     try {
       const sanitizedExam = ExamModel.getSanitizedExamData();
@@ -31,26 +56,26 @@ class ExamController {
     }
   }
 
-  /**
-   * Endpoint API: Recibe el examen completo del estudiante, califica la opción múltiple y guarda en la DB.
-   */
   static submitExam(req, res) {
     try {
-      const { student, answers, speaking_audio_url } = req.body;
+      const { student, answers, speaking_audio_url, attempt_time } = req.body;
 
       if (!student || !student.firstName || !student.lastName || !student.grade) {
         return res.status(400).json({ success: false, message: 'Datos de estudiante incompletos.' });
       }
 
-      // 1. Registrar o recuperar el registro del estudiante en DB
-      const studentRecord = StudentModel.createOrGet(student.firstName, student.lastName, student.grade);
+      const studentRecord = StudentModel.createOrGet(
+        student.firstName,
+        student.lastName,
+        student.grade,
+        student.username || ''
+      );
 
-      // 2. Evaluar respuestas de opción múltiple / cloze
       const evaluation = ExamModel.evaluateAnswers(answers || {});
 
-      // 3. Guardar el envío completo
       const submissionId = SubmissionModel.save({
         student_id: studentRecord.id,
+        attempt_time: attempt_time || student.startTime || new Date().toISOString(),
         score_reading_writing: evaluation.score_reading_writing,
         score_listening: evaluation.score_listening,
         total_auto_score: evaluation.total_auto_score,

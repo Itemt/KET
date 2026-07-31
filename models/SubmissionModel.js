@@ -2,12 +2,13 @@ const db = require('../config/db');
 
 class SubmissionModel {
   /**
-   * Guarda un nuevo envío de examen en la base de datos
+   * Guarda un nuevo envío de examen en la base de datos registrando la hora de intento
    * @param {object} submissionData 
    */
   static save(submissionData) {
     const {
       student_id,
+      attempt_time,
       score_reading_writing,
       score_listening,
       total_auto_score,
@@ -21,6 +22,7 @@ class SubmissionModel {
     const stmt = db.prepare(`
       INSERT INTO submissions (
         student_id,
+        attempt_time,
         score_reading_writing,
         score_listening,
         total_auto_score,
@@ -30,11 +32,12 @@ class SubmissionModel {
         speaking_audio_url,
         raw_answers_json
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     const info = stmt.run(
       student_id,
+      attempt_time || new Date().toISOString(),
       score_reading_writing,
       score_listening,
       total_auto_score,
@@ -49,7 +52,7 @@ class SubmissionModel {
   }
 
   /**
-   * Obtiene todos los envíos con datos del estudiante para el panel de administración
+   * Obtiene todos los envíos con datos del estudiante y hora de intento
    */
   static getAllWithStudent() {
     return db.prepare(`
@@ -59,6 +62,7 @@ class SubmissionModel {
         st.first_name,
         st.last_name,
         st.grade,
+        s.attempt_time,
         s.score_reading_writing,
         s.score_listening,
         s.total_auto_score,
@@ -89,7 +93,7 @@ class SubmissionModel {
       WHERE s.id = ?
     `).get(submissionId);
 
-    if (row && row.raw_answers_json) {
+    if (row && row.raw_answers_json && typeof row.raw_answers_json === 'string') {
       try {
         row.raw_answers_json = JSON.parse(row.raw_answers_json);
       } catch (e) {

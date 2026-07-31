@@ -5,6 +5,12 @@ const AudioController = require('../controllers/AudioController');
 const AdminController = require('../controllers/AdminController');
 
 // --- Rutas públicas de estudiante ---
+// Lista de estudiantes pre-cargados
+router.get('/students/list', ExamController.getStudentsList);
+
+// Login de estudiante con nombreapellido
+router.post('/students/login', ExamController.loginStudent);
+
 // Obtener el examen (sanitizado)
 router.get('/exam', ExamController.getExamData);
 

@@ -53,12 +53,15 @@ try {
       first_name TEXT NOT NULL,
       last_name TEXT NOT NULL,
       grade TEXT NOT NULL,
+      username TEXT UNIQUE,
+      last_login_at DATETIME,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS submissions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       student_id INTEGER NOT NULL,
+      attempt_time DATETIME,
       score_reading_writing INTEGER DEFAULT 0,
       score_listening INTEGER DEFAULT 0,
       total_auto_score INTEGER DEFAULT 0,
@@ -89,15 +92,16 @@ try {
         run: (...args) => {
           if (q.includes('insert into students')) {
             const existing = memoryStore.students.find(s => 
-              s.first_name.toLowerCase() === args[0].toLowerCase() &&
-              s.last_name.toLowerCase() === args[1].toLowerCase() &&
-              s.grade === args[2]
+              (s.username && args[3] && s.username.toLowerCase() === args[3].toLowerCase()) ||
+              (s.first_name.toLowerCase() === args[0].toLowerCase() && s.last_name.toLowerCase() === args[1].toLowerCase())
             );
             if (existing) {
+              existing.last_login_at = new Date().toISOString();
+              saveTmpStore(memoryStore);
               return { lastInsertRowid: existing.id };
             }
             const id = memoryStore.students.length + 1;
-            const newStudent = { id, first_name: args[0], last_name: args[1], grade: args[2], created_at: new Date().toISOString() };
+            const newStudent = { id, first_name: args[0], last_name: args[1], grade: args[2], username: args[3] || '', last_login_at: new Date().toISOString(), created_at: new Date().toISOString() };
             memoryStore.students.push(newStudent);
             saveTmpStore(memoryStore);
             return { lastInsertRowid: id };
@@ -107,14 +111,15 @@ try {
             const newSub = {
               id,
               student_id: args[0],
-              score_reading_writing: args[1],
-              score_listening: args[2],
-              total_auto_score: args[3],
-              max_auto_score: args[4],
-              writing_part6: args[5],
-              writing_part7: args[6],
-              speaking_audio_url: args[7],
-              raw_answers_json: args[8],
+              attempt_time: args[1] || new Date().toISOString(),
+              score_reading_writing: args[2],
+              score_listening: args[3],
+              total_auto_score: args[4],
+              max_auto_score: args[5],
+              writing_part6: args[6],
+              writing_part7: args[7],
+              speaking_audio_url: args[8],
+              raw_answers_json: args[9],
               submitted_at: new Date().toISOString()
             };
             memoryStore.submissions.push(newSub);
@@ -130,6 +135,12 @@ try {
         },
         get: (...args) => {
           if (q.includes('from students')) {
+            if (args.length === 1) { // Buscar por username o ID
+              return memoryStore.students.find(s => 
+                (s.username && s.username.toLowerCase() === args[0].toString().toLowerCase()) ||
+                s.id === parseInt(args[0], 10)
+              ) || null;
+            }
             return memoryStore.students.find(s => 
               s.first_name.toLowerCase() === args[0].toLowerCase() &&
               s.last_name.toLowerCase() === args[1].toLowerCase() &&
@@ -145,7 +156,8 @@ try {
                 ...sub,
                 first_name: st.first_name || 'Estudiante',
                 last_name: st.last_name || '',
-                grade: st.grade || '6to'
+                grade: st.grade || '6to',
+                attempt_time: sub.attempt_time || sub.submitted_at
               };
             }
             return null;
@@ -162,6 +174,7 @@ try {
                 first_name: st.first_name || 'Estudiante',
                 last_name: st.last_name || '',
                 grade: st.grade || '6to',
+                attempt_time: sub.attempt_time || sub.submitted_at,
                 score_reading_writing: sub.score_reading_writing,
                 score_listening: sub.score_listening,
                 total_auto_score: sub.total_auto_score,
