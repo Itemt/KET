@@ -1,20 +1,13 @@
 const path = require('path');
 const SubmissionModel = require('../models/SubmissionModel');
 
-// Clave o PIN de administrador por defecto (puede configurarse en .env)
 const ADMIN_PASSCODE = process.env.ADMIN_PASSCODE || "ket2026";
 
 class AdminController {
-  /**
-   * Renderiza la vista HTML del Panel Docente / Administrador
-   */
   static renderAdminPage(req, res) {
     res.sendFile(path.join(__dirname, '../views/admin.html'));
   }
 
-  /**
-   * Verificar autenticación de Administrador
-   */
   static login(req, res) {
     const { passcode } = req.body;
     if (passcode === ADMIN_PASSCODE) {
@@ -24,12 +17,9 @@ class AdminController {
     }
   }
 
-  /**
-   * Obtiene la lista de todos los exámenes enviados
-   */
-  static getSubmissions(req, res) {
+  static async getSubmissions(req, res) {
     try {
-      const submissions = SubmissionModel.getAllWithStudent();
+      const submissions = await SubmissionModel.getAllWithStudent();
       res.json({ success: true, submissions });
     } catch (error) {
       console.error('Error al consultar entregas:', error);
@@ -37,13 +27,10 @@ class AdminController {
     }
   }
 
-  /**
-   * Obtiene los detalles completos de una entrega por su ID
-   */
-  static getSubmissionDetail(req, res) {
+  static async getSubmissionDetail(req, res) {
     try {
       const { id } = req.params;
-      const submission = SubmissionModel.getById(id);
+      const submission = await SubmissionModel.getById(id);
 
       if (!submission) {
         return res.status(404).json({ success: false, message: 'Entrega no encontrada.' });
@@ -56,13 +43,10 @@ class AdminController {
     }
   }
 
-  /**
-   * Elimina un registro de entrega por ID
-   */
-  static deleteSubmission(req, res) {
+  static async deleteSubmission(req, res) {
     try {
       const { id } = req.params;
-      SubmissionModel.delete(id);
+      await SubmissionModel.delete(id);
       res.json({ success: true, message: 'Entrega eliminada correctamente.' });
     } catch (error) {
       console.error('Error al eliminar entrega:', error);

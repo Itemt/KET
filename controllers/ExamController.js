@@ -12,38 +12,37 @@ class ExamController {
     res.sendFile(path.join(__dirname, '../views/exam.html'));
   }
 
-  /**
-   * Endpoint API: Obtener lista de estudiantes autorizados para el selector (opcional)
-   */
   static getStudentsList(req, res) {
     const list = StudentModel.getAuthorizedList();
     res.json({ success: true, students: list });
   }
 
-  /**
-   * Endpoint API: Autenticar estudiante con nombreapellido y clave
-   */
-  static loginStudent(req, res) {
-    const { username, password } = req.body;
+  static async loginStudent(req, res) {
+    try {
+      const { username, password } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({ success: false, message: 'Por favor ingresa tu usuario y contraseña.' });
-    }
+      if (!username || !password) {
+        return res.status(400).json({ success: false, message: 'Por favor ingresa tu usuario y contraseña.' });
+      }
 
-    const studentRecord = StudentModel.authenticate(username, password);
+      const studentRecord = await StudentModel.authenticate(username, password);
 
-    if (!studentRecord) {
-      return res.status(401).json({
-        success: false,
-        message: 'Usuario o contraseña incorrectos. Recuerda que es tu nombreapellido (ej. thiagoalvarez).'
+      if (!studentRecord) {
+        return res.status(401).json({
+          success: false,
+          message: 'Usuario o contraseña incorrectos. Recuerda que es tu nombreapellido (ej. thiagoalvarez).'
+        });
+      }
+
+      res.json({
+        success: true,
+        message: '¡Bienvenido(a) al examen!',
+        student: studentRecord
       });
+    } catch (err) {
+      console.error('Error en login de estudiante:', err);
+      res.status(500).json({ success: false, message: 'Error interno al autenticar.' });
     }
-
-    res.json({
-      success: true,
-      message: '¡Bienvenido(a) al examen!',
-      student: studentRecord
-    });
   }
 
   static getExamData(req, res) {
@@ -56,32 +55,32 @@ class ExamController {
     }
   }
 
-  static submitExam(req, res) {
+  static async submitExam(req, res) {
     try {
       const { student, answers, speaking_audio_url, attempt_time } = req.body;
 
-      if (!student || !student.firstName || !student.lastName || !student.grade) {
+      if (!student || (!student.firstName && !student.first_name)) {
         return res.status(400).json({ success: false, message: 'Datos de estudiante incompletos.' });
       }
 
-      const studentRecord = StudentModel.createOrGet(
-        student.firstName,
-        student.lastName,
-        student.grade,
-        student.username || ''
-      );
+      const firstName = student.firstName || student.first_name;
+      const lastName = student.lastName || student.last_name || '';
+      const grade = student.grade || '6to';
+      const username = student.username || '';
+
+      const studentRecord = await StudentModel.createOrGet(firstName, lastName, grade, username);
 
       const evaluation = ExamModel.evaluateAnswers(answers || {});
 
-      const submissionId = SubmissionModel.save({
+      const submissionId = await SubmissionModel.save({
         student_id: studentRecord.id,
-        attempt_time: attempt_time || student.startTime || new Date().toISOString(),
+        attempt_time: attempt_time || student.startTime || student.attemptTime || new Date().toISOString(),
         score_reading_writing: evaluation.score_reading_writing,
         score_listening: evaluation.score_listening,
         total_auto_score: evaluation.total_auto_score,
         max_auto_score: evaluation.max_auto_score,
-        writing_part6: answers.writing_part6 || '',
-        writing_part7: answers.writing_part7 || '',
+        writing_part6: answers ? answers.writing_part6 || '' : '',
+        writing_part7: answers ? answers.writing_part7 || '' : '',
         speaking_audio_url: speaking_audio_url || '',
         raw_answers_json: answers || {}
       });

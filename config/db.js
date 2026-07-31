@@ -1,56 +1,56 @@
 const path = require('path');
 const fs = require('fs');
-const { execSync } = require('child_process');
 
 let db = null;
-
-// Archivo de respaldo en /tmp para entornos Serverless (Vercel)
-const tmpJsonPath = '/tmp/ket_data.json';
 const CLOUD_STORE_URL = 'https://jsonblob.com/api/jsonBlob/019fb8a2-b355-7175-8959-772dcddae5ca';
+const tmpJsonPath = '/tmp/ket_data.json';
 
-function loadTmpStore() {
-  // 1. Intentar cargar desde el Cloud Sync en vivo
+// Cache en memoria global
+global.memoryStore = global.memoryStore || { students: [], submissions: [] };
+
+async function fetchCloudStore() {
   try {
-    const output = execSync(`curl -s "${CLOUD_STORE_URL}"`, { encoding: 'utf8', timeout: 3000 });
-    const parsed = JSON.parse(output);
-    if (parsed && Array.isArray(parsed.students) && Array.isArray(parsed.submissions)) {
-      return parsed;
+    const res = await fetch(CLOUD_STORE_URL, { headers: { 'Accept': 'application/json' } });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.students) && Array.isArray(data.submissions)) {
+        global.memoryStore = data;
+        return data;
+      }
     }
   } catch (e) {
-    console.warn('Advertencia al sincronizar con Cloud Store:', e.message);
+    console.warn('Advertencia leyendo Cloud Store:', e.message);
   }
-
-  // 2. Fallback a /tmp local
+  
   try {
     if (fs.existsSync(tmpJsonPath)) {
       const raw = fs.readFileSync(tmpJsonPath, 'utf8');
-      return JSON.parse(raw);
+      global.memoryStore = JSON.parse(raw);
     }
-  } catch (e) {
-    console.warn('Error leyendo /tmp/ket_data.json:', e.message);
-  }
+  } catch (e) {}
 
-  return { students: [], submissions: [] };
+  return global.memoryStore;
 }
 
-function saveTmpStore(store) {
-  // 1. Guardar en /tmp local
+async function saveCloudStore(store) {
+  global.memoryStore = store;
+  
   try {
     fs.writeFileSync(tmpJsonPath, JSON.stringify(store, null, 2), 'utf8');
-  } catch (e) {
-    console.warn('Error guardando en /tmp/ket_data.json:', e.message);
-  }
+  } catch (e) {}
 
-  // 2. Sincronizar en la nube para Vercel Serverless
   try {
-    const payload = JSON.stringify(store);
-    execSync(`curl -s -X PUT -H "Content-Type: application/json" -d '${payload.replace(/'/g, "'\\''")}' "${CLOUD_STORE_URL}"`, { timeout: 3000 });
+    await fetch(CLOUD_STORE_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(store)
+    });
   } catch (e) {
-    console.warn('Error enviando a Cloud Store:', e.message);
+    console.warn('Advertencia guardando en Cloud Store:', e.message);
   }
 }
 
-// Intentar cargar SQLite con better-sqlite3 (Entorno Local / Railway)
+// Intentar SQLite nativo primero (Local / Railway)
 try {
   const Database = require('better-sqlite3');
 
@@ -59,17 +59,16 @@ try {
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
-  } catch (e) {
-    // Silencioso en Serverless
-  }
+  } catch (e) {}
 
   const isVercel = process.env.VERCEL || process.env.NOW_BUILDER;
-  const dbPath = isVercel ? '/tmp/ket_exam.db' : path.join(__dirname, '../ket_exam.db');
-  
-  db = new Database(dbPath);
-  if (!isVercel) {
-    db.pragma('journal_mode = WAL');
+  if (isVercel) {
+    throw new Error('Entorno Vercel Serverless activado - usando motor Async Cloud Store.');
   }
+
+  const dbPath = path.join(__dirname, '../ket_exam.db');
+  db = new Database(dbPath);
+  db.pragma('journal_mode = WAL');
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS students (
@@ -99,126 +98,15 @@ try {
     );
   `);
 
-  console.log('✅ Base de Datos SQLite inicializada correctamente.');
+  console.log('✅ Base de Datos SQLite nativa cargada.');
 
 } catch (err) {
-  console.warn('⚠️ Activando motor de datos resiliente para Serverless:', err.message);
-
-  global.memoryStore = loadTmpStore();
-  const memoryStore = global.memoryStore;
+  console.log('ℹ️ Motor Cloud Async activado para Serverless.');
 
   db = {
-    memory: true,
-    prepare: (query) => {
-      const q = query.toLowerCase();
-      
-      return {
-        run: (...args) => {
-          // Refrescar estado antes de guardar
-          const store = loadTmpStore();
-          
-          if (q.includes('insert into students')) {
-            const existing = store.students.find(s => 
-              (s.username && args[3] && s.username.toLowerCase() === args[3].toLowerCase()) ||
-              (s.first_name.toLowerCase() === args[0].toLowerCase() && s.last_name.toLowerCase() === args[1].toLowerCase())
-            );
-            if (existing) {
-              existing.last_login_at = new Date().toISOString();
-              saveTmpStore(store);
-              return { lastInsertRowid: existing.id };
-            }
-            const id = store.students.length + 1;
-            const newStudent = { id, first_name: args[0], last_name: args[1], grade: args[2], username: args[3] || '', last_login_at: new Date().toISOString(), created_at: new Date().toISOString() };
-            store.students.push(newStudent);
-            saveTmpStore(store);
-            return { lastInsertRowid: id };
-          }
-          if (q.includes('insert into submissions')) {
-            const id = store.submissions.length + 1;
-            const newSub = {
-              id,
-              student_id: args[0],
-              attempt_time: args[1] || new Date().toISOString(),
-              score_reading_writing: args[2],
-              score_listening: args[3],
-              total_auto_score: args[4],
-              max_auto_score: args[5],
-              writing_part6: args[6],
-              writing_part7: args[7],
-              speaking_audio_url: args[8],
-              raw_answers_json: args[9],
-              submitted_at: new Date().toISOString()
-            };
-            store.submissions.push(newSub);
-            saveTmpStore(store);
-            return { lastInsertRowid: id };
-          }
-          if (q.includes('delete from submissions')) {
-            store.submissions = store.submissions.filter(s => s.id !== parseInt(args[0], 10));
-            saveTmpStore(store);
-            return { changes: 1 };
-          }
-          return { lastInsertRowid: 1, changes: 0 };
-        },
-        get: (...args) => {
-          const store = loadTmpStore();
-          if (q.includes('from students')) {
-            if (args.length === 1) {
-              return store.students.find(s => 
-                (s.username && s.username.toLowerCase() === args[0].toString().toLowerCase()) ||
-                s.id === parseInt(args[0], 10)
-              ) || null;
-            }
-            return store.students.find(s => 
-              s.first_name.toLowerCase() === args[0].toLowerCase() &&
-              s.last_name.toLowerCase() === args[1].toLowerCase() &&
-              s.grade === args[2]
-            ) || null;
-          }
-          if (q.includes('from submissions')) {
-            const subId = parseInt(args[0], 10);
-            const sub = store.submissions.find(s => s.id === subId);
-            if (sub) {
-              const st = store.students.find(s => s.id === sub.student_id) || {};
-              return {
-                ...sub,
-                first_name: st.first_name || 'Estudiante',
-                last_name: st.last_name || '',
-                grade: st.grade || '6to',
-                attempt_time: sub.attempt_time || sub.submitted_at
-              };
-            }
-            return null;
-          }
-          return null;
-        },
-        all: () => {
-          const store = loadTmpStore();
-          if (q.includes('from submissions')) {
-            return store.submissions.map(sub => {
-              const st = store.students.find(s => s.id === sub.student_id) || {};
-              return {
-                submission_id: sub.id,
-                student_id: sub.student_id,
-                first_name: st.first_name || 'Estudiante',
-                last_name: st.last_name || '',
-                grade: st.grade || '6to',
-                attempt_time: sub.attempt_time || sub.submitted_at,
-                score_reading_writing: sub.score_reading_writing,
-                score_listening: sub.score_listening,
-                total_auto_score: sub.total_auto_score,
-                max_auto_score: sub.max_auto_score,
-                writing_part6: sub.writing_part6,
-                writing_part7: sub.writing_part7,
-                speaking_audio_url: sub.speaking_audio_url,
-                submitted_at: sub.submitted_at
-              };
-            });
-          }
-          return [];
-        }
-      };
-    }
+    isServerless: true,
+    fetchStore: fetchCloudStore,
+    saveStore: saveCloudStore
   };
 }
 

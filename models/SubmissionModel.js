@@ -1,11 +1,7 @@
 const db = require('../config/db');
 
 class SubmissionModel {
-  /**
-   * Guarda un nuevo envío de examen en la base de datos registrando la hora de intento
-   * @param {object} submissionData 
-   */
-  static save(submissionData) {
+  static async save(submissionData) {
     const {
       student_id,
       attempt_time,
@@ -19,6 +15,29 @@ class SubmissionModel {
       raw_answers_json
     } = submissionData;
 
+    if (db.isServerless) {
+      const store = await db.fetchStore();
+      const id = store.submissions.length + 1;
+      const newSub = {
+        id,
+        student_id: parseInt(student_id, 10),
+        attempt_time: attempt_time || new Date().toISOString(),
+        score_reading_writing: score_reading_writing || 0,
+        score_listening: score_listening || 0,
+        total_auto_score: total_auto_score || 0,
+        max_auto_score: max_auto_score || 0,
+        writing_part6: writing_part6 || '',
+        writing_part7: writing_part7 || '',
+        speaking_audio_url: speaking_audio_url || '',
+        raw_answers_json: typeof raw_answers_json === 'string' ? raw_answers_json : JSON.stringify(raw_answers_json || {}),
+        submitted_at: new Date().toISOString()
+      };
+      store.submissions.push(newSub);
+      await db.saveStore(store);
+      return id;
+    }
+
+    // Entorno SQLite nativo
     const stmt = db.prepare(`
       INSERT INTO submissions (
         student_id,
@@ -51,10 +70,30 @@ class SubmissionModel {
     return info.lastInsertRowid;
   }
 
-  /**
-   * Obtiene todos los envíos con datos del estudiante y hora de intento
-   */
-  static getAllWithStudent() {
+  static async getAllWithStudent() {
+    if (db.isServerless) {
+      const store = await db.fetchStore();
+      return store.submissions.map(sub => {
+        const st = store.students.find(s => s.id === sub.student_id) || {};
+        return {
+          submission_id: sub.id,
+          student_id: sub.student_id,
+          first_name: st.first_name || 'Estudiante',
+          last_name: st.last_name || '',
+          grade: st.grade || '6to',
+          attempt_time: sub.attempt_time || sub.submitted_at,
+          score_reading_writing: sub.score_reading_writing,
+          score_listening: sub.score_listening,
+          total_auto_score: sub.total_auto_score,
+          max_auto_score: sub.max_auto_score,
+          writing_part6: sub.writing_part6,
+          writing_part7: sub.writing_part7,
+          speaking_audio_url: sub.speaking_audio_url,
+          submitted_at: sub.submitted_at
+        };
+      }).sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at));
+    }
+
     return db.prepare(`
       SELECT 
         s.id AS submission_id,
@@ -77,11 +116,29 @@ class SubmissionModel {
     `).all();
   }
 
-  /**
-   * Obtiene un envío por su ID con detalles completos
-   * @param {number} submissionId 
-   */
-  static getById(submissionId) {
+  static async getById(submissionId) {
+    if (db.isServerless) {
+      const store = await db.fetchStore();
+      const subId = parseInt(submissionId, 10);
+      const sub = store.submissions.find(s => s.id === subId);
+      if (sub) {
+        const st = store.students.find(s => s.id === sub.student_id) || {};
+        let rawAnswers = sub.raw_answers_json;
+        if (typeof rawAnswers === 'string') {
+          try { rawAnswers = JSON.parse(rawAnswers); } catch (e) { rawAnswers = {}; }
+        }
+        return {
+          ...sub,
+          first_name: st.first_name || 'Estudiante',
+          last_name: st.last_name || '',
+          grade: st.grade || '6to',
+          attempt_time: sub.attempt_time || sub.submitted_at,
+          raw_answers_json: rawAnswers
+        };
+      }
+      return null;
+    }
+
     const row = db.prepare(`
       SELECT 
         s.*,
@@ -104,11 +161,13 @@ class SubmissionModel {
     return row;
   }
 
-  /**
-   * Elimina un envío por ID
-   * @param {number} submissionId 
-   */
-  static delete(submissionId) {
+  static async delete(submissionId) {
+    if (db.isServerless) {
+      const store = await db.fetchStore();
+      store.submissions = store.submissions.filter(s => s.id !== parseInt(submissionId, 10));
+      await db.saveStore(store);
+      return { changes: 1 };
+    }
     return db.prepare('DELETE FROM submissions WHERE id = ?').run(submissionId);
   }
 }

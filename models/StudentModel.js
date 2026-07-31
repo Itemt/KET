@@ -2,9 +2,6 @@ const db = require('../config/db');
 const studentsList = require('../config/students.json');
 
 class StudentModel {
-  /**
-   * Obtener la lista completa de estudiantes autorizados
-   */
   static getAuthorizedList() {
     return studentsList.map(s => ({
       id: s.id,
@@ -14,16 +11,10 @@ class StudentModel {
     }));
   }
 
-  /**
-   * Autenticar un estudiante con username y password (ambos 'nombreapellido')
-   * @param {string} username 
-   * @param {string} password 
-   */
-  static authenticate(username, password) {
+  static async authenticate(username, password) {
     const cleanUser = username.trim().toLowerCase();
     const cleanPass = password.trim().toLowerCase();
 
-    // Buscar en la lista oficial pre-cargada
     const officialStudent = studentsList.find(s => 
       s.username.toLowerCase() === cleanUser && s.password.toLowerCase() === cleanPass
     );
@@ -32,9 +23,8 @@ class StudentModel {
       return null;
     }
 
-    // Registrar o actualizar sesión en la base de datos con hora de intento
     const attemptTime = new Date().toISOString();
-    const studentRecord = this.createOrGet(
+    const studentRecord = await this.createOrGet(
       officialStudent.firstName,
       officialStudent.lastName,
       officialStudent.grade,
@@ -48,15 +38,41 @@ class StudentModel {
     };
   }
 
-  /**
-   * Registra o recupera un estudiante existente
-   */
-  static createOrGet(firstName, lastName, grade, username = '') {
+  static async createOrGet(firstName, lastName, grade, username = '') {
     const cleanFirst = firstName.trim();
     const cleanLast = lastName.trim();
     const cleanGrade = grade.trim();
     const cleanUser = username.trim().toLowerCase();
 
+    if (db.isServerless) {
+      const store = await db.fetchStore();
+      let existing = store.students.find(s => 
+        (s.username && cleanUser && s.username.toLowerCase() === cleanUser) ||
+        (s.first_name.toLowerCase() === cleanFirst.toLowerCase() && s.last_name.toLowerCase() === cleanLast.toLowerCase())
+      );
+
+      if (existing) {
+        existing.last_login_at = new Date().toISOString();
+        await db.saveStore(store);
+        return existing;
+      }
+
+      const id = store.students.length + 1;
+      const newStudent = {
+        id,
+        first_name: cleanFirst,
+        last_name: cleanLast,
+        grade: cleanGrade,
+        username: cleanUser,
+        last_login_at: new Date().toISOString(),
+        created_at: new Date().toISOString()
+      };
+      store.students.push(newStudent);
+      await db.saveStore(store);
+      return newStudent;
+    }
+
+    // Entorno SQLite nativo
     try {
       const existing = db.prepare(`
         SELECT * FROM students 
@@ -64,12 +80,8 @@ class StudentModel {
         ORDER BY id DESC LIMIT 1
       `).get(cleanUser, cleanFirst, cleanLast);
 
-      if (existing) {
-        return existing;
-      }
-    } catch (e) {
-      // Ignorar si la columna no existe aún
-    }
+      if (existing) return existing;
+    } catch (e) {}
 
     const stmt = db.prepare(`
       INSERT INTO students (first_name, last_name, grade, username)
@@ -86,7 +98,11 @@ class StudentModel {
     };
   }
 
-  static getById(id) {
+  static async getById(id) {
+    if (db.isServerless) {
+      const store = await db.fetchStore();
+      return store.students.find(s => s.id === parseInt(id, 10)) || null;
+    }
     return db.prepare('SELECT * FROM students WHERE id = ?').get(id);
   }
 }

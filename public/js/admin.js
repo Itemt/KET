@@ -19,11 +19,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Elementos Modal Detalle
   const detailModal = document.getElementById('detail-modal');
   const modalCloseBtn = document.getElementById('modal-close-btn');
+  const btnLogout = document.getElementById('btn-admin-logout');
 
   // Check login previo en sessionStorage
   const savedPasscode = sessionStorage.getItem('admin_passcode');
   if (savedPasscode) {
     attemptLogin(savedPasscode);
+  }
+
+  // Manejar Cerrar Sesión
+  if (btnLogout) {
+    btnLogout.addEventListener('click', () => {
+      sessionStorage.removeItem('admin_passcode');
+      currentPasscode = '';
+      dashboardContent.style.display = 'none';
+      btnLogout.style.display = 'none';
+      loginOverlay.classList.add('active');
+    });
   }
 
   /* --- Formulario de Login --- */
@@ -47,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('admin_passcode', passcode);
         loginOverlay.classList.remove('active');
         dashboardContent.style.display = 'block';
+        if (btnLogout) btnLogout.style.display = 'inline-flex';
         loadSubmissions();
       } else {
         loginError.style.display = 'block';
