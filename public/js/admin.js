@@ -5,6 +5,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   let submissionsList = [];
   let currentPasscode = '';
+  let activeTab = 'main'; // 'main' o 'bonus'
 
   // Elementos DOM
   const loginOverlay = document.getElementById('admin-login-overlay');
@@ -21,10 +22,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalCloseBtn = document.getElementById('modal-close-btn');
   const btnLogout = document.getElementById('btn-admin-logout');
 
+  // Pestañas
+  const tabBtnMain = document.getElementById('tab-btn-main');
+  const tabBtnBonus = document.getElementById('tab-btn-bonus');
+
+  if (tabBtnMain) {
+    tabBtnMain.addEventListener('click', () => {
+      activeTab = 'main';
+      tabBtnMain.classList.add('active');
+      if (tabBtnBonus) tabBtnBonus.classList.remove('active');
+      loadSubmissions();
+    });
+  }
+
+  if (tabBtnBonus) {
+    tabBtnBonus.addEventListener('click', () => {
+      activeTab = 'bonus';
+      tabBtnBonus.classList.add('active');
+      if (tabBtnMain) tabBtnMain.classList.remove('active');
+      loadSubmissions();
+    });
+  }
+
   // Limpiar credenciales guardadas para exigir siempre el PIN de acceso al docente
   sessionStorage.removeItem('admin_passcode');
 
-  // Manejar Cerrar Sesión
   if (btnLogout) {
     btnLogout.addEventListener('click', () => {
       sessionStorage.removeItem('admin_passcode');
@@ -72,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Cargando lista de entregas...</td></tr>`;
 
-      const res = await fetch('/api/admin/submissions');
+      const endpoint = activeTab === 'bonus' ? '/api/bonus/submissions' : '/api/admin/submissions';
+      const res = await fetch(endpoint);
       const data = await res.json();
 
       if (data.success) {
@@ -97,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const avg = list.length > 0 ? (totalScore / list.length).toFixed(1) : 0;
-    const maxSample = list.length > 0 ? list[0].max_auto_score : 0;
+    const maxSample = list.length > 0 ? list[0].max_auto_score : (activeTab === 'bonus' ? 33 : 31);
 
     const avgElem = document.getElementById('stat-avg-score');
     if (avgElem) avgElem.textContent = `${avg} / ${maxSample}`;
@@ -106,14 +129,20 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Renderizar Tabla de Entregas --- */
   function renderSubmissionsTable(list) {
     if (list.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">No hay respuestas registradas aún.</td></tr>`;
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">
+            ${activeTab === 'bonus' ? 'No hay entregas registradas en el Examen Bonus aún.' : 'No hay respuestas registradas aún.'}
+          </td>
+        </tr>
+      `;
       return;
     }
 
     let html = '';
     list.forEach(sub => {
-      const percentage = sub.max_auto_score > 0 ? (sub.total_auto_score / sub.max_auto_score) * 100 : 0;
-      let badgeClass = 'score-med';
+      const percentage = (sub.total_auto_score / sub.max_auto_score) * 100;
+      let badgeClass = 'score-mid';
       if (percentage >= 70) badgeClass = 'score-high';
       else if (percentage < 50) badgeClass = 'score-low';
 
@@ -127,8 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
         hour: '2-digit', minute: '2-digit', second: '2-digit'
       });
 
-      const hasAudio = sub.speaking_audio_url && sub.speaking_audio_url.trim() !== '';
-
       html += `
         <tr>
           <td><strong>#${sub.submission_id}</strong></td>
@@ -141,8 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </td>
           <td>
             <span style="font-size: 0.85rem; color: var(--text-muted);">
-              P6: ${sub.writing_part6 ? '✅ Escrito' : '❌ Vacío'}<br>
-              P7: ${sub.writing_part7 ? '✅ Escrito' : '❌ Vacío'}
+              ${activeTab === 'bonus' ? '🚀 Bonus Completo' : `P6: ${sub.writing_part6 ? '✅ Escrito' : '❌ Vacío'}<br>P7: ${sub.writing_part7 ? '✅ Escrito' : '❌ Vacío'}`}
             </span>
           </td>
           <td style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">
@@ -166,30 +192,30 @@ document.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = html;
   }
 
-  /* --- Filtrado y Búsqueda --- */
+  // Búsqueda y Filtros
+  searchInput.addEventListener('input', applyFilters);
+  gradeFilter.addEventListener('change', applyFilters);
+  btnRefresh.addEventListener('click', loadSubmissions);
+
   function applyFilters() {
-    const searchTerm = searchInput.value.toLowerCase().trim();
+    const term = searchInput.value.toLowerCase().trim();
     const selectedGrade = gradeFilter.value;
 
     const filtered = submissionsList.filter(sub => {
       const fullName = `${sub.first_name} ${sub.last_name}`.toLowerCase();
-      const matchesSearch = fullName.includes(searchTerm);
+      const matchesSearch = fullName.includes(term);
       const matchesGrade = selectedGrade === 'ALL' || sub.grade === selectedGrade;
-
       return matchesSearch && matchesGrade;
     });
 
     renderSubmissionsTable(filtered);
   }
 
-  searchInput.addEventListener('input', applyFilters);
-  gradeFilter.addEventListener('change', applyFilters);
-  btnRefresh.addEventListener('click', loadSubmissions);
-
-  /* --- Ver Detalle de una Entrega --- */
+  // Ver Detalle de Entrega
   window.viewSubmissionDetail = async function(id) {
     try {
-      const res = await fetch(`/api/admin/submissions/${id}`);
+      const endpoint = activeTab === 'bonus' ? `/api/bonus/submissions/${id}` : `/api/admin/submissions/${id}`;
+      const res = await fetch(endpoint);
       const data = await res.json();
 
       if (data.success) {
@@ -200,13 +226,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-student-avatar').textContent = (sub.first_name.charAt(0) + sub.last_name.charAt(0)).toUpperCase();
 
         const scoreRwElem = document.getElementById('modal-score-rw');
-        if (scoreRwElem) scoreRwElem.textContent = `${sub.score_reading_writing}`;
+        if (scoreRwElem) scoreRwElem.textContent = `${sub.total_auto_score}`;
         
         const scoreTotalElem = document.getElementById('modal-score-total');
         if (scoreTotalElem) scoreTotalElem.textContent = `${sub.total_auto_score} / ${sub.max_auto_score}`;
 
         const p6Elem = document.getElementById('modal-writing-p6');
-        if (p6Elem) p6Elem.textContent = sub.writing_part6 || 'Sin respuesta redactada.';
+        if (p6Elem) p6Elem.textContent = sub.writing_part6 || sub.bonus_writing || 'Sin respuesta redactada.';
 
         const p7Elem = document.getElementById('modal-writing-p7');
         if (p7Elem) p7Elem.textContent = sub.writing_part7 || 'Sin respuesta redactada.';
@@ -220,34 +246,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  /* --- Eliminar Entrega --- */
+  // Cerrar Modal Detalle
+  if (modalCloseBtn) {
+    modalCloseBtn.addEventListener('click', () => {
+      detailModal.classList.remove('active');
+    });
+  }
+
+  // Eliminar Entrega
   window.deleteSubmissionItem = async function(id) {
-    if (!confirm(`¿Estás seguro de eliminar el registro de entrega #${id}? Esta acción no se puede deshacer.`)) {
-      return;
-    }
+    const confirmDelete = confirm('¿Estás seguro de eliminar esta entrega? Esta acción no se puede deshacer.');
+    if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`/api/admin/submissions/${id}`, { method: 'DELETE' });
+      const endpoint = activeTab === 'bonus' ? `/api/bonus/submissions/${id}` : `/api/admin/submissions/${id}`;
+      const res = await fetch(endpoint, { method: 'DELETE' });
       const data = await res.json();
 
       if (data.success) {
         loadSubmissions();
       } else {
-        alert(`Error al eliminar: ${data.message}`);
+        alert('Error al eliminar la entrega.');
       }
     } catch (err) {
       console.error('Error al eliminar:', err);
     }
   };
-
-  // Cerrar Modal
-  modalCloseBtn.addEventListener('click', () => {
-    detailModal.classList.remove('active');
-  });
-
-  detailModal.addEventListener('click', (e) => {
-    if (e.target === detailModal) {
-      detailModal.classList.remove('active');
-    }
-  });
 });

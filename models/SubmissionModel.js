@@ -71,10 +71,19 @@ class SubmissionModel {
   }
 
   static async getAllWithStudent() {
+    const studentsList = require('../config/students.json');
     if (db.isServerless) {
       const store = await db.fetchStore();
       return store.submissions.map(sub => {
-        const st = store.students.find(s => s.id === sub.student_id) || {};
+        let st = store.students.find(s => s.id === sub.student_id);
+        if (!st) {
+          const official = studentsList.find(s => s.id === sub.student_id);
+          if (official) {
+            st = { first_name: official.firstName, last_name: official.lastName, grade: official.grade };
+          }
+        }
+        st = st || {};
+
         return {
           submission_id: sub.id,
           student_id: sub.student_id,
