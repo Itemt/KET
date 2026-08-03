@@ -2,8 +2,9 @@ const path = require('path');
 const fs = require('fs');
 
 let db = null;
-const CLOUD_STORE_URL = 'https://jsonblob.com/api/jsonBlob/019fb8a2-b355-7175-8959-772dcddae5ca';
+const CLOUD_STORE_URL = 'https://jsonblob.com/api/jsonBlob/019fc84b-a815-70ce-ae0e-37c7c5b58b8f';
 const tmpJsonPath = '/tmp/ket_data.json';
+const backupJsonPath = path.join(__dirname, '../data/ket_backup.json');
 
 // Cache en memoria global
 global.memoryStore = global.memoryStore || { students: [], submissions: [] };
@@ -13,7 +14,7 @@ async function fetchCloudStore() {
     const res = await fetch(CLOUD_STORE_URL, { headers: { 'Accept': 'application/json' } });
     if (res.ok) {
       const data = await res.json();
-      if (data && Array.isArray(data.students) && Array.isArray(data.submissions)) {
+      if (data && Array.isArray(data.students) && Array.isArray(data.submissions) && data.submissions.length > 0) {
         global.memoryStore = data;
         return data;
       }
@@ -25,7 +26,22 @@ async function fetchCloudStore() {
   try {
     if (fs.existsSync(tmpJsonPath)) {
       const raw = fs.readFileSync(tmpJsonPath, 'utf8');
-      global.memoryStore = JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.submissions) && parsed.submissions.length > 0) {
+        global.memoryStore = parsed;
+        return global.memoryStore;
+      }
+    }
+  } catch (e) {}
+
+  try {
+    if (fs.existsSync(backupJsonPath)) {
+      const raw = fs.readFileSync(backupJsonPath, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.submissions)) {
+        global.memoryStore = parsed;
+        return global.memoryStore;
+      }
     }
   } catch (e) {}
 

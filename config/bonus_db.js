@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 let db = null;
-const CLOUD_STORE_URL = 'https://jsonblob.com/api/jsonBlob/019fb8d7-0bd6-731c-b97f-4cf857d9e57e';
+const CLOUD_STORE_URL = 'https://jsonblob.com/api/jsonBlob/019fc84b-aa86-7824-844e-d54414f3c0db';
 const tmpJsonPath = '/tmp/ket_bonus_data.json';
 
 // Cache en memoria global independiente para el Bonus

@@ -1,0 +1,248 @@
+{
+  "students": [
+    {
+      "id": 1,
+      "first_name": "PRUEBA",
+      "last_name": "PRUEBA",
+      "grade": "6to B",
+      "created_at": "2026-07-31 14:09:24",
+      "username": null
+    },
+    {
+      "id": 2,
+      "first_name": "Thiago",
+      "last_name": "Álvarez Julio",
+      "grade": "6to",
+      "created_at": "2026-07-31 18:57:50",
+      "username": "thiagoalvarez"
+    },
+    {
+      "id": 3,
+      "first_name": "Álvaro Andrés",
+      "last_name": "Angarita Rey",
+      "grade": "6to",
+      "created_at": "2026-07-31 18:57:50",
+      "username": "alvaroangarita"
+    },
+    {
+      "id": 4,
+      "first_name": "Matías Andrés",
+      "last_name": "Cardona Marín",
+      "grade": "6to",
+      "created_at": "2026-07-31 18:57:50",
+      "username": "matiascardona"
+    },
+    {
+      "id": 5,
+      "first_name": "Camila Andrea",
+      "last_name": "Gutiérrez Lobo",
+      "grade": "6to",
+      "created_at": "2026-07-31 18:57:50",
+      "username": "camilagutierrez"
+    },
+    {
+      "id": 6,
+      "first_name": "Jerónimo",
+      "last_name": "Hernández Gómez",
+      "grade": "6to",
+      "created_at": "2026-07-31 18:57:50",
+      "username": "jeronimohernandez"
+    },
+    {
+      "id": 7,
+      "first_name": "Ana María",
+      "last_name": "Londoño Guzmán",
+      "grade": "6to",
+      "created_at": "2026-07-31 18:57:50",
+      "username": "analondono"
+    },
+    {
+      "id": 8,
+      "first_name": "Juan Diego",
+      "last_name": "Meza Mercado",
+      "grade": "6to",
+      "created_at": "2026-07-31 18:57:50",
+      "username": "juanmeza"
+    },
+    {
+      "id": 9,
+      "first_name": "Hefzibá",
+      "last_name": "Díaz Díaz",
+      "grade": "6to",
+      "created_at": "2026-07-31 18:57:50",
+      "username": "hefzibadiaz"
+    },
+    {
+      "id": 10,
+      "first_name": "Juan David",
+      "last_name": "Montoya González",
+      "grade": "6to",
+      "created_at": "2026-07-31 18:57:50",
+      "username": "juanmontoya"
+    },
+    {
+      "id": 11,
+      "first_name": "Sarai Lisset",
+      "last_name": "Morales Villamizar",
+      "grade": "6to",
+      "created_at": "2026-07-31 18:57:50",
+      "username": "saraimorales"
+    }
+  ],
+  "submissions": [
+    {
+      "id": 1,
+      "student_id": 1,
+      "score_reading_writing": 7,
+      "score_listening": 0,
+      "total_auto_score": 7,
+      "max_auto_score": 56,
+      "writing_part6": "",
+      "writing_part7": "",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"A\",\"rw_p1_q2\":\"A\",\"rw_p1_q3\":\"A\",\"rw_p1_q4\":\"A\",\"rw_p1_q5\":\"A\",\"rw_p1_q6\":\"A\",\"rw_p2_q7\":\"A\",\"rw_p2_q8\":\"A\",\"rw_p2_q9\":\"A\",\"rw_p2_q10\":\"A\",\"rw_p2_q11\":\"A\",\"rw_p2_q12\":\"A\",\"rw_p2_q13\":\"A\",\"rw_p3_q14\":\"A\",\"rw_p3_q15\":\"A\",\"rw_p3_q16\":\"A\",\"rw_p3_q17\":\"A\",\"rw_p3_q18\":\"A\",\"rw_p4_q19\":\"A\",\"rw_p4_q20\":\"A\",\"rw_p4_q21\":\"A\",\"rw_p4_q22\":\"A\",\"rw_p4_q23\":\"B\",\"rw_p5_q25\":\"\",\"rw_p5_q26\":\"\",\"rw_p5_q27\":\"\",\"rw_p5_q28\":\"\",\"rw_p5_q29\":\"\",\"rw_p5_q30\":\"\",\"writing_part6\":\"\",\"writing_part7\":\"\",\"lis_p2_q6\":\"\",\"lis_p2_q7\":\"\",\"lis_p2_q8\":\"\",\"lis_p2_q9\":\"\",\"lis_p2_q10\":\"\",\"speaking_audio_url\":\"\"}",
+      "submitted_at": "2026-07-31 14:09:24",
+      "attempt_time": null
+    },
+    {
+      "id": 2,
+      "student_id": 2,
+      "score_reading_writing": 3,
+      "score_listening": 0,
+      "total_auto_score": 3,
+      "max_auto_score": 48,
+      "writing_part6": "Hi Sam! We can watch a movie at 4pm and eat popcorn.",
+      "writing_part7": "Tom and Laura went on a sunny trip to the forest...",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
+      "submitted_at": "2026-07-31 18:57:50",
+      "attempt_time": "2026-07-31T18:57:50.871Z"
+    },
+    {
+      "id": 3,
+      "student_id": 3,
+      "score_reading_writing": 3,
+      "score_listening": 0,
+      "total_auto_score": 3,
+      "max_auto_score": 48,
+      "writing_part6": "Hi Sam! We can watch a movie at 4pm and eat popcorn.",
+      "writing_part7": "Tom and Laura went on a sunny trip to the forest...",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
+      "submitted_at": "2026-07-31 18:57:50",
+      "attempt_time": "2026-07-31T18:57:50.890Z"
+    },
+    {
+      "id": 4,
+      "student_id": 4,
+      "score_reading_writing": 3,
+      "score_listening": 0,
+      "total_auto_score": 3,
+      "max_auto_score": 48,
+      "writing_part6": "Hi Sam! We can watch a movie at 4pm and eat popcorn.",
+      "writing_part7": "Tom and Laura went on a sunny trip to the forest...",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
+      "submitted_at": "2026-07-31 18:57:50",
+      "attempt_time": "2026-07-31T18:57:50.890Z"
+    },
+    {
+      "id": 5,
+      "student_id": 5,
+      "score_reading_writing": 3,
+      "score_listening": 0,
+      "total_auto_score": 3,
+      "max_auto_score": 48,
+      "writing_part6": "Hi Sam! We can watch a movie at 4pm and eat popcorn.",
+      "writing_part7": "Tom and Laura went on a sunny trip to the forest...",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
+      "submitted_at": "2026-07-31 18:57:50",
+      "attempt_time": "2026-07-31T18:57:50.891Z"
+    },
+    {
+      "id": 6,
+      "student_id": 6,
+      "score_reading_writing": 3,
+      "score_listening": 0,
+      "total_auto_score": 3,
+      "max_auto_score": 48,
+      "writing_part6": "Hi Sam! We can watch a movie at 4pm and eat popcorn.",
+      "writing_part7": "Tom and Laura went on a sunny trip to the forest...",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
+      "submitted_at": "2026-07-31 18:57:50",
+      "attempt_time": "2026-07-31T18:57:50.891Z"
+    },
+    {
+      "id": 7,
+      "student_id": 7,
+      "score_reading_writing": 3,
+      "score_listening": 0,
+      "total_auto_score": 3,
+      "max_auto_score": 48,
+      "writing_part6": "Hi Sam! We can watch a movie at 4pm and eat popcorn.",
+      "writing_part7": "Tom and Laura went on a sunny trip to the forest...",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
+      "submitted_at": "2026-07-31 18:57:50",
+      "attempt_time": "2026-07-31T18:57:50.891Z"
+    },
+    {
+      "id": 8,
+      "student_id": 8,
+      "score_reading_writing": 3,
+      "score_listening": 0,
+      "total_auto_score": 3,
+      "max_auto_score": 48,
+      "writing_part6": "Hi Sam! We can watch a movie at 4pm and eat popcorn.",
+      "writing_part7": "Tom and Laura went on a sunny trip to the forest...",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
+      "submitted_at": "2026-07-31 18:57:50",
+      "attempt_time": "2026-07-31T18:57:50.892Z"
+    },
+    {
+      "id": 9,
+      "student_id": 9,
+      "score_reading_writing": 3,
+      "score_listening": 0,
+      "total_auto_score": 3,
+      "max_auto_score": 48,
+      "writing_part6": "Hi Sam! We can watch a movie at 4pm and eat popcorn.",
+      "writing_part7": "Tom and Laura went on a sunny trip to the forest...",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
+      "submitted_at": "2026-07-31 18:57:50",
+      "attempt_time": "2026-07-31T18:57:50.891Z"
+    },
+    {
+      "id": 10,
+      "student_id": 10,
+      "score_reading_writing": 3,
+      "score_listening": 0,
+      "total_auto_score": 3,
+      "max_auto_score": 48,
+      "writing_part6": "Hi Sam! We can watch a movie at 4pm and eat popcorn.",
+      "writing_part7": "Tom and Laura went on a sunny trip to the forest...",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
+      "submitted_at": "2026-07-31 18:57:50",
+      "attempt_time": "2026-07-31T18:57:50.892Z"
+    },
+    {
+      "id": 11,
+      "student_id": 11,
+      "score_reading_writing": 3,
+      "score_listening": 0,
+      "total_auto_score": 3,
+      "max_auto_score": 48,
+      "writing_part6": "Hi Sam! We can watch a movie at 4pm and eat popcorn.",
+      "writing_part7": "Tom and Laura went on a sunny trip to the forest...",
+      "speaking_audio_url": "",
+      "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
+      "submitted_at": "2026-07-31 18:57:50",
+      "attempt_time": "2026-07-31T18:57:50.892Z"
+    }
+  ]
+}
