@@ -1,346 +1,380 @@
 /**
- * MODELO DE EXAMEN KET (A2 Key) - CAMBRIDGE ENGLISH FOR 6TH GRADE (EDICIÓN EXTENDIDA Y EXPANDIDA)
- * Banco completo y extendido de 48 preguntas objetivas + 2 tareas de redacción.
+ * MODELO DE EXAMEN KET (A2 Key) - CAMBRIDGE ENGLISH FOR 6TH GRADE
+ * EDICIÓN 2 — Textos y preguntas completamente nuevos.
+ * Estructura idéntica: 7 partes, 48 preguntas objetivas + 2 redacciones.
  */
 
 class ExamModel {
   static getFullExamData() {
     return {
-      title: "Cambridge KET (A2 Key) for Schools - Master Mock Exam 6th Grade",
+      title: "Cambridge KET (A2 Key) for Schools — Official Practice Exam · Edition 2",
       timeAllowedMinutes: 75,
       sections: {
         reading_writing: {
-          title: "Reading & Writing Section (Master Edition)",
+          title: "Reading & Writing Section",
           timeLimit: "75 minutes",
           totalParts: 7,
           parts: [
-            /* --- PART 1: SHORT NOTICES & MESSAGES (10 Questions) --- */
+
+            /* ─────────────────────────────────────────────────────────────
+               PART 1 — SHORT NOTICES & MESSAGES (10 Questions, Q1-10)
+               Task: Read a notice / message and choose A, B, or C.
+            ───────────────────────────────────────────────────────────── */
             {
               part: 1,
-              instructions: "For questions 1-10, read each notice/email and choose the correct answer (A, B, or C).",
+              instructions: "For questions 1–10, read each notice or message and choose the best answer (A, B, or C).",
               type: "multiple_choice",
               questions: [
                 {
                   id: "rw_p1_q1",
-                  context: "LIBRARY NOTICE: 'All borrowed books must be returned by Friday afternoon. Late returns incur a fee of $1 per day.'",
-                  question: "1. What does the library notice say?",
+                  context: "SCHOOL NOTICE: 'The science fair will take place on Friday, not Thursday as planned. All students must bring their projects to the gym before 8:00 am.'",
+                  question: "1. What does the notice say?",
                   options: {
-                    A: "You can keep library books until Saturday morning.",
-                    B: "You must pay extra money if you return books after Friday.",
-                    C: "There is no fee for returning books next week."
+                    A: "The science fair is on Thursday and projects go to the library.",
+                    B: "The science fair has been moved to Friday and students must arrive early.",
+                    C: "Students must collect their projects from the gym on Friday."
                   },
                   correctAnswer: "B"
                 },
                 {
                   id: "rw_p1_q2",
-                  context: "EMAIL FROM BEN TO TOM: 'Hi Tom, my dad can drive us to the football stadium on Saturday. Meet us at my house at 2:00 pm. Don't forget your boots!'",
-                  question: "2. Why did Ben write this email?",
+                  context: "TEXT FROM ANNA TO JAKE: 'Jake, I left your art folder on the front doorstep. Mum says dinner is at 6:30 tonight — don't be late!'",
+                  question: "2. Why did Anna send this message?",
                   options: {
-                    A: "To invite Tom to play football at his house at 2:00 pm.",
-                    B: "To give Tom details about their trip to the football stadium.",
-                    C: "To ask Tom's father for a lift to the stadium."
+                    A: "To ask Jake to bring her art folder.",
+                    B: "To let Jake know where his folder is and remind him about dinner.",
+                    C: "To tell Jake that dinner has been cancelled."
                   },
                   correctAnswer: "B"
                 },
                 {
                   id: "rw_p1_q3",
-                  context: "COMPUTER LAB RULES: 'No food or drinks near the keyboards. Please turn off computers before leaving.'",
-                  question: "3. What are students expected to do?",
+                  context: "PARK SIGN: 'Dogs must be kept on a lead at all times. Owners who do not follow this rule will be asked to leave.'",
+                  question: "3. What does the park sign warn?",
                   options: {
-                    A: "Leave the computers running when they finish.",
-                    B: "Keep snacks and drinks away from the equipment.",
-                    C: "Eat their lunch in the computer lab."
+                    A: "Dogs are not allowed in the park.",
+                    B: "Dog owners must control their pets with a lead.",
+                    C: "Only small dogs can enter the park."
                   },
                   correctAnswer: "B"
                 },
                 {
                   id: "rw_p1_q4",
-                  context: "MEMO FROM MUSIC TEACHER: 'Choir practice moved from Tuesday 4:00 pm to Wednesday 3:30 pm in Room 12.'",
-                  question: "4. What has changed about choir practice?",
+                  context: "EMAIL FROM TEACHER: 'Please remember that the book report is due on Monday morning. I will not accept reports submitted after 9:00 am.'",
+                  question: "4. What must students do?",
                   options: {
-                    A: "The day, the time, and the room teacher.",
-                    B: "Only the room location.",
-                    C: "Both the day and the start time."
-                  },
-                  correctAnswer: "C"
-                },
-                {
-                  id: "rw_p1_q5",
-                  context: "TEXT FROM MOM: 'Hi Leo, I put your science project poster on the kitchen table. Don't forget to take it to school!'",
-                  question: "5. Why did Mom text Leo?",
-                  options: {
-                    A: "To remind him to take his project to school.",
-                    B: "To ask him to finish his science homework.",
-                    C: "To tell him that she delivered his project to school."
+                    A: "Submit their book report before 9:00 am on Monday.",
+                    B: "Email their report to the teacher on Monday afternoon.",
+                    C: "Ask the teacher for more time if they are late."
                   },
                   correctAnswer: "A"
                 },
                 {
-                  id: "rw_p1_q6",
-                  context: "SWIMMING POOL SIGN: 'Diving is only allowed in the deep end. Beginners must stay in the shallow area.'",
-                  question: "6. What is the rule at the swimming pool?",
+                  id: "rw_p1_q5",
+                  context: "RESTAURANT NOTICE: 'We are closed every Tuesday for staff training. We apologise for any inconvenience.'",
+                  question: "5. When is the restaurant closed?",
                   options: {
-                    A: "Everyone can dive anywhere in the pool.",
-                    B: "Beginner swimmers must not swim in the deep end.",
-                    C: "Diving is prohibited in all areas of the pool."
+                    A: "On Mondays for cleaning.",
+                    B: "Every Tuesday for training.",
+                    C: "At weekends for private events."
+                  },
+                  correctAnswer: "B"
+                },
+                {
+                  id: "rw_p1_q6",
+                  context: "TEXT FROM DAD: 'Hi Luis, I finished work early. I am at the supermarket now. Do you need anything special for your school project tomorrow?'",
+                  question: "6. What is Dad doing?",
+                  options: {
+                    A: "He is picking Luis up from school.",
+                    B: "He is at the supermarket and is asking if Luis needs anything.",
+                    C: "He is asking Luis to finish his school project."
                   },
                   correctAnswer: "B"
                 },
                 {
                   id: "rw_p1_q7",
-                  context: "SCIENCE LAB NOTICE: 'Safety glasses are required for all students during chemistry experiments.'",
-                  question: "7. What must students do during chemistry experiments?",
+                  context: "SPORTS HALL NOTICE: 'The basketball court is reserved for Year 6 students every Wednesday from 12:00 to 1:00 pm.'",
+                  question: "7. Who can use the basketball court on Wednesday at 12:30 pm?",
                   options: {
-                    A: "Wear protective glasses over their eyes.",
-                    B: "Ask the teacher to wear safety glasses.",
-                    C: "Store their glasses in their school bags."
+                    A: "All students at any time.",
+                    B: "Only Year 6 students from 12:00 to 1:00 pm.",
+                    C: "Teachers and staff only."
                   },
-                  correctAnswer: "A"
+                  correctAnswer: "B"
                 },
                 {
                   id: "rw_p1_q8",
-                  context: "BUS STOP ANNOUNCEMENT: 'Express Bus 40 to the Museum leaves every 15 minutes from Bay 3.'",
-                  question: "8. How often does Bus 40 run?",
+                  context: "TRAIN STATION NOTICE: 'The 4:15 pm train to Greenfield is delayed by 25 minutes due to signal problems.'",
+                  question: "8. What time will the train to Greenfield now leave?",
                   options: {
-                    A: "Four times every hour.",
-                    B: "Every 40 minutes.",
-                    C: "Only three times a day."
+                    A: "At 4:15 pm as scheduled.",
+                    B: "At 4:40 pm.",
+                    C: "The service has been cancelled."
                   },
-                  correctAnswer: "A"
+                  correctAnswer: "B"
                 },
                 {
                   id: "rw_p1_q9",
-                  context: "GYM LOCKER NOTICE: 'Do not leave valuables in lockers overnight. Management is not responsible for lost items.'",
-                  question: "9. What advice is given to gym users?",
+                  context: "EMAIL FROM LUCY TO DAVID: 'Hi David! I changed the meeting point for Saturday. Instead of the café, let's meet outside the bookshop on Central Street at 11 am.'",
+                  question: "9. What has Lucy changed?",
                   options: {
-                    A: "Take valuable personal belongings home with you.",
-                    B: "Pay management to guard your locker.",
-                    C: "Leave your locker unlocked overnight."
+                    A: "The day and time of the meeting.",
+                    B: "The location where they will meet.",
+                    C: "The activity they are planning to do."
                   },
-                  correctAnswer: "A"
+                  correctAnswer: "B"
                 },
                 {
                   id: "rw_p1_q10",
-                  context: "EMAIL FROM CLARA: 'Hi Mark, the museum tour has been rescheduled for Thursday morning. Meet us at the front entrance at 9:15 am.'",
-                  question: "10. Where should Mark meet Clara?",
+                  context: "HOTEL NOTICE: 'Checkout time is 11:00 am. If you need a late checkout, please ask reception before 9:00 am on your day of departure.'",
+                  question: "10. What should guests do if they want to leave after 11:00 am?",
                   options: {
-                    A: "Outside the museum entrance at 9:15 am on Thursday.",
-                    B: "Inside the main ticket office on Friday.",
-                    C: "At the school bus stop at 9:00 am."
+                    A: "Check out without telling anyone.",
+                    B: "Call the hotel the day before they arrive.",
+                    C: "Speak to reception before 9:00 am on the day they leave."
                   },
-                  correctAnswer: "A"
+                  correctAnswer: "C"
                 }
               ]
             },
 
-            /* --- PART 2: MATCHING ANNOUNCEMENTS & ADVERTISEMENTS (A-H) (10 Questions) --- */
+            /* ─────────────────────────────────────────────────────────────
+               PART 2 — MATCHING NOTICES (8 notices A-H, Q11-20)
+               Task: Match each person's need to the correct notice.
+            ───────────────────────────────────────────────────────────── */
             {
               part: 2,
-              instructions: "Read the eight advertisements/notices below (A-H). For questions 11-20, match each person's statement to the correct notice (A-H).",
+              instructions: "Read the eight notices below (A–H). For questions 11–20, match each person's statement to the most suitable notice (A–H). You can use each notice more than once.",
               type: "matching_notices",
               notices: [
-                { id: "A", title: "Notice A: City Swimming Pool", text: "Open 7:00 am - 9:00 pm. Professional swimming lessons available for children every Tuesday and Thursday." },
-                { id: "B", title: "Notice B: Green Park Cafe", text: "Special weekend offer: buy any lunch sandwich and receive a free ice-cold fruit juice! Open Saturdays & Sundays." },
-                { id: "C", title: "Notice C: Tech World Store", text: "Huge clearance sale! 50% discount on wireless headphones, computer keyboards, and mice this week only." },
-                { id: "D", title: "Notice D: Sunny Beach Hotel", text: "Free breakfast included for all guests! Book online today to get early summer family discounts." },
-                { id: "E", title: "Notice E: St. Mary's Library", text: "Youth Book Club meets every Wednesday at 4:30 pm in the quiet reading room. All 6th graders welcome!" },
-                { id: "F", title: "Notice F: Mountain Cinema", text: "Student ticket night! All cinema tickets are half-price ($5) every Monday evening with a valid student ID." },
-                { id: "G", title: "Notice G: Central Bus Station", text: "Direct express buses to the international airport leave every 20 minutes from Stand B. Fast and cheap!" },
-                { id: "H", title: "Notice H: Grand City Theater", text: "Children under 12 receive 50% off tickets for all weekend musical and magic theater shows." }
+                { id: "A", title: "Notice A: River Valley Campsite", text: "Family camping weekends available from April to October. Rent tents, sleeping bags, and cooking equipment on site. Book in advance." },
+                { id: "B", title: "Notice B: CloudFit Gym", text: "First month FREE for new members! Personal trainers available Monday to Friday. Open 6 am – 10 pm." },
+                { id: "C", title: "Notice C: Eastwood Art Gallery", text: "Free guided tours every Saturday at 2:00 pm. The current exhibition features young local artists aged 10–18." },
+                { id: "D", title: "Notice D: Quick Bites Food Market", text: "Fresh homemade sandwiches, salads, and smoothies. Lunch special: buy two items, get the third for free! Open weekdays." },
+                { id: "E", title: "Notice E: CityRide Bike Rentals", text: "Hire a bicycle for the day! Helmets and maps included. Perfect for exploring the river path and old town centre." },
+                { id: "F", title: "Notice F: StarLearn Online Courses", text: "Study English, Maths, and Science from home. Live video lessons with qualified teachers. Monthly or yearly plans available." },
+                { id: "G", title: "Notice G: Westside Night Market", text: "Every Friday evening from 6 pm. Street food, live music, and handmade crafts. Free entry for all visitors." },
+                { id: "H", title: "Notice H: SunSplash Waterpark", text: "Open weekends and school holidays. Family tickets available. Height restrictions apply to some slides. Book online." }
               ],
               questions: [
                 {
                   id: "rw_p2_q11",
-                  question: "11. You want to pay less for a movie ticket on a weekday evening.",
-                  options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
-                  correctAnswer: "F"
-                },
-                {
-                  id: "rw_p2_q12",
-                  question: "12. You want an instructor to teach you how to swim better.",
-                  options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
-                  correctAnswer: "A"
-                },
-                {
-                  id: "rw_p2_q13",
-                  question: "13. You want to get a free drink when you purchase food.",
-                  options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "rw_p2_q14",
-                  question: "14. You want to join a school club after class to discuss stories.",
-                  options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
-                  correctAnswer: "E"
-                },
-                {
-                  id: "rw_p2_q15",
-                  question: "15. You want to buy computer accessories at a discounted price.",
+                  question: "11. You want to visit an exhibition and see art created by young people.",
                   options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
                   correctAnswer: "C"
                 },
                 {
-                  id: "rw_p2_q16",
-                  question: "16. You want cheap theater tickets for younger children on Saturday.",
+                  id: "rw_p2_q12",
+                  question: "12. You want to start exercising and pay nothing for the first month.",
+                  options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
+                  correctAnswer: "B"
+                },
+                {
+                  id: "rw_p2_q13",
+                  question: "13. You want to go to a water attraction with your family during a school holiday.",
                   options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
                   correctAnswer: "H"
                 },
                 {
-                  id: "rw_p2_q17",
-                  question: "17. You need fast transportation to the airport without spending much money.",
+                  id: "rw_p2_q14",
+                  question: "14. You want to enjoy live music and food outdoors on a Friday night without paying an entrance fee.",
                   options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
                   correctAnswer: "G"
                 },
                 {
+                  id: "rw_p2_q15",
+                  question: "15. You want to learn school subjects online with a real teacher.",
+                  options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
+                  correctAnswer: "F"
+                },
+                {
+                  id: "rw_p2_q16",
+                  question: "16. You want to spend a night outdoors in nature and borrow camping equipment.",
+                  options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
+                  correctAnswer: "A"
+                },
+                {
+                  id: "rw_p2_q17",
+                  question: "17. You want to explore the city on two wheels with a map included.",
+                  options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
+                  correctAnswer: "E"
+                },
+                {
                   id: "rw_p2_q18",
-                  question: "18. You are planning a family beach trip and want complimentary morning meals.",
+                  question: "18. You want to buy a healthy lunch and get one item free.",
                   options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
                   correctAnswer: "D"
                 },
                 {
                   id: "rw_p2_q19",
-                  question: "19. You want to buy new computer keyboards and headphones at half price.",
+                  question: "19. You want a Saturday guided tour of a local art space at no cost.",
                   options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
                   correctAnswer: "C"
                 },
                 {
                   id: "rw_p2_q20",
-                  question: "20. You want to attend a musical show on Sunday with a younger brother or sister.",
+                  question: "20. You want to hire sports equipment to ride along a river path.",
                   options: { A: "Notice A", B: "Notice B", C: "Notice C", D: "Notice D", E: "Notice E", F: "Notice F", G: "Notice G", H: "Notice H" },
-                  correctAnswer: "H"
+                  correctAnswer: "E"
                 }
               ]
             },
 
-            /* --- PART 3: MATCHING PROFILES & COMPREHENSION (10 Questions) --- */
+            /* ─────────────────────────────────────────────────────────────
+               PART 3 — MATCHING PROFILES (3 Texts, Q21-30)
+               Task: Which person — Oliver, Sofia, or Ben?
+            ───────────────────────────────────────────────────────────── */
             {
               part: 3,
-              instructions: "Read the three short profiles about three young students (Sarah, Lucas, Mia). For questions 21-30, choose the correct student.",
+              instructions: "Read the three short profiles about Oliver, Sofia, and Ben. For questions 21–30, decide which person each statement describes. Write A for Oliver, B for Sofia, or C for Ben.",
               type: "matching_texts",
               texts: [
-                { id: "person_A", name: "Sarah", content: "Sarah loves wildlife and photography. Last weekend she visited a safari park with her family and took over 100 photos of birds and lions. She hopes to become a professional nature photographer." },
-                { id: "person_B", name: "Lucas", content: "Lucas spends his weekends inventing things at home. He recently built a robot out of cardboard boxes and old computer parts with his older brother. They added LED lights and remote controls." },
-                { id: "person_C", name: "Mia", content: "Mia is passionate about water sports. She goes to the coast every Saturday morning for sailing lessons. Even when the sea is rough, she loves steering small boats by herself." }
+                {
+                  id: "person_A",
+                  name: "Oliver",
+                  content: "Oliver is crazy about cooking. Every weekend he experiments with new recipes in the kitchen. Last month he entered a school cooking competition and made a three-layer chocolate cake that won first prize. He wants to be a chef when he grows up."
+                },
+                {
+                  id: "person_B",
+                  name: "Sofia",
+                  content: "Sofia loves astronomy. She spends clear nights in her garden looking at stars and planets through her telescope. She has a notebook where she draws maps of the constellations she finds. Her favourite planet is Saturn because of its rings."
+                },
+                {
+                  id: "person_C",
+                  name: "Ben",
+                  content: "Ben is passionate about music. He has been playing the guitar since he was eight years old. He recently started writing his own songs. On weekends, he performs at his school's youth band with three other students."
+                }
               ],
               questions: [
                 {
                   id: "rw_p3_q21",
-                  question: "21. Who spent their weekend constructing something at home?",
-                  options: { A: "Sarah", B: "Lucas", C: "Mia" },
-                  correctAnswer: "B"
-                },
-                {
-                  id: "rw_p3_q22",
-                  question: "22. Who engages in outdoor water sports every weekend?",
-                  options: { A: "Sarah", B: "Lucas", C: "Mia" },
+                  question: "21. Who participates in group music performances at school?",
+                  options: { A: "Oliver", B: "Sofia", C: "Ben" },
                   correctAnswer: "C"
                 },
                 {
+                  id: "rw_p3_q22",
+                  question: "22. Who keeps written records of their observations in a notebook?",
+                  options: { A: "Oliver", B: "Sofia", C: "Ben" },
+                  correctAnswer: "B"
+                },
+                {
                   id: "rw_p3_q23",
-                  question: "23. Who likes taking pictures of animals and nature?",
-                  options: { A: "Sarah", B: "Lucas", C: "Mia" },
+                  question: "23. Who won a prize for something they made by hand?",
+                  options: { A: "Oliver", B: "Sofia", C: "Ben" },
                   correctAnswer: "A"
                 },
                 {
                   id: "rw_p3_q24",
-                  question: "24. Who built a creative project together with a sibling?",
-                  options: { A: "Sarah", B: "Lucas", C: "Mia" },
+                  question: "24. Who has a hobby that they do late at night outdoors?",
+                  options: { A: "Oliver", B: "Sofia", C: "Ben" },
                   correctAnswer: "B"
                 },
                 {
                   id: "rw_p3_q25",
-                  question: "25. Who dreams of having a career outdoors with wild animals?",
-                  options: { A: "Sarah", B: "Lucas", C: "Mia" },
-                  correctAnswer: "A"
+                  question: "25. Who has been practising their skill since primary school age?",
+                  options: { A: "Oliver", B: "Sofia", C: "Ben" },
+                  correctAnswer: "C"
                 },
                 {
                   id: "rw_p3_q26",
-                  question: "26. Who learned how to control a boat independently in the sea?",
-                  options: { A: "Sarah", B: "Lucas", C: "Mia" },
-                  correctAnswer: "C"
-                },
-                {
-                  id: "rw_p3_q27",
-                  question: "27. Who recycled household materials like cardboard for a project?",
-                  options: { A: "Sarah", B: "Lucas", C: "Mia" },
+                  question: "26. Who is interested in objects and phenomena beyond Earth?",
+                  options: { A: "Oliver", B: "Sofia", C: "Ben" },
                   correctAnswer: "B"
                 },
                 {
-                  id: "rw_p3_q28",
-                  question: "28. Who took more than a hundred photographs during a family trip?",
-                  options: { A: "Sarah", B: "Lucas", C: "Mia" },
+                  id: "rw_p3_q27",
+                  question: "27. Who would like to work in the food industry in the future?",
+                  options: { A: "Oliver", B: "Sofia", C: "Ben" },
                   correctAnswer: "A"
                 },
                 {
-                  id: "rw_p3_q29",
-                  question: "29. Who enjoys steering small vessels even when waves are choppy?",
-                  options: { A: "Sarah", B: "Lucas", C: "Mia" },
+                  id: "rw_p3_q28",
+                  question: "28. Who recently began creating original artistic work?",
+                  options: { A: "Oliver", B: "Sofia", C: "Ben" },
                   correctAnswer: "C"
                 },
                 {
+                  id: "rw_p3_q29",
+                  question: "29. Who tries different recipes and tests new ideas each week?",
+                  options: { A: "Oliver", B: "Sofia", C: "Ben" },
+                  correctAnswer: "A"
+                },
+                {
                   id: "rw_p3_q30",
-                  question: "30. Who incorporated LED lights into a mechanical creation?",
-                  options: { A: "Sarah", B: "Lucas", C: "Mia" },
+                  question: "30. Who has a particular favourite among the planets in our solar system?",
+                  options: { A: "Oliver", B: "Sofia", C: "Ben" },
                   correctAnswer: "B"
                 }
               ]
             },
 
-            /* --- PART 4: MULTIPLE CHOICE VOCABULARY CLOZE (10 Questions) --- */
+            /* ─────────────────────────────────────────────────────────────
+               PART 4 — MULTIPLE CHOICE VOCABULARY CLOZE (10 Questions, Q31-40)
+               Task: Choose the correct word for each gap.
+            ───────────────────────────────────────────────────────────── */
             {
               part: 4,
-              instructions: "Read the texts below. For questions 31-40, choose the correct word (A, B, or C) for each gap.",
+              instructions: "Read the texts below. For questions 31–40, choose the correct word (A, B, or C) to fill each gap.",
               type: "multiple_choice_cloze",
-              passage: "TEXT 1: Oceans cover more than seventy percent of the Earth's surface and are home to millions of amazing creatures. Dolphins, for instance, are among the most (31) [____] animals in the sea. They live in social groups called pods and communicate using clicks and whistles. Dolphins can swim extremely (32) [____] and love jumping out of the water. They feed mainly (33) [____] small fish and squid. Scientists believe dolphins are very (34) [____] toward human beings and often swim alongside boats. It is very important for everyone to (35) [____] ocean waters clean so sea animals can (36) [____] safely.\n\nTEXT 2: Tropical rainforests are often called the lungs of the planet because they produce large amounts of (37) [____]. Thousands of rare birds, insects, and colorful flowers thrive beneath the tall tree canopy. However, many rainforests are in (38) [____] due to deforestation. Protecting these ancient forests is essential if we want to (39) [____] global biodiversity and ensure a healthy (40) [____] for future generations.",
+              passage: "TEXT 1: Japan is a beautiful island country in East Asia. It is (31) [____] for its cherry blossom trees, which bloom every spring in pink and white colours. Millions of tourists (32) [____] Japan each year to see this natural spectacle. Japanese people are very (33) [____] to visitors and are happy to give (34) [____] about places to visit. Japan is also famous for its delicious food, especially sushi, which is (35) [____] from raw fish and rice.\n\nTEXT 2: The Amazon River in South America is one of the most (36) [____] rivers in the world. It flows through dense tropical rainforest and is home to thousands of (37) [____] of fish, birds, and reptiles. The water level rises (38) [____] the rainy season, flooding large areas of forest. Local communities depend (39) [____] the river for food, water, and transport. Scientists travel there every year to (40) [____] new species of wildlife.",
               questions: [
-                { id: "rw_p4_q31", gapNumber: 31, options: { A: "intelligent", B: "heavy", C: "difficult" }, correctAnswer: "A" },
-                { id: "rw_p4_q32", gapNumber: 32, options: { A: "fast", B: "slowly", C: "late" }, correctAnswer: "A" },
-                { id: "rw_p4_q33", gapNumber: 33, options: { A: "on", B: "at", C: "with" }, correctAnswer: "A" },
-                { id: "rw_p4_q34", gapNumber: 34, options: { A: "friendly", B: "dangerous", C: "scared" }, correctAnswer: "A" },
-                { id: "rw_p4_q35", gapNumber: 35, options: { A: "keep", B: "make", C: "break" }, correctAnswer: "A" },
-                { id: "rw_p4_q36", gapNumber: 36, options: { A: "live", B: "living", C: "lived" }, correctAnswer: "A" },
-                { id: "rw_p4_q37", gapNumber: 37, options: { A: "oxygen", B: "smoke", C: "plastic" }, correctAnswer: "A" },
-                { id: "rw_p4_q38", gapNumber: 38, options: { A: "danger", B: "peace", C: "safety" }, correctAnswer: "A" },
-                { id: "rw_p4_q39", gapNumber: 39, options: { A: "preserve", B: "destroy", C: "forget" }, correctAnswer: "A" },
-                { id: "rw_p4_q40", gapNumber: 40, options: { A: "climate", B: "kitchen", C: "furniture" }, correctAnswer: "A" }
+                { id: "rw_p4_q31", gapNumber: 31, options: { A: "famous", B: "worried", C: "tired" }, correctAnswer: "A" },
+                { id: "rw_p4_q32", gapNumber: 32, options: { A: "avoid", B: "visit", C: "leave" }, correctAnswer: "B" },
+                { id: "rw_p4_q33", gapNumber: 33, options: { A: "rude", B: "bored", C: "kind" }, correctAnswer: "C" },
+                { id: "rw_p4_q34", gapNumber: 34, options: { A: "directions", B: "problems", C: "excuses" }, correctAnswer: "A" },
+                { id: "rw_p4_q35", gapNumber: 35, options: { A: "broken", B: "made", C: "sold" }, correctAnswer: "B" },
+                { id: "rw_p4_q36", gapNumber: 36, options: { A: "powerful", B: "tiny", C: "frozen" }, correctAnswer: "A" },
+                { id: "rw_p4_q37", gapNumber: 37, options: { A: "species", B: "vehicles", C: "machines" }, correctAnswer: "A" },
+                { id: "rw_p4_q38", gapNumber: 38, options: { A: "during", B: "without", C: "despite" }, correctAnswer: "A" },
+                { id: "rw_p4_q39", gapNumber: 39, options: { A: "against", B: "on", C: "between" }, correctAnswer: "B" },
+                { id: "rw_p4_q40", gapNumber: 40, options: { A: "discover", B: "remove", C: "forget" }, correctAnswer: "A" }
               ]
             },
 
-            /* --- PART 5: OPEN GRAMMAR CLOZE (8 Questions) --- */
+            /* ─────────────────────────────────────────────────────────────
+               PART 5 — OPEN CLOZE (8 Questions, Q41-48)
+               Task: Write ONE word only for each gap.
+            ───────────────────────────────────────────────────────────── */
             {
               part: 5,
-              instructions: "Read the email. For questions 41-48, write ONE word only for each gap.",
+              instructions: "Read the postcard below. For questions 41–48, write ONE word only to fill each gap.",
               type: "open_cloze",
-              passage: "Dear Alex,\nI am writing to tell you (41) [____] my new puppy! His name (42) [____] Max and he is only three months old. He has fluffy brown fur (43) [____] big black eyes. Every morning, I take him for a walk (44) [____] the park near my house. He loves running after tennis balls. Do you (45) [____] any pets at home? I hope you can come (46) [____] visit us (47) [____] Saturday! Please write (48) [____] soon.\nBest wishes,\nSam",
+              passage: "Hi Clara!\nGreetings (41) [____] sunny Australia! I am here (42) [____] my family on a two-week holiday. Yesterday we went (43) [____] a wildlife sanctuary and I saw real kangaroos (44) [____] koalas up close — it (45) [____] amazing! The weather here is warm (46) [____] beautiful every day. Tomorrow we (47) [____] going to visit the Great Barrier Reef (48) [____] snorkelling. I wish you were here!\nSee you soon,\nLuisa",
               questions: [
-                { id: "rw_p5_q41", gapNumber: 41, acceptableAnswers: ["about"], correctAnswer: "about" },
-                { id: "rw_p5_q42", gapNumber: 42, acceptableAnswers: ["is", "'s"], correctAnswer: "is" },
-                { id: "rw_p5_q43", gapNumber: 43, acceptableAnswers: ["and"], correctAnswer: "and" },
-                { id: "rw_p5_q44", gapNumber: 44, acceptableAnswers: ["in", "at", "through"], correctAnswer: "in" },
-                { id: "rw_p5_q45", gapNumber: 45, acceptableAnswers: ["have"], correctAnswer: "have" },
-                { id: "rw_p5_q46", gapNumber: 46, acceptableAnswers: ["to", "and"], correctAnswer: "to" },
-                { id: "rw_p5_q47", gapNumber: 47, acceptableAnswers: ["this", "on", "next"], correctAnswer: "this" },
-                { id: "rw_p5_q48", gapNumber: 48, acceptableAnswers: ["back", "to"], correctAnswer: "back" }
+                { id: "rw_p5_q41", gapNumber: 41, acceptableAnswers: ["from"], correctAnswer: "from" },
+                { id: "rw_p5_q42", gapNumber: 42, acceptableAnswers: ["with"], correctAnswer: "with" },
+                { id: "rw_p5_q43", gapNumber: 43, acceptableAnswers: ["to"], correctAnswer: "to" },
+                { id: "rw_p5_q44", gapNumber: 44, acceptableAnswers: ["and"], correctAnswer: "and" },
+                { id: "rw_p5_q45", gapNumber: 45, acceptableAnswers: ["was", "is", "'s"], correctAnswer: "was" },
+                { id: "rw_p5_q46", gapNumber: 46, acceptableAnswers: ["and"], correctAnswer: "and" },
+                { id: "rw_p5_q47", gapNumber: 47, acceptableAnswers: ["are"], correctAnswer: "are" },
+                { id: "rw_p5_q48", gapNumber: 48, acceptableAnswers: ["for", "to go"], correctAnswer: "for" }
               ]
             },
 
-            /* --- PART 6: WRITING AN EMAIL (25+ Words) --- */
+            /* ─────────────────────────────────────────────────────────────
+               PART 6 — WRITING: SHORT EMAIL (min. 25 words)
+            ───────────────────────────────────────────────────────────── */
             {
               part: 6,
-              instructions: "WRITING PART 6: Read the note from your friend Sam:\n\n'Hi! I would love to hang out this weekend. Which movie should we watch at your house? What time can I come over, and what snacks will we eat?'\n\nWrite an email answering Sam's three questions (write at least 25 words in English).",
+              instructions: "WRITING PART 6 — Your English friend Leo has sent you this note:\n\n'Hi! I really want to visit your city sometime. Which place should I visit first? What food should I try? And what is the best way to travel around?'\n\nWrite an email to Leo answering his three questions. Write at least 25 words in English.",
               type: "text_production",
               minWords: 25,
               fieldName: "writing_part6"
             },
 
-            /* --- PART 7: WRITING A STORY (35+ Words) --- */
+            /* ─────────────────────────────────────────────────────────────
+               PART 7 — WRITING: SHORT STORY (min. 35 words)
+            ───────────────────────────────────────────────────────────── */
             {
               part: 7,
-              instructions: "WRITING PART 7: Read the story scenario below and write a short story in English (at least 35 words).\n\nStory Scenario:\n1. Scene 1: Last Saturday morning, Tom and Laura packed their backpacks and traveled by bus to the sunny countryside.\n2. Scene 2: They spent the afternoon exploring a green forest, climbing a small hill, and having a picnic near a clear river.\n3. Scene 3: In the evening, they watched the sunset, felt tired but very happy, and traveled back home.\n\nWrite your story describing what happened, what the weather was like, and how they felt.",
+              instructions: "WRITING PART 7 — Look at the three pictures below and write a short story in English (at least 35 words).\n\nYour story must include these three scenes:\n1. Scene 1: One rainy afternoon, Emma found an old letter inside a box in her grandmother's attic.\n2. Scene 2: She read the letter and discovered it was a treasure map drawn by her great-grandfather.\n3. Scene 3: The next morning, Emma and her cousin followed the map to a garden and found a small wooden box with old coins inside.\n\nWrite your story describing what happened, what the characters felt, and what the treasure was.",
               type: "text_production",
               minWords: 35,
               fieldName: "writing_part7"
             }
+
           ]
         }
       }
@@ -349,7 +383,7 @@ class ExamModel {
 
   static getSanitizedExamData() {
     const fullData = JSON.parse(JSON.stringify(this.getFullExamData()));
-    
+
     fullData.sections.reading_writing.parts.forEach(part => {
       if (part.questions) {
         part.questions.forEach(q => {
@@ -373,7 +407,7 @@ class ExamModel {
           if (q.correctAnswer || q.acceptableAnswers) {
             maxRW++;
             const given = (studentAnswers[q.id] || "").toString().trim().toLowerCase();
-            
+
             if (q.correctAnswer && given === q.correctAnswer.toLowerCase()) {
               scoreRW++;
             } else if (q.acceptableAnswers) {
