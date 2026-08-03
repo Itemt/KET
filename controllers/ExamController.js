@@ -34,10 +34,15 @@ class ExamController {
         });
       }
 
+      const version = ExamModel.getVersionForStudent(studentRecord.id);
+
       res.json({
         success: true,
         message: '¡Bienvenido(a) al examen!',
-        student: studentRecord
+        student: {
+          ...studentRecord,
+          examVersion: version
+        }
       });
     } catch (err) {
       console.error('Error en login de estudiante:', err);
@@ -47,8 +52,16 @@ class ExamController {
 
   static getExamData(req, res) {
     try {
-      const sanitizedExam = ExamModel.getSanitizedExamData();
-      res.json({ success: true, exam: sanitizedExam });
+      const studentId = req.query.studentId || req.query.student_id;
+      let version = 0;
+      if (studentId) {
+        version = ExamModel.getVersionForStudent(studentId);
+      } else if (req.query.version !== undefined) {
+        version = parseInt(req.query.version, 10) || 0;
+      }
+
+      const sanitizedExam = ExamModel.getSanitizedExamData(version);
+      res.json({ success: true, exam: sanitizedExam, version });
     } catch (error) {
       console.error('Error al obtener datos del examen:', error);
       res.status(500).json({ success: false, message: 'Error al cargar el examen.' });
@@ -70,7 +83,8 @@ class ExamController {
 
       const studentRecord = await StudentModel.createOrGet(firstName, lastName, grade, username);
 
-      const evaluation = ExamModel.evaluateAnswers(answers || {});
+      const version = ExamModel.getVersionForStudent(studentRecord.id);
+      const evaluation = ExamModel.evaluateAnswers(answers || {}, version);
 
       const submissionId = await SubmissionModel.save({
         student_id: studentRecord.id,

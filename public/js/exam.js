@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Cargar Datos del Examen desde Backend --- */
   async function fetchExamData() {
     try {
-      const res = await fetch('/api/exam');
+      const studentId = student.id || student.student_id || '';
+      const res = await fetch('/api/exam?studentId=' + encodeURIComponent(studentId));
       const data = await res.json();
 
       if (data.success) {
