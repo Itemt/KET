@@ -14,7 +14,8 @@
       "last_name": "Álvarez Julio",
       "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
-      "username": "thiagoalvarez"
+      "username": "thiagoalvarez",
+      "last_login_at": "2026-08-03T16:48:31.567Z"
     },
     {
       "id": 3,
@@ -87,6 +88,15 @@
       "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "saraimorales"
+    },
+    {
+      "id": 12,
+      "first_name": "Miguel Ángel",
+      "last_name": "Ávila Silva",
+      "grade": "6to B",
+      "username": "miguelavila",
+      "last_login_at": "2026-08-03T16:48:31.953Z",
+      "created_at": "2026-08-03T16:48:31.953Z"
     }
   ],
   "submissions": [
