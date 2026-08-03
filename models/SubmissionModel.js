@@ -16,25 +16,30 @@ class SubmissionModel {
     } = submissionData;
 
     if (db.isServerless) {
-      const store = await db.fetchStore();
-      const id = store.submissions.length + 1;
-      const newSub = {
-        id,
-        student_id: parseInt(student_id, 10),
-        attempt_time: attempt_time || new Date().toISOString(),
-        score_reading_writing: score_reading_writing || 0,
-        score_listening: score_listening || 0,
-        total_auto_score: total_auto_score || 0,
-        max_auto_score: max_auto_score || 0,
-        writing_part6: writing_part6 || '',
-        writing_part7: writing_part7 || '',
-        speaking_audio_url: speaking_audio_url || '',
-        raw_answers_json: typeof raw_answers_json === 'string' ? raw_answers_json : JSON.stringify(raw_answers_json || {}),
-        submitted_at: new Date().toISOString()
-      };
-      store.submissions.push(newSub);
-      await db.saveStore(store);
-      return id;
+      const lockFn = db.withLock || (fn => fn());
+      return lockFn(async () => {
+        const store = await db.fetchStore();
+        // Usar max(id)+1 en lugar de length+1 para evitar IDs duplicados en envíos simultáneos
+        const maxId = store.submissions.reduce((m, s) => Math.max(m, s.id || 0), 0);
+        const id = maxId + 1;
+        const newSub = {
+          id,
+          student_id: parseInt(student_id, 10),
+          attempt_time: attempt_time || new Date().toISOString(),
+          score_reading_writing: score_reading_writing || 0,
+          score_listening: score_listening || 0,
+          total_auto_score: total_auto_score || 0,
+          max_auto_score: max_auto_score || 0,
+          writing_part6: writing_part6 || '',
+          writing_part7: writing_part7 || '',
+          speaking_audio_url: speaking_audio_url || '',
+          raw_answers_json: typeof raw_answers_json === 'string' ? raw_answers_json : JSON.stringify(raw_answers_json || {}),
+          submitted_at: new Date().toISOString()
+        };
+        store.submissions.push(newSub);
+        await db.saveStore(store);
+        return id;
+      });
     }
 
     // Entorno SQLite nativo

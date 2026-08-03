@@ -2,71 +2,125 @@ const path = require('path');
 const fs = require('fs');
 
 let db = null;
-const CLOUD_STORE_URL = 'https://jsonblob.com/api/jsonBlob/019fc84b-a815-70ce-ae0e-37c7c5b58b8f';
+
+// === ALMACENAMIENTO EN LA NUBE - PRIMARIO Y SECUNDARIO ===
+// Primario: JSONBlob (activo y con datos del 31 de julio)
+const CLOUD_PRIMARY_URL = 'https://jsonblob.com/api/jsonBlob/019fc84b-a815-70ce-ae0e-37c7c5b58b8f';
+
+// Rutas de respaldo local
 const tmpJsonPath = '/tmp/ket_data.json';
 const backupJsonPath = path.join(__dirname, '../data/ket_backup.json');
 
 // Cache en memoria global
-global.memoryStore = global.memoryStore || { students: [], submissions: [] };
+global.memoryStore = global.memoryStore || null;
 
-async function fetchCloudStore() {
+// Mutex simple para prevenir condiciones de carrera en envíos simultáneos
+global._ketSaveLock = global._ketSaveLock || Promise.resolve();
+
+async function withSaveLock(fn) {
+  let releaseLock;
+  const lockAcquired = new Promise(resolve => { releaseLock = resolve; });
+  const prevLock = global._ketSaveLock;
+  global._ketSaveLock = lockAcquired;
+  await prevLock;
   try {
-    const res = await fetch(CLOUD_STORE_URL, { headers: { 'Accept': 'application/json' } });
+    return await fn();
+  } finally {
+    releaseLock();
+  }
+}
+
+// ============================================================
+// FETCH - Lee datos con cascada de fallbacks
+// ============================================================
+async function fetchCloudStore() {
+  // 1. Intentar leer desde la nube primaria
+  try {
+    const res = await fetch(CLOUD_PRIMARY_URL, {
+      headers: { 'Accept': 'application/json' },
+      signal: AbortSignal.timeout(5000)
+    });
     if (res.ok) {
       const data = await res.json();
-      if (data && Array.isArray(data.students) && Array.isArray(data.submissions) && data.submissions.length > 0) {
+      if (data && Array.isArray(data.students) && Array.isArray(data.submissions)) {
         global.memoryStore = data;
+        // Actualizar respaldo local silenciosamente
+        try { fs.writeFileSync(tmpJsonPath, JSON.stringify(data, null, 2), 'utf8'); } catch (e) {}
+        try { fs.writeFileSync(backupJsonPath, JSON.stringify(data, null, 2), 'utf8'); } catch (e) {}
         return data;
       }
     }
   } catch (e) {
-    console.warn('Advertencia leyendo Cloud Store:', e.message);
+    console.warn('⚠️ Cloud Store primario no disponible:', e.message);
   }
-  
+
+  // 2. Fallback a /tmp local
   try {
     if (fs.existsSync(tmpJsonPath)) {
       const raw = fs.readFileSync(tmpJsonPath, 'utf8');
       const parsed = JSON.parse(raw);
-      if (parsed && Array.isArray(parsed.submissions) && parsed.submissions.length > 0) {
+      if (parsed && Array.isArray(parsed.students) && Array.isArray(parsed.submissions)) {
+        console.log('ℹ️ Usando respaldo /tmp local.');
         global.memoryStore = parsed;
-        return global.memoryStore;
+        return parsed;
       }
     }
   } catch (e) {}
 
+  // 3. Fallback al archivo de respaldo en el repo
   try {
     if (fs.existsSync(backupJsonPath)) {
       const raw = fs.readFileSync(backupJsonPath, 'utf8');
       const parsed = JSON.parse(raw);
-      if (parsed && Array.isArray(parsed.submissions)) {
+      if (parsed && Array.isArray(parsed.students) && Array.isArray(parsed.submissions)) {
+        console.log('ℹ️ Usando respaldo del repositorio local.');
         global.memoryStore = parsed;
-        return global.memoryStore;
+        return parsed;
       }
     }
   } catch (e) {}
 
-  return global.memoryStore;
-}
-
-async function saveCloudStore(store) {
-  global.memoryStore = store;
-  
-  try {
-    fs.writeFileSync(tmpJsonPath, JSON.stringify(store, null, 2), 'utf8');
-  } catch (e) {}
-
-  try {
-    await fetch(CLOUD_STORE_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(store)
-    });
-  } catch (e) {
-    console.warn('Advertencia guardando en Cloud Store:', e.message);
+  // 4. Último recurso: memoria en caliente (si ya fue cargada antes en esta sesión)
+  if (global.memoryStore) {
+    console.log('ℹ️ Usando memoria en caliente de la sesión actual.');
+    return global.memoryStore;
   }
+
+  // 5. Tabla vacía
+  const empty = { students: [], submissions: [] };
+  global.memoryStore = empty;
+  return empty;
 }
 
+// ============================================================
+// SAVE - Guarda datos con escritura en cascada
+// ============================================================
+async function saveCloudStore(store) {
+  // Siempre actualizar la memoria
+  global.memoryStore = store;
+
+  // Guardar en /tmp local (síncrono, siempre funciona en Vercel durante la sesión)
+  try { fs.writeFileSync(tmpJsonPath, JSON.stringify(store, null, 2), 'utf8'); } catch (e) {}
+
+  // Guardar en respaldo del repo (si tiene permisos de escritura)
+  try { fs.writeFileSync(backupJsonPath, JSON.stringify(store, null, 2), 'utf8'); } catch (e) {}
+
+  // Guardar en la nube primaria (async, no bloquea la respuesta al estudiante)
+  fetch(CLOUD_PRIMARY_URL, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(store),
+    signal: AbortSignal.timeout(8000)
+  }).then(r => {
+    if (!r.ok) console.warn('⚠️ Error guardando en Cloud Store primario, status:', r.status);
+  }).catch(e => {
+    console.warn('⚠️ Error de red al guardar en Cloud Store:', e.message);
+  });
+}
+
+// ============================================================
 // Intentar SQLite nativo primero (Local / Railway)
+// ============================================================
 try {
   const Database = require('better-sqlite3');
 
@@ -125,7 +179,8 @@ try {
   db = {
     isServerless: true,
     fetchStore: fetchCloudStore,
-    saveStore: saveCloudStore
+    saveStore: saveCloudStore,
+    withLock: withSaveLock
   };
 }
 

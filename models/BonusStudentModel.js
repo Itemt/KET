@@ -46,7 +46,8 @@ class BonusStudentModel {
         return existing;
       }
 
-      const id = store.students.length + 1;
+      const maxId = store.students.reduce((m, s) => Math.max(m, s.id || 0), 0);
+      const id = maxId + 1;
       const newStudent = {
         id,
         first_name: cleanFirst,

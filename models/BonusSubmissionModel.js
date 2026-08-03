@@ -13,7 +13,8 @@ class BonusSubmissionModel {
 
     if (db.isServerless) {
       const store = await db.fetchStore();
-      const id = store.submissions.length + 1;
+      const maxId = store.submissions.reduce((m, s) => Math.max(m, s.id || 0), 0);
+      const id = maxId + 1;
       const newSub = {
         id,
         student_id: parseInt(student_id, 10),
