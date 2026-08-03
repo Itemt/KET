@@ -4,7 +4,7 @@
       "id": 1,
       "first_name": "PRUEBA",
       "last_name": "PRUEBA",
-      "grade": "6to B",
+      "grade": "6to A",
       "created_at": "2026-07-31 14:09:24",
       "username": null
     },
@@ -12,7 +12,7 @@
       "id": 2,
       "first_name": "Thiago",
       "last_name": "Álvarez Julio",
-      "grade": "6to",
+      "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "thiagoalvarez"
     },
@@ -20,7 +20,7 @@
       "id": 3,
       "first_name": "Álvaro Andrés",
       "last_name": "Angarita Rey",
-      "grade": "6to",
+      "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "alvaroangarita"
     },
@@ -28,7 +28,7 @@
       "id": 4,
       "first_name": "Matías Andrés",
       "last_name": "Cardona Marín",
-      "grade": "6to",
+      "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "matiascardona"
     },
@@ -36,7 +36,7 @@
       "id": 5,
       "first_name": "Camila Andrea",
       "last_name": "Gutiérrez Lobo",
-      "grade": "6to",
+      "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "camilagutierrez"
     },
@@ -44,7 +44,7 @@
       "id": 6,
       "first_name": "Jerónimo",
       "last_name": "Hernández Gómez",
-      "grade": "6to",
+      "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "jeronimohernandez"
     },
@@ -52,7 +52,7 @@
       "id": 7,
       "first_name": "Ana María",
       "last_name": "Londoño Guzmán",
-      "grade": "6to",
+      "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "analondono"
     },
@@ -60,7 +60,7 @@
       "id": 8,
       "first_name": "Juan Diego",
       "last_name": "Meza Mercado",
-      "grade": "6to",
+      "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "juanmeza"
     },
@@ -68,7 +68,7 @@
       "id": 9,
       "first_name": "Hefzibá",
       "last_name": "Díaz Díaz",
-      "grade": "6to",
+      "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "hefzibadiaz"
     },
@@ -76,7 +76,7 @@
       "id": 10,
       "first_name": "Juan David",
       "last_name": "Montoya González",
-      "grade": "6to",
+      "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "juanmontoya"
     },
@@ -84,7 +84,7 @@
       "id": 11,
       "first_name": "Sarai Lisset",
       "last_name": "Morales Villamizar",
-      "grade": "6to",
+      "grade": "6to A",
       "created_at": "2026-07-31 18:57:50",
       "username": "saraimorales"
     }
@@ -243,34 +243,6 @@
       "raw_answers_json": "{\"rw_p1_q1\":\"B\",\"rw_p1_q2\":\"B\",\"rw_p1_q3\":\"B\",\"writing_part6\":\"Hi Sam! We can watch a movie at 4pm and eat popcorn.\",\"writing_part7\":\"Tom and Laura went on a sunny trip to the forest...\"}",
       "submitted_at": "2026-07-31 18:57:50",
       "attempt_time": "2026-07-31T18:57:50.892Z"
-    },
-    {
-      "id": 12,
-      "student_id": 98,
-      "attempt_time": "2026-08-03T16:11:34.922Z",
-      "score_reading_writing": 3,
-      "score_listening": 0,
-      "total_auto_score": 3,
-      "max_auto_score": 30,
-      "writing_part6": "test2",
-      "writing_part7": "",
-      "speaking_audio_url": "",
-      "raw_answers_json": "{}",
-      "submitted_at": "2026-08-03T16:11:34.922Z"
-    },
-    {
-      "id": 13,
-      "student_id": 98,
-      "attempt_time": "2026-08-03T16:12:37.812Z",
-      "score_reading_writing": 3,
-      "score_listening": 0,
-      "total_auto_score": 3,
-      "max_auto_score": 30,
-      "writing_part6": "test2",
-      "writing_part7": "",
-      "speaking_audio_url": "",
-      "raw_answers_json": "{}",
-      "submitted_at": "2026-08-03T16:12:37.812Z"
     }
   ]
 }
