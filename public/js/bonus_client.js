@@ -17,11 +17,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       if (data.success && data.students) {
         studentSelect.innerHTML = '<option value="">-- Selecciona tu nombre --</option>';
-        data.students.forEach(s => {
-          const opt = document.createElement('option');
-          opt.value = s.username;
-          opt.textContent = `${s.fullName} (${s.username})`;
-          studentSelect.appendChild(opt);
+
+        const gradesMap = {};
+        data.students.forEach(st => {
+          const g = st.grade || '6to';
+          if (!gradesMap[g]) gradesMap[g] = [];
+          gradesMap[g].push(st);
+        });
+
+        Object.keys(gradesMap).sort().forEach(gradeName => {
+          const groupEl = document.createElement('optgroup');
+          groupEl.label = `─── GRADO ${gradeName.toUpperCase()} ───`;
+          gradesMap[gradeName].forEach(st => {
+            const opt = document.createElement('option');
+            opt.value = st.username;
+            opt.textContent = `${st.fullName} (${st.username})`;
+            groupEl.appendChild(opt);
+          });
+          studentSelect.appendChild(groupEl);
         });
       }
     } catch (e) {}
