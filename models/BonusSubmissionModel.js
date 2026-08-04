@@ -12,22 +12,25 @@ class BonusSubmissionModel {
     } = submissionData;
 
     if (db.isServerless) {
-      const store = await db.fetchStore();
-      const maxId = store.submissions.reduce((m, s) => Math.max(m, s.id || 0), 0);
-      const id = maxId + 1;
-      const newSub = {
-        id,
-        student_id: parseInt(student_id, 10),
-        attempt_time: attempt_time || new Date().toISOString(),
-        total_auto_score: total_auto_score || 0,
-        max_auto_score: max_auto_score || 0,
-        bonus_writing: bonus_writing || '',
-        raw_answers_json: typeof raw_answers_json === 'string' ? raw_answers_json : JSON.stringify(raw_answers_json || {}),
-        submitted_at: new Date().toISOString()
-      };
-      store.submissions.push(newSub);
-      await db.saveStore(store);
-      return id;
+      const lockFn = db.withLock || (fn => fn());
+      return lockFn(async () => {
+        const store = await db.fetchStore();
+        const maxId = store.submissions.reduce((m, s) => Math.max(m, s.id || 0), 0);
+        const id = maxId + 1;
+        const newSub = {
+          id,
+          student_id: parseInt(student_id, 10),
+          attempt_time: attempt_time || new Date().toISOString(),
+          total_auto_score: total_auto_score || 0,
+          max_auto_score: max_auto_score || 0,
+          bonus_writing: bonus_writing || '',
+          raw_answers_json: typeof raw_answers_json === 'string' ? raw_answers_json : JSON.stringify(raw_answers_json || {}),
+          submitted_at: new Date().toISOString()
+        };
+        store.submissions.push(newSub);
+        await db.saveStore(store);
+        return id;
+      });
     }
 
     const stmt = db.prepare(`

@@ -13,6 +13,22 @@ const backupJsonPath = path.join(__dirname, '../data/ket_bonus_backup.json');
 // Cache en memoria global independiente para el Bonus
 global.bonusMemoryStore = global.bonusMemoryStore || null;
 
+// Mutex simple para prevenir condiciones de carrera en el Bonus
+global._bonusSaveLock = global._bonusSaveLock || Promise.resolve();
+
+async function withSaveLock(fn) {
+  let releaseLock;
+  const lockAcquired = new Promise(resolve => { releaseLock = resolve; });
+  const prevLock = global._bonusSaveLock;
+  global._bonusSaveLock = lockAcquired;
+  await prevLock;
+  try {
+    return await fn();
+  } finally {
+    releaseLock();
+  }
+}
+
 // ============================================================
 // FETCH - Lee datos con cascada de fallbacks
 // ============================================================
@@ -136,7 +152,8 @@ try {
   db = {
     isServerless: true,
     fetchStore: fetchCloudStore,
-    saveStore: saveCloudStore
+    saveStore: saveCloudStore,
+    withLock: withSaveLock
   };
 }
 

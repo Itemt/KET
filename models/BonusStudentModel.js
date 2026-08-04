@@ -34,32 +34,35 @@ class BonusStudentModel {
     const cleanUser = username.trim().toLowerCase();
 
     if (db.isServerless) {
-      const store = await db.fetchStore();
-      let existing = store.students.find(s => 
-        (s.username && cleanUser && s.username.toLowerCase() === cleanUser) ||
-        (s.first_name.toLowerCase() === cleanFirst.toLowerCase() && s.last_name.toLowerCase() === cleanLast.toLowerCase())
-      );
+      const lockFn = db.withLock || (fn => fn());
+      return lockFn(async () => {
+        const store = await db.fetchStore();
+        let existing = store.students.find(s =>
+          (s.username && cleanUser && s.username.toLowerCase() === cleanUser) ||
+          (s.first_name.toLowerCase() === cleanFirst.toLowerCase() && s.last_name.toLowerCase() === cleanLast.toLowerCase())
+        );
 
-      if (existing) {
-        existing.last_login_at = new Date().toISOString();
+        if (existing) {
+          existing.last_login_at = new Date().toISOString();
+          await db.saveStore(store);
+          return existing;
+        }
+
+        const maxId = store.students.reduce((m, s) => Math.max(m, s.id || 0), 0);
+        const id = maxId + 1;
+        const newStudent = {
+          id,
+          first_name: cleanFirst,
+          last_name: cleanLast,
+          grade: cleanGrade,
+          username: cleanUser,
+          last_login_at: new Date().toISOString(),
+          created_at: new Date().toISOString()
+        };
+        store.students.push(newStudent);
         await db.saveStore(store);
-        return existing;
-      }
-
-      const maxId = store.students.reduce((m, s) => Math.max(m, s.id || 0), 0);
-      const id = maxId + 1;
-      const newStudent = {
-        id,
-        first_name: cleanFirst,
-        last_name: cleanLast,
-        grade: cleanGrade,
-        username: cleanUser,
-        last_login_at: new Date().toISOString(),
-        created_at: new Date().toISOString()
-      };
-      store.students.push(newStudent);
-      await db.saveStore(store);
-      return newStudent;
+        return newStudent;
+      });
     }
 
     try {
