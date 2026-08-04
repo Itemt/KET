@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `<div class="context-box">${q.context}</div>`;
           }
           if (q.question) {
-            html += `<p class="question-text">${idx + 1}. ${q.question}</p>`;
+            html += `<p class="question-text">${q.question}</p>`;
           }
 
           if (q.options) {
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           if (q.question) {
-            html += `<p class="question-text">${idx + 1}. ${q.question}</p>`;
+            html += `<p class="question-text">${q.question}</p>`;
           }
 
           if (q.options) {
