@@ -15,7 +15,7 @@ class StudentModel {
     const cleanUser = username.trim().toLowerCase();
     const cleanPass = password.trim().toLowerCase();
 
-    const officialStudent = studentsList.find(s => 
+    const officialStudent = studentsList.find(s =>
       s.username.toLowerCase() === cleanUser && s.password.toLowerCase() === cleanPass
     );
 
@@ -44,57 +44,33 @@ class StudentModel {
     const cleanGrade = grade.trim();
     const cleanUser = username.trim().toLowerCase();
 
-    if (db.isServerless) {
-      const lockFn = db.withLock || (fn => fn());
-      return lockFn(async () => {
-        const store = await db.fetchStore();
-        let existing = store.students.find(s =>
-          (s.username && cleanUser && s.username.toLowerCase() === cleanUser) ||
-          (s.first_name.toLowerCase() === cleanFirst.toLowerCase() && s.last_name.toLowerCase() === cleanLast.toLowerCase())
-        );
+    // Buscar estudiante existente por username o nombre completo
+    const existing = await db.queryOne(
+      `SELECT * FROM students 
+       WHERE (username IS NOT NULL AND username != '' AND LOWER(username) = ?)
+          OR (LOWER(first_name) = ? AND LOWER(last_name) = ?)
+       ORDER BY id DESC LIMIT 1`,
+      [cleanUser, cleanFirst.toLowerCase(), cleanLast.toLowerCase()]
+    );
 
-        if (existing) {
-          existing.last_login_at = new Date().toISOString();
-          await db.saveStore(store);
-          return existing;
-        }
-
-        const maxId = store.students.reduce((m, s) => Math.max(m, s.id || 0), 0);
-        const id = maxId + 1;
-        const newStudent = {
-          id,
-          first_name: cleanFirst,
-          last_name: cleanLast,
-          grade: cleanGrade,
-          username: cleanUser,
-          last_login_at: new Date().toISOString(),
-          created_at: new Date().toISOString()
-        };
-        store.students.push(newStudent);
-        await db.saveStore(store);
-        return newStudent;
-      });
+    if (existing) {
+      // Actualizar last_login_at
+      await db.run(
+        `UPDATE students SET last_login_at = ? WHERE id = ?`,
+        [new Date().toISOString(), existing.id]
+      );
+      return existing;
     }
 
-    // Entorno SQLite nativo
-    try {
-      const existing = db.prepare(`
-        SELECT * FROM students 
-        WHERE LOWER(username) = LOWER(?) OR (LOWER(first_name) = LOWER(?) AND LOWER(last_name) = LOWER(?))
-        ORDER BY id DESC LIMIT 1
-      `).get(cleanUser, cleanFirst, cleanLast);
-
-      if (existing) return existing;
-    } catch (e) {}
-
-    const stmt = db.prepare(`
-      INSERT INTO students (first_name, last_name, grade, username)
-      VALUES (?, ?, ?, ?)
-    `);
-    const info = stmt.run(cleanFirst, cleanLast, cleanGrade, cleanUser);
+    // Crear nuevo estudiante
+    const result = await db.run(
+      `INSERT INTO students (first_name, last_name, grade, username, last_login_at)
+       VALUES (?, ?, ?, ?, ?)`,
+      [cleanFirst, cleanLast, cleanGrade, cleanUser || null, new Date().toISOString()]
+    );
 
     return {
-      id: info.lastInsertRowid,
+      id: Number(result.lastInsertRowid),
       first_name: cleanFirst,
       last_name: cleanLast,
       grade: cleanGrade,
@@ -103,11 +79,7 @@ class StudentModel {
   }
 
   static async getById(id) {
-    if (db.isServerless) {
-      const store = await db.fetchStore();
-      return store.students.find(s => s.id === parseInt(id, 10)) || null;
-    }
-    return db.prepare('SELECT * FROM students WHERE id = ?').get(id);
+    return db.queryOne('SELECT * FROM students WHERE id = ?', [parseInt(id, 10)]);
   }
 }
 

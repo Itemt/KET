@@ -15,3 +15,5 @@ uploads/speaking/*
 .env
 *.log
 .DS_Store
+.vercel
+.env*
