@@ -58,7 +58,34 @@ async function initTurso() {
     )
   `);
 
-  // Índice para búsquedas rápidas por username
+  // Tablas Bonus
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS bonus_students (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      first_name TEXT NOT NULL,
+      last_name TEXT NOT NULL,
+      grade TEXT NOT NULL,
+      username TEXT,
+      last_login_at TEXT,
+      created_at TEXT DEFAULT (datetime('now'))
+    )
+  `);
+
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS bonus_submissions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      student_id INTEGER NOT NULL,
+      attempt_time TEXT,
+      total_auto_score INTEGER DEFAULT 0,
+      max_auto_score INTEGER DEFAULT 0,
+      bonus_writing TEXT,
+      raw_answers_json TEXT NOT NULL DEFAULT '{}',
+      submitted_at TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (student_id) REFERENCES bonus_students(id) ON DELETE CASCADE
+    )
+  `);
+
+  // Índices para búsquedas rápidas por username
   await client.execute(`
     CREATE UNIQUE INDEX IF NOT EXISTS idx_students_username ON students(username) WHERE username IS NOT NULL AND username != ''
   `);
