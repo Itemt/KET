@@ -99,9 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  let currentActiveTab = 'tab-listening';
+
   function switchTab(targetTabId) {
+    currentActiveTab = targetTabId;
     const tabBtns = document.querySelectorAll('.tab-btn');
     const sections = document.querySelectorAll('.exam-section-content');
+    const btnSubmit = document.getElementById('btn-submit-exam');
 
     tabBtns.forEach(b => {
       if (b.getAttribute('data-tab') === targetTabId) {
@@ -120,6 +124,16 @@ document.addEventListener('DOMContentLoaded', () => {
         s.classList.remove('active');
       }
     });
+
+    if (btnSubmit) {
+      if (targetTabId === 'tab-listening') {
+        btnSubmit.innerHTML = '🎧 Enviar Listening';
+        btnSubmit.style.background = 'linear-gradient(135deg, #06b6d4, #3b82f6)';
+      } else if (targetTabId === 'tab-reading-writing') {
+        btnSubmit.innerHTML = '📖 Enviar Reading & Writing';
+        btnSubmit.style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
+      }
+    }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -496,7 +510,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleSubmission = async (e) => {
       if (e) e.preventDefault();
 
-      const confirmSubmit = confirm('¿Estás seguro de enviar tus respuestas del examen? Se guardará y actualizará el puntaje de tus respuestas.');
+      const sectionName = currentActiveTab === 'tab-listening' ? 'Listening' : 'Reading & Writing';
+      const confirmSubmit = confirm(`¿Estás seguro de enviar tus respuestas de ${sectionName}? Se guardará y actualizará el puntaje de esta sección.`);
       if (!confirmSubmit) return;
 
       const formData = new FormData(form);
