@@ -529,11 +529,15 @@ document.addEventListener('DOMContentLoaded', () => {
       let html = '';
 
       (audioObj.parts || []).forEach(part => {
+        const titleText = part.title || `Part ${part.part || ''}`;
+        const instructionsText = part.instructions || '';
+
         html += `<div class="part-card" style="margin-top: 16px;">
           <div class="part-header">
-            <span class="part-badge" style="background: linear-gradient(135deg, #0284c7, #2563eb);">${part.partTitle}</span>
-            <h2 style="font-size: 1.1rem; color: var(--dark); margin-top: 4px;">${part.partSubtitle}</h2>
-          </div>`;
+            <span class="part-badge" style="background: linear-gradient(135deg, #0284c7, #2563eb);">Part ${part.part || ''}</span>
+            <h2 style="font-size: 1.1rem; color: var(--dark); margin-top: 4px;">${titleText}</h2>
+          </div>
+          ${instructionsText ? `<p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">${instructionsText}</p>` : ''}`;
 
         if (part.type === 'matching' && part.options) {
           html += `<div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.88rem;">
