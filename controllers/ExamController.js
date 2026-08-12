@@ -172,9 +172,13 @@ class ExamController {
         score: {
           total: evaluation.total_auto_score,
           max: evaluation.max_auto_score,
+          total_auto_score: evaluation.total_auto_score,
+          max_auto_score: evaluation.max_auto_score,
           reading_writing: evaluation.score_reading_writing,
+          score_reading_writing: evaluation.score_reading_writing,
           max_reading_writing: evaluation.max_reading_writing,
           listening: evaluation.score_listening,
+          score_listening: evaluation.score_listening,
           max_listening: evaluation.max_listening
         }
       });

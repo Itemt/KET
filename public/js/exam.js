@@ -559,14 +559,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --- Mostrar Modal de Resultados --- */
   function showResultsModal(score) {
+    if (!score) score = {};
+
+    const listeningVal = score.score_listening !== undefined ? score.score_listening : (score.listening !== undefined ? score.listening : 0);
+    const maxListeningVal = score.max_listening !== undefined ? score.max_listening : 125;
+
+    const rwVal = score.score_reading_writing !== undefined ? score.score_reading_writing : (score.reading_writing !== undefined ? score.reading_writing : 0);
+    const maxRwVal = score.max_reading_writing !== undefined ? score.max_reading_writing : 48;
+
+    const totalVal = score.total_auto_score !== undefined ? score.total_auto_score : (score.total !== undefined ? score.total : 0);
+    const maxTotalVal = score.max_auto_score !== undefined ? score.max_auto_score : (score.max !== undefined ? score.max : 173);
+
     const listeningElem = document.getElementById('res-score-listening');
-    if (listeningElem) listeningElem.textContent = `${score.score_listening || 0} / ${score.max_listening || 125}`;
+    if (listeningElem) listeningElem.textContent = `${listeningVal} / ${maxListeningVal}`;
 
     const rwElem = document.getElementById('res-score-rw');
-    if (rwElem) rwElem.textContent = `${score.score_reading_writing || 0} / ${score.max_reading_writing || 48}`;
+    if (rwElem) rwElem.textContent = `${rwVal} / ${maxRwVal}`;
 
     const totalElem = document.getElementById('res-score-total');
-    if (totalElem) totalElem.textContent = `${score.total_auto_score || 0} / ${score.max_auto_score || 173}`;
+    if (totalElem) totalElem.textContent = `${totalVal} / ${maxTotalVal}`;
 
     const modal = document.getElementById('results-modal');
     if (modal) modal.classList.add('active');
