@@ -517,63 +517,100 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = html;
   }
 
-  /* --- Renderizar Sección Listening --- */
-  function renderListeningSection(listeningData) {
-    if (!listeningData || !listeningData.audios) return;
+  /* --- Renderizar Sección Listening (Audios 1, 2, 3, 4 y 5) --- */
+  function renderListeningSection(section) {
+    if (!section || !section.audios) return;
 
-    listeningData.audios.forEach((audioObj, audioIdx) => {
-      const trackNum = audioIdx + 1;
-      const container = document.getElementById(`listening-questions-a${trackNum}`);
+    section.audios.forEach((audioObj, index) => {
+      let containerId = 'listening-questions-a1';
+      let themeColor = '#06b6d4';
+      let titleColor = '#0891b2';
+
+      if (index === 1) {
+        containerId = 'listening-questions-a2';
+        themeColor = '#8b5cf6';
+        titleColor = '#6d28d9';
+      } else if (index === 2) {
+        containerId = 'listening-questions-a3';
+        themeColor = '#10b981';
+        titleColor = '#047857';
+      } else if (index === 3) {
+        containerId = 'listening-questions-a4';
+        themeColor = '#f59e0b';
+        titleColor = '#b45309';
+      } else if (index === 4) {
+        containerId = 'listening-questions-a5';
+        themeColor = '#d946ef';
+        titleColor = '#a21caf';
+      }
+
+      const container = document.getElementById(containerId);
       if (!container) return;
 
       let html = '';
 
       (audioObj.parts || []).forEach(part => {
-        const titleText = part.title || `Part ${part.part || ''}`;
-        const instructionsText = part.instructions || '';
-
-        html += `<div class="part-card" style="margin-top: 16px;">
-          <div class="part-header">
-            <span class="part-badge" style="background: linear-gradient(135deg, #0284c7, #2563eb);">Part ${part.part || ''}</span>
-            <h2 style="font-size: 1.1rem; color: var(--dark); margin-top: 4px;">${titleText}</h2>
-          </div>
-          ${instructionsText ? `<p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">${instructionsText}</p>` : ''}`;
+        html += `
+          <div class="card" style="margin-top: 16px;">
+            <div class="part-header" style="border-left: 4px solid ${themeColor}; padding-left: 12px; margin-bottom: 16px;">
+              <h3 class="part-title" style="color: ${titleColor}; font-size: 1.1rem; font-weight: 800;">${part.title || ''}</h3>
+              <p class="instructions" style="font-size: 0.9rem; color: var(--text-muted);">${part.instructions || ''}</p>
+            </div>
+        `;
 
         if (part.type === 'matching' && part.options) {
-          html += `<div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.88rem;">
-            <strong>Opciones A–H:</strong> `;
-          Object.keys(part.options).forEach(k => {
-            html += `<span style="margin-right: 12px;"><strong>${k}:</strong> ${part.options[k]}</span>`;
-          });
-          html += `</div>`;
+          html += `
+            <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.88rem;">
+              <strong>Opciones A–H:</strong> `;
+            Object.keys(part.options).forEach(k => {
+              html += `<span style="margin-right: 12px;"><strong>${k}:</strong> ${part.options[k]}</span>`;
+            });
+            html += `</div>`;
         }
 
         if (part.questions) {
-          part.questions.forEach(q => {
-            const questionTitleText = q.question || (q.label ? `<strong>${q.gapNumber || ''}. ${q.label}</strong> ${q.prompt || ''}` : '');
-            html += `<div class="question-box">
-              <div class="question-title">${questionTitleText}</div>
-              <div class="options-group">`;
-
-            if (part.type === 'matching' && part.options) {
-              Object.keys(part.options).forEach(optKey => {
-                html += `<label class="option-label">
-                  <input type="radio" name="${q.id}" value="${optKey}">
-                  <span class="option-text"><strong>${optKey}</strong></span>
-                </label>`;
-              });
-            } else if (q.options) {
-              Object.keys(q.options).forEach(optKey => {
-                html += `<label class="option-label">
-                  <input type="radio" name="${q.id}" value="${optKey}">
-                  <span class="option-text"><strong>${optKey}.</strong> ${q.options[optKey]}</span>
-                </label>`;
-              });
-            } else {
-              html += `<input type="text" name="${q.id}" class="form-control" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);" placeholder="Escribe tu respuesta aquí...">`;
+          part.questions.forEach((q) => {
+            html += `<div class="question-block">`;
+            
+            if (q.question) {
+              html += `<p class="question-text" style="font-weight: 700; color: var(--dark); font-size: 0.98rem; margin-bottom: 12px;">${q.question}</p>`;
             }
 
-            html += `</div></div>`;
+            if (part.type === 'matching' && part.options) {
+              html += `<div class="options-group" style="display: flex; gap: 8px; flex-wrap: wrap;">`;
+              Object.keys(part.options).forEach(optKey => {
+                html += `
+                  <label class="option-item">
+                    <input type="radio" name="${q.id}" value="${optKey}">
+                    <span><strong>${optKey}</strong></span>
+                  </label>
+                `;
+              });
+              html += `</div>`;
+            } else if (q.options) {
+              html += `<div class="options-group">`;
+              Object.keys(q.options).forEach(optKey => {
+                html += `
+                  <label class="option-item">
+                    <input type="radio" name="${q.id}" value="${optKey}">
+                    <span><strong>${optKey}.</strong> ${q.options[optKey]}</span>
+                  </label>
+                `;
+              });
+              html += `</div>`;
+            } else if (part.type === 'gap_fill' || q.label) {
+              html += `
+                <div style="margin-top: 10px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                  <label style="font-weight: 700; color: var(--dark); min-width: 140px;">${q.label || ('Gap ' + (q.gapNumber || ''))}</label>
+                  <div style="font-size: 1rem; color: ${titleColor}; font-weight: 600;">${q.prompt || ''}</div>
+                  <input type="text" name="${q.id}" class="input-field" placeholder="Tu respuesta..." style="max-width: 240px;">
+                </div>
+              `;
+            } else {
+              html += `<input type="text" name="${q.id}" class="input-field" placeholder="Tu respuesta..." style="max-width: 300px;">`;
+            }
+
+            html += `</div>`;
           });
         }
 
