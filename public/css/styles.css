@@ -561,3 +561,20 @@ body {
     top: 0;
   }
 }
+
+/* Toast de Notificación de Guardado */
+.toast-notification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #38bdf8;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  border: 1px solid #0284c7;
+  z-index: 9999;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}

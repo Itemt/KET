@@ -1,23 +1,23 @@
-/* ==========================================================================
-   CAMBRIDGE KET A2 MOCK EXAM - CLIENT SIDE ENGINE (AUDIOS 1, 2, 3, 4 & 5)
-   ========================================================================== */
-
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Verificar datos del alumno en localStorage
-  const studentDataRaw = localStorage.getItem('ket_student');
-  if (!studentDataRaw) {
-    alert('Por favor regístrate con tu nombre y grado antes de comenzar el examen.');
+  // Verificar Autenticación de Estudiante
+  const studentData = localStorage.getItem('ket_student');
+  if (!studentData) {
     window.location.href = '/';
     return;
   }
 
-  const student = JSON.parse(studentDataRaw);
-  setupStudentHeader(student);
+  let student;
+  try {
+    student = JSON.parse(studentData);
+  } catch (e) {
+    localStorage.removeItem('ket_student');
+    window.location.href = '/';
+    return;
+  }
 
-  // Variables de Estado
   let examData = null;
 
-  // Cargar Examen desde API
+  setupStudentHeader(student);
   fetchExamData();
   setupModuleSelector();
   setupTabNavigation();
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupAudioPlayer('4');
   setupAudioPlayer('5');
   setupFormSubmission(student);
+  setupSaveProgressButtons();
 
   /* --- Cargar Datos del Examen desde Backend --- */
   async function fetchExamData() {
@@ -44,12 +45,43 @@ document.addEventListener('DOMContentLoaded', () => {
         if (examData.sections && examData.sections.listening) {
           renderListeningSection(examData.sections.listening);
         }
+
+        // Restaurar progreso y respuestas previamente guardadas
+        if (data.existingAnswers) {
+          restoreSavedAnswers(data.existingAnswers);
+        }
       } else {
         alert('Error al cargar el contenido del examen.');
       }
     } catch (err) {
       console.error('Error al conectar con la API de examen:', err);
     }
+  }
+
+  /* --- Restaurar Respuestas Guardadas --- */
+  function restoreSavedAnswers(savedAnswers) {
+    if (!savedAnswers || typeof savedAnswers !== 'object') return;
+
+    Object.keys(savedAnswers).forEach(key => {
+      const val = savedAnswers[key];
+      if (val === undefined || val === null || val === '') return;
+
+      // 1. Opciones Radio
+      try {
+        const radios = document.querySelectorAll(`input[type="radio"][name="${CSS.escape(key)}"]`);
+        radios.forEach(radio => {
+          if (radio.value === val) radio.checked = true;
+        });
+      } catch (e) {}
+
+      // 2. Textos e Insumos
+      try {
+        const input = document.querySelector(`input[name="${CSS.escape(key)}"]:not([type="radio"]), textarea[name="${CSS.escape(key)}"]`);
+        if (input) {
+          input.value = val;
+        }
+      } catch (e) {}
+    });
   }
 
   /* --- Configurar Encabezado del Estudiante --- */
@@ -138,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /* --- Cambiador de Pistas dentro de Listening (Audio 1, 2, 3, 4, 5) --- */
+  /* --- Alternar entre Sub-Pestañas de Audios 1, 2, 3, 4 y 5 --- */
   function setupAudioTrackSwitcher() {
     const btnTrack1 = document.getElementById('btn-audio-track-1');
     const btnTrack2 = document.getElementById('btn-audio-track-2');
@@ -152,25 +184,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const container4 = document.getElementById('audio-track-4-container');
     const container5 = document.getElementById('audio-track-5-container');
 
-    const audio1 = document.getElementById('audio-element-1');
-    const audio2 = document.getElementById('audio-element-2');
-    const audio3 = document.getElementById('audio-element-3');
-    const audio4 = document.getElementById('audio-element-4');
-    const audio5 = document.getElementById('audio-element-5');
-
     function resetTrackBtns() {
-      [btnTrack1, btnTrack2, btnTrack3, btnTrack4, btnTrack5].forEach(b => {
-        if (b) {
-          b.classList.remove('active');
-          b.style.background = '#f1f5f9';
-          b.style.color = 'var(--dark)';
+      [btnTrack1, btnTrack2, btnTrack3, btnTrack4, btnTrack5].forEach(btn => {
+        if (btn) {
+          btn.classList.remove('active');
+          btn.style.background = '#f1f5f9';
+          btn.style.color = 'var(--dark)';
         }
       });
       [container1, container2, container3, container4, container5].forEach(c => {
         if (c) c.style.display = 'none';
-      });
-      [audio1, audio2, audio3, audio4, audio5].forEach(a => {
-        if (a && !a.paused) a.pause();
       });
     }
 
@@ -234,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const seekBar = document.getElementById(`seek-bar-a${idSuffix}`);
     const currentLabel = document.getElementById(`time-current-a${idSuffix}`);
     const durationLabel = document.getElementById(`time-duration-a${idSuffix}`);
-    const speedBtns = document.querySelectorAll(`.btn-speed-a${idSuffix}`);
 
     if (!audio) return;
 
@@ -248,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnPlay) {
       btnPlay.addEventListener('click', () => {
         if (audio.paused) {
-          // Pausar los otros audios
           ['1', '2', '3', '4', '5'].forEach(otherId => {
             if (otherId !== idSuffix) {
               const otherAudio = document.getElementById(`audio-element-${otherId}`);
@@ -308,191 +329,246 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
-
-
   }
 
   /* --- Renderizar Sección Reading & Writing --- */
-  function renderReadingWritingSection(section) {
+  function renderReadingWritingSection(rwData) {
     const container = document.getElementById('reading-writing-container');
+    if (!container) return;
+
     let html = '';
 
-    section.parts.forEach(part => {
-      html += `
-        <div class="card">
-          <div class="part-header">
-            <h3 class="part-title">📘 Part ${part.part}</h3>
-            <p class="instructions">${part.instructions}</p>
-          </div>
-      `;
+    // Part 1
+    if (rwData.p1 && rwData.p1.length > 0) {
+      html += `<div class="part-card">
+        <div class="part-header">
+          <span class="part-badge">Part 1</span>
+          <h2>Notices & Short Messages (Questions 1–10)</h2>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
+          Read the notice or text and choose the correct answer (A, B, or C).
+        </p>`;
 
-      if (part.passage) {
-        html += `<div class="context-box">${part.passage}</div>`;
-      }
+      rwData.p1.forEach((q, idx) => {
+        html += `<div class="question-box">
+          <div class="context-box">${q.context}</div>
+          <div class="question-title">${q.question}</div>
+          <div class="options-group">`;
 
-      if (part.notices) {
-        html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 24px;">`;
-        part.notices.forEach(not => {
-          html += `
-            <div style="background: #f8fafc; border-left: 4px solid var(--primary); padding: 14px 16px; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);">
-              <h4 style="color: var(--primary); font-weight: 700; font-size: 0.95rem; margin-bottom: 6px;">${not.title}</h4>
-              <p style="font-size: 0.88rem; color: var(--dark); line-height: 1.5;">${not.text}</p>
-            </div>
-          `;
+        Object.keys(q.options).forEach(optKey => {
+          html += `<label class="option-label">
+            <input type="radio" name="${q.id}" value="${optKey}">
+            <span class="option-text"><strong>${optKey}.</strong> ${q.options[optKey]}</span>
+          </label>`;
         });
-        html += `</div>`;
-      }
 
-      if (part.texts) {
-        html += `<div class="context-box">`;
-        part.texts.forEach(txt => {
-          html += `<p><strong>${txt.name}:</strong> ${txt.content}</p>`;
-        });
-        html += `</div>`;
-      }
-
-      if (part.questions) {
-        part.questions.forEach((q) => {
-          html += `<div class="question-block">`;
-          if (q.context) {
-            html += `<div class="context-box">${q.context}</div>`;
-          }
-          if (q.question) {
-            html += `<p class="question-text">${q.question}</p>`;
-          }
-
-          if (q.options) {
-            html += `<div class="options-group">`;
-            Object.keys(q.options).forEach(optKey => {
-              html += `
-                <label class="option-item">
-                  <input type="radio" name="${q.id}" value="${optKey}">
-                  <span><strong>${optKey}.</strong> ${q.options[optKey]}</span>
-                </label>
-              `;
-            });
-            html += `</div>`;
-          } else if (part.type === 'open_cloze') {
-            html += `
-              <div style="margin-top: 10px;">
-                <label style="font-weight: 600;">Gap (${q.gapNumber}):</label>
-                <input type="text" name="${q.id}" class="input-field" placeholder="Escribe una palabra aquí..." style="max-width: 300px; margin-left: 10px;">
-              </div>
-            `;
-          }
-
-          html += `</div>`;
-        });
-      }
-
-      if (part.type === 'text_production') {
-        html += `
-          <div class="question-block">
-            <textarea name="${part.fieldName}" id="${part.fieldName}" class="input-field writing-area" data-minwords="${part.minWords}" placeholder="Write your text here in English..."></textarea>
-            <div class="word-count-badge" id="badge-${part.fieldName}">Palabras: 0 / mín. ${part.minWords}</div>
-          </div>
-        `;
-      }
+        html += `</div></div>`;
+      });
 
       html += `</div>`;
-    });
+    }
+
+    // Part 2
+    if (rwData.p2Questions && rwData.p2Questions.length > 0) {
+      html += `<div class="part-card">
+        <div class="part-header">
+          <span class="part-badge">Part 2</span>
+          <h2>Matching Notices A–H (Questions 11–20)</h2>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+          Match each statement to the correct Notice (A–H).
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 24px;">`;
+
+      (rwData.p2Notices || []).forEach(n => {
+        html += `<div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px;">
+          <strong style="color: var(--primary);">${n.title}</strong>
+          <p style="font-size: 0.85rem; color: var(--dark); margin-top: 4px;">${n.text}</p>
+        </div>`;
+      });
+
+      html += `</div>`;
+
+      rwData.p2Questions.forEach(q => {
+        html += `<div class="question-box">
+          <div class="question-title">${q.question}</div>
+          <div class="options-group" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">`;
+
+        Object.keys(q.options).forEach(optKey => {
+          html += `<label class="option-label">
+            <input type="radio" name="${q.id}" value="${optKey}">
+            <span class="option-text"><strong>${optKey}</strong></span>
+          </label>`;
+        });
+
+        html += `</div></div>`;
+      });
+
+      html += `</div>`;
+    }
+
+    // Part 3
+    if (rwData.p3Questions && rwData.p3Questions.length > 0) {
+      html += `<div class="part-card">
+        <div class="part-header">
+          <span class="part-badge">Part 3</span>
+          <h2>Multiple Choice Profiles (Questions 21–30)</h2>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+          Read the 3 profiles and select which person matches each question.
+        </p>`;
+
+      rwData.p3Questions.forEach(q => {
+        html += `<div class="question-box">
+          <div class="question-title">${q.question}</div>
+          <div class="options-group">`;
+
+        Object.keys(q.options).forEach(optKey => {
+          html += `<label class="option-label">
+            <input type="radio" name="${q.id}" value="${optKey}">
+            <span class="option-text"><strong>${optKey}.</strong> ${q.options[optKey]}</span>
+          </label>`;
+        });
+
+        html += `</div></div>`;
+      });
+
+      html += `</div>`;
+    }
+
+    // Part 4
+    if (rwData.p4Questions && rwData.p4Questions.length > 0) {
+      html += `<div class="part-card">
+        <div class="part-header">
+          <span class="part-badge">Part 4</span>
+          <h2>Reading Comprehension Text (Questions 31–40)</h2>
+        </div>
+        <div class="context-box" style="white-space: pre-line; line-height: 1.6; margin-bottom: 20px;">${rwData.p4Text || ''}</div>`;
+
+      rwData.p4Questions.forEach(q => {
+        html += `<div class="question-box">
+          <div class="question-title">${q.question}</div>
+          <div class="options-group">`;
+
+        Object.keys(q.options).forEach(optKey => {
+          html += `<label class="option-label">
+            <input type="radio" name="${q.id}" value="${optKey}">
+            <span class="option-text"><strong>${optKey}.</strong> ${q.options[optKey]}</span>
+          </label>`;
+        });
+
+        html += `</div></div>`;
+      });
+
+      html += `</div>`;
+    }
+
+    // Part 5
+    if (rwData.p5Questions && rwData.p5Questions.length > 0) {
+      html += `<div class="part-card">
+        <div class="part-header">
+          <span class="part-badge">Part 5</span>
+          <h2>Grammar Gap Fill (Questions 41–48)</h2>
+        </div>
+        <div class="context-box" style="white-space: pre-line; line-height: 1.6; margin-bottom: 20px;">${rwData.p5Text || ''}</div>`;
+
+      rwData.p5Questions.forEach(q => {
+        html += `<div class="question-box">
+          <div class="question-title">${q.question}</div>
+          <div class="options-group">`;
+
+        Object.keys(q.options).forEach(optKey => {
+          html += `<label class="option-label">
+            <input type="radio" name="${q.id}" value="${optKey}">
+            <span class="option-text"><strong>${optKey}.</strong> ${q.options[optKey]}</span>
+          </label>`;
+        });
+
+        html += `</div></div>`;
+      });
+
+      html += `</div>`;
+    }
+
+    // Part 6
+    if (rwData.p6) {
+      html += `<div class="part-card">
+        <div class="part-header">
+          <span class="part-badge">Part 6</span>
+          <h2>Short Email / Note (Writing)</h2>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--dark); margin-bottom: 12px; line-height: 1.5;">${rwData.p6.prompt || ''}</p>
+        <textarea name="writing_part6" rows="5" class="form-control" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);" placeholder="Write your email here (25 words or more)..."></textarea>
+      </div>`;
+    }
+
+    // Part 7
+    if (rwData.p7) {
+      html += `<div class="part-card">
+        <div class="part-header">
+          <span class="part-badge">Part 7</span>
+          <h2>Picture Story (Writing)</h2>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--dark); margin-bottom: 12px; line-height: 1.5;">${rwData.p7.prompt || ''}</p>
+        <textarea name="writing_part7" rows="7" class="form-control" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);" placeholder="Write your story here (35 words or more)..."></textarea>
+      </div>`;
+    }
 
     container.innerHTML = html;
-    setupWritingCounters();
   }
 
-  function setupWritingCounters() {
-    const textareas = document.querySelectorAll('.writing-area');
-    textareas.forEach(ta => {
-      ta.addEventListener('input', () => {
-        const text = ta.value.trim();
-        const words = text ? text.split(/\s+/).length : 0;
-        const minWords = parseInt(ta.getAttribute('data-minwords') || '0', 10);
-        const badge = document.getElementById(`badge-${ta.id}`);
+  /* --- Renderizar Sección Listening --- */
+  function renderListeningSection(listeningData) {
+    if (!listeningData || !listeningData.audios) return;
 
-        if (badge) {
-          badge.textContent = `Palabras: ${words} / mín. ${minWords}`;
-          if (words >= minWords) {
-            badge.classList.add('valid');
-          } else {
-            badge.classList.remove('valid');
-          }
-        }
-      });
-    });
-  }
-
-  /* --- Renderizar Sección Listening (Audios 1, 2, 3, 4 y 5) --- */
-  function renderListeningSection(section) {
-    if (!section.audios) return;
-
-    section.audios.forEach((audioObj, index) => {
-      let containerId = 'listening-questions-a1';
-      let themeColor = '#06b6d4';
-      let titleColor = '#0891b2';
-
-      if (index === 1) {
-        containerId = 'listening-questions-a2';
-        themeColor = '#8b5cf6';
-        titleColor = '#6d28d9';
-      } else if (index === 2) {
-        containerId = 'listening-questions-a3';
-        themeColor = '#10b981';
-        titleColor = '#047857';
-      } else if (index === 3) {
-        containerId = 'listening-questions-a4';
-        themeColor = '#f59e0b';
-        titleColor = '#b45309';
-      } else if (index === 4) {
-        containerId = 'listening-questions-a5';
-        themeColor = '#d946ef';
-        titleColor = '#a21caf';
-      }
-
-      const container = document.getElementById(containerId);
+    listeningData.audios.forEach((audioObj, audioIdx) => {
+      const trackNum = audioIdx + 1;
+      const container = document.getElementById(`listening-questions-a${trackNum}`);
       if (!container) return;
 
       let html = '';
 
-      audioObj.parts.forEach(part => {
-        html += `
-          <div class="card">
-            <div class="part-header" style="border-left: 4px solid ${themeColor}; padding-left: 12px; margin-bottom: 16px;">
-              <h3 class="part-title" style="color: ${titleColor}; font-size: 1.1rem; font-weight: 800;">${part.title}</h3>
-              <p class="instructions" style="font-size: 0.9rem; color: var(--text-muted);">${part.instructions}</p>
-            </div>
-        `;
+      (audioObj.parts || []).forEach(part => {
+        html += `<div class="part-card" style="margin-top: 16px;">
+          <div class="part-header">
+            <span class="part-badge" style="background: linear-gradient(135deg, #0284c7, #2563eb);">${part.partTitle}</span>
+            <h2 style="font-size: 1.1rem; color: var(--dark); margin-top: 4px;">${part.partSubtitle}</h2>
+          </div>`;
+
+        if (part.type === 'matching' && part.options) {
+          html += `<div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.88rem;">
+            <strong>Opciones A–H:</strong> `;
+          Object.keys(part.options).forEach(k => {
+            html += `<span style="margin-right: 12px;"><strong>${k}:</strong> ${part.options[k]}</span>`;
+          });
+          html += `</div>`;
+        }
 
         if (part.questions) {
-          part.questions.forEach((q) => {
-            html += `<div class="question-block">`;
-            
-            if (q.question) {
-              html += `<p class="question-text" style="font-weight: 700; color: var(--dark); font-size: 0.98rem; margin-bottom: 12px;">${q.question}</p>`;
-            }
+          part.questions.forEach(q => {
+            html += `<div class="question-box">
+              <div class="question-title">${q.question}</div>
+              <div class="options-group">`;
 
-            if (q.options) {
-              html += `<div class="options-group">`;
-              Object.keys(q.options).forEach(optKey => {
-                html += `
-                  <label class="option-item">
-                    <input type="radio" name="${q.id}" value="${optKey}">
-                    <span><strong>${optKey}.</strong> ${q.options[optKey]}</span>
-                  </label>
-                `;
+            if (part.type === 'matching' && part.options) {
+              Object.keys(part.options).forEach(optKey => {
+                html += `<label class="option-label">
+                  <input type="radio" name="${q.id}" value="${optKey}">
+                  <span class="option-text"><strong>${optKey}</strong></span>
+                </label>`;
               });
-              html += `</div>`;
-            } else if (part.type === 'gap_fill') {
-              html += `
-                <div style="margin-top: 10px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                  <label style="font-weight: 700; color: var(--dark); min-width: 140px;">${q.label}</label>
-                  <div style="font-size: 1rem; color: ${titleColor}; font-weight: 600;">${q.prompt}</div>
-                  <input type="text" name="${q.id}" class="input-field" placeholder="Tu respuesta..." style="max-width: 240px;">
-                </div>
-              `;
+            } else if (q.options) {
+              Object.keys(q.options).forEach(optKey => {
+                html += `<label class="option-label">
+                  <input type="radio" name="${q.id}" value="${optKey}">
+                  <span class="option-text"><strong>${optKey}.</strong> ${q.options[optKey]}</span>
+                </label>`;
+              });
+            } else {
+              html += `<input type="text" name="${q.id}" class="form-control" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);" placeholder="Escribe tu respuesta aquí...">`;
             }
 
-            html += `</div>`;
+            html += `</div></div>`;
           });
         }
 
@@ -501,6 +577,74 @@ document.addEventListener('DOMContentLoaded', () => {
 
       container.innerHTML = html;
     });
+  }
+
+  /* --- Guardar Progreso del Estudiante --- */
+  function setupSaveProgressButtons() {
+    const btnHeader = document.getElementById('btn-save-progress-header');
+    const btnBottom = document.getElementById('btn-save-progress-bottom');
+
+    if (btnHeader) btnHeader.addEventListener('click', () => saveProgress(true));
+    if (btnBottom) btnBottom.addEventListener('click', () => saveProgress(true));
+  }
+
+  async function saveProgress(showToast = true) {
+    const form = document.getElementById('ket-exam-form');
+    if (!form) return;
+
+    const formData = new FormData(form);
+    const answersObj = {};
+
+    formData.forEach((value, key) => {
+      if (value !== undefined && value !== null && value.toString().trim() !== '') {
+        answersObj[key] = value.toString().trim();
+      }
+    });
+
+    const payload = {
+      student: {
+        firstName: student.firstName || student.first_name,
+        lastName: student.lastName || student.last_name || '',
+        grade: student.grade || '6to',
+        username: student.username || ''
+      },
+      answers: answersObj,
+      attempt_time: student.attemptTime || student.startTime || new Date().toISOString()
+    };
+
+    try {
+      const response = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+      if (result.success && showToast) {
+        showSaveToast('💾 ¡Tu progreso ha sido guardado exitosamente!');
+      }
+    } catch (err) {
+      console.error('Error al guardar progreso:', err);
+      if (showToast) alert('No se pudo guardar el progreso. Verifica tu conexión a internet.');
+    }
+  }
+
+  function showSaveToast(message) {
+    let toast = document.getElementById('save-progress-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'save-progress-toast';
+      toast.className = 'toast-notification';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.display = 'block';
+    toast.style.opacity = '1';
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => { toast.style.display = 'none'; }, 300);
+    }, 3000);
   }
 
   /* --- Envío Final del Examen --- */
@@ -593,9 +737,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const btnExit = document.getElementById('btn-exit-exam');
   if (btnExit) {
-    btnExit.addEventListener('click', () => {
-      const confirmExit = confirm('¿Deseas salir del examen? Las respuestas no guardadas se perderán.');
+    btnExit.addEventListener('click', async () => {
+      const confirmExit = confirm('¿Deseas salir del examen? Puedes guardar tu progreso antes de salir.');
       if (confirmExit) {
+        await saveProgress(false);
         window.location.href = '/';
       }
     });

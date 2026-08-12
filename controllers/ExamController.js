@@ -52,15 +52,21 @@ class ExamController {
     }
   }
 
-  static getExamData(req, res) {
+  static async getExamData(req, res) {
     try {
       const studentId = req.query.studentId || req.query.student_id;
       let rwVersion = 0;
       let listeningVersion = 0;
+      let existingAnswers = {};
 
       if (studentId) {
         rwVersion = ExamModel.getVersionForStudent(studentId);
         listeningVersion = ExamModel.getListeningVersionForStudent(studentId);
+
+        const existingSub = await SubmissionModel.getByStudentId(studentId);
+        if (existingSub && existingSub.raw_answers_json) {
+          existingAnswers = existingSub.raw_answers_json;
+        }
       } else {
         if (req.query.version !== undefined) {
           rwVersion = parseInt(req.query.version, 10) || 0;
@@ -75,7 +81,8 @@ class ExamController {
         success: true,
         exam: sanitizedExam,
         version: rwVersion,
-        listeningVersion: listeningVersion
+        listeningVersion: listeningVersion,
+        existingAnswers: existingAnswers
       });
     } catch (error) {
       console.error('Error al obtener datos del examen:', error);

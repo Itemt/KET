@@ -20,8 +20,11 @@
         </div>
       </a>
 
-      <!-- BOTÓN REGRESAR / SALIR -->
+      <!-- BOTONES DE ACCIÓN -->
       <div style="display: flex; gap: 10px; align-items: center;">
+        <button type="button" id="btn-save-progress-header" class="btn" style="background: #e0f2fe; color: #0369a1; font-weight: 700; font-size: 0.85rem; border: 1px solid #bae6fd;">
+          💾 Guardar Progreso
+        </button>
         <button id="btn-exit-exam" class="btn" style="background: #f1f5f9; color: var(--dark); font-size: 0.85rem;">
           🚪 Salir del Examen
         </button>
@@ -291,9 +294,12 @@
         </div>
       </section>
 
-      <!-- BOTÓN PRINCIPAL DE ENVÍO FINAL -->
-      <div style="margin-top: 30px; text-align: center;">
-        <button type="submit" id="btn-submit-exam" class="btn btn-primary" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); border: none; padding: 16px 36px; font-size: 1.15rem; width: 100%; max-width: 450px;">
+      <!-- BOTONES PRINCIPALES DE GUARDADO Y ENVÍO -->
+      <div style="margin-top: 30px; display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+        <button type="button" id="btn-save-progress-bottom" class="btn" style="background: #e0f2fe; color: #0369a1; font-weight: 700; font-size: 1.05rem; padding: 16px 28px; border: 1px solid #bae6fd; min-width: 220px;">
+          💾 Guardar Progreso
+        </button>
+        <button type="submit" id="btn-submit-exam" class="btn btn-primary" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); border: none; padding: 16px 36px; font-size: 1.15rem; width: 100%; max-width: 350px;">
           🎧 Enviar Listening
         </button>
       </div>
