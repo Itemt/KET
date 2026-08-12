@@ -550,8 +550,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (part.questions) {
           part.questions.forEach(q => {
+            const questionTitleText = q.question || (q.label ? `<strong>${q.gapNumber || ''}. ${q.label}</strong> ${q.prompt || ''}` : '');
             html += `<div class="question-box">
-              <div class="question-title">${q.question}</div>
+              <div class="question-title">${questionTitleText}</div>
               <div class="options-group">`;
 
             if (part.type === 'matching' && part.options) {
