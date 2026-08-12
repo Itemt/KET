@@ -275,6 +275,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /* --- Construir Mapa de Preguntas y Respuestas Correctas --- */
+  function buildQuestionMap(fullExamData) {
+    const map = {};
+    if (!fullExamData || !fullExamData.sections) return map;
+
+    // Listening
+    if (fullExamData.sections.listening && fullExamData.sections.listening.audios) {
+      fullExamData.sections.listening.audios.forEach(audioObj => {
+        if (audioObj.parts) {
+          audioObj.parts.forEach(part => {
+            if (part.questions) {
+              part.questions.forEach(q => {
+                map[q.id] = {
+                  id: q.id,
+                  text: q.question || (q.label ? `${q.label} ${q.prompt || ''}` : `Pregunta ${q.id}`),
+                  correctAnswer: q.correctAnswer || (q.acceptableAnswers ? q.acceptableAnswers[0] : ''),
+                  acceptableAnswers: q.acceptableAnswers || []
+                };
+              });
+            }
+          });
+        }
+      });
+    }
+
+    // Reading & Writing
+    if (fullExamData.sections.reading_writing && fullExamData.sections.reading_writing.parts) {
+      fullExamData.sections.reading_writing.parts.forEach(part => {
+        if (part.questions) {
+          part.questions.forEach(q => {
+            map[q.id] = {
+              id: q.id,
+              text: q.question || (q.gapNumber ? `Gap (${q.gapNumber})` : `Pregunta ${q.id}`),
+              correctAnswer: q.correctAnswer || (q.acceptableAnswers ? q.acceptableAnswers[0] : ''),
+              acceptableAnswers: q.acceptableAnswers || []
+            };
+          });
+        }
+      });
+    }
+
+    return map;
+  }
+
   /* --- Ver Detalle de Entrega --- */
   window.viewSubmissionDetail = async function(id) {
     try {
@@ -298,15 +342,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const scoreTotalElem = document.getElementById('modal-score-total');
         if (scoreTotalElem) scoreTotalElem.textContent = `${sub.total_auto_score} / ${sub.max_auto_score || 148}`;
 
-        const p6Elem = document.getElementById('modal-writing-p6');
-        if (p6Elem) p6Elem.textContent = sub.writing_part6 || sub.bonus_writing || 'Sin respuesta redactada.';
+        // Textos del Writing (Partes 6 y 7)
+        const p6Text = (sub.writing_part6 || sub.bonus_writing || '').trim();
+        const p7Text = (sub.writing_part7 || '').trim();
 
-        const p7Elem = document.getElementById('modal-writing-p7');
-        if (p7Elem) p7Elem.textContent = sub.writing_part7 || 'Sin respuesta redactada.';
+        const p6Words = p6Text ? p6Text.split(/\s+/).length : 0;
+        const p7Words = p7Text ? p7Text.split(/\s+/).length : 0;
+
+        document.getElementById('modal-writing-p6').textContent = p6Text || 'Sin respuesta redactada por el alumno.';
+        document.getElementById('modal-writing-p7').textContent = p7Text || 'Sin respuesta redactada por el alumno.';
+
+        const badgeP6 = document.getElementById('badge-wordcount-p6');
+        if (badgeP6) badgeP6.textContent = `${p6Words} palabras ${p6Words >= 25 ? '✅ (Completado)' : '(mín. 25)'}`;
+
+        const badgeP7 = document.getElementById('badge-wordcount-p7');
+        if (badgeP7) badgeP7.textContent = `${p7Words} palabras ${p7Words >= 35 ? '✅ (Completado)' : '(mín. 35)'}`;
+
+        const questionMap = buildQuestionMap(sub.fullExamData);
 
         // Renderizar las respuestas individuales de Listening (100 Preguntas)
-        renderModalListeningAnswers(sub.raw_answers_json || {});
-        renderModalRWAnswers(sub.raw_answers_json || {});
+        renderModalListeningAnswers(sub.raw_answers_json || {}, questionMap);
+        renderModalRWAnswers(sub.raw_answers_json || {}, questionMap);
 
         detailModal.classList.add('active');
       } else {
@@ -317,65 +373,94 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  /* --- Renderizar Lista de Respuestas de Listening en Modal --- */
-  function renderModalListeningAnswers(answersObj) {
+  /* --- Renderizar Lista Completa de Respuestas de Listening (100 Preguntas) --- */
+  function renderModalListeningAnswers(answersObj, questionMap = {}) {
     const container = document.getElementById('modal-listening-answers-container');
     if (!container) return;
 
     let html = '';
-    let foundCount = 0;
+    let answeredCount = 0;
 
     for (let i = 1; i <= 100; i++) {
       const qKey = `listening_q${i}`;
-      const given = answersObj[qKey];
+      const given = answersObj[qKey] !== undefined && answersObj[qKey] !== null ? answersObj[qKey].toString().trim() : '';
+      const qDef = questionMap[qKey] || {};
 
-      if (given !== undefined && given !== null && given !== '') {
-        foundCount++;
-        let trackTag = 'Audio 1';
-        let trackBorder = '#06b6d4';
-        let tagBg = '#e0f2fe';
-        let tagColor = '#0369a1';
+      let trackTag = 'Audio 1';
+      let trackBorder = '#06b6d4';
+      let tagBg = '#e0f2fe';
+      let tagColor = '#0369a1';
 
-        if (i >= 26 && i <= 50) {
-          trackTag = 'Audio 2';
-          trackBorder = '#8b5cf6';
-          tagBg = '#f3e8ff';
-          tagColor = '#6d28d9';
-        } else if (i >= 51 && i <= 75) {
-          trackTag = 'Audio 3';
-          trackBorder = '#10b981';
-          tagBg = '#d1fae5';
-          tagColor = '#047857';
-        } else if (i >= 76) {
-          trackTag = 'Audio 4';
-          trackBorder = '#eab308';
-          tagBg = '#fef9c3';
-          tagColor = '#a16207';
+      if (i >= 26 && i <= 50) {
+        trackTag = 'Audio 2';
+        trackBorder = '#8b5cf6';
+        tagBg = '#f3e8ff';
+        tagColor = '#6d28d9';
+      } else if (i >= 51 && i <= 75) {
+        trackTag = 'Audio 3';
+        trackBorder = '#10b981';
+        tagBg = '#d1fae5';
+        tagColor = '#047857';
+      } else if (i >= 76) {
+        trackTag = 'Audio 4';
+        trackBorder = '#eab308';
+        tagBg = '#fef9c3';
+        tagColor = '#a16207';
+      }
+
+      const correctAns = qDef.correctAnswer || '';
+      let statusBadge = '';
+      let cardBg = '#f8fafc';
+
+      if (given) answeredCount++;
+
+      if (!given) {
+        statusBadge = `<span style="background: #fef3c7; color: #b45309; font-weight: 700; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px;">⚠️ Sin responder</span>`;
+      } else {
+        const isMatch = (correctAns && given.toLowerCase() === correctAns.toLowerCase()) || 
+                        (qDef.acceptableAnswers && qDef.acceptableAnswers.some(a => a.toLowerCase() === given.toLowerCase()));
+        if (isMatch) {
+          statusBadge = `<span style="background: #dcfce7; color: #15803d; font-weight: 700; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px;">✅ Correcto (+1)</span>`;
+          cardBg = '#f0fdf4';
+        } else {
+          statusBadge = `<span style="background: #fee2e2; color: #b91c1c; font-weight: 700; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px;">❌ Incorrecto</span>`;
+          cardBg = '#fef2f2';
         }
+      }
 
-        html += `
-          <div style="background: #f8fafc; border-left: 4px solid ${trackBorder}; padding: 10px 14px; border-radius: var(--radius-sm);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-weight: 700; font-size: 0.85rem; color: var(--dark);">Pregunta ${i} (${qKey}):</span>
+      const qTextDisplay = qDef.text ? `<div style="font-size: 0.88rem; color: var(--dark); font-weight: 600; margin-bottom: 6px;">${qDef.text}</div>` : '';
+
+      html += `
+        <div style="background: ${cardBg}; border-left: 4px solid ${trackBorder}; padding: 12px 16px; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 800; font-size: 0.9rem; color: var(--dark);">Pregunta ${i} (${qKey}):</span>
               <span style="font-size: 0.7rem; font-weight: 800; background: ${tagBg}; color: ${tagColor}; padding: 2px 6px; border-radius: 4px;">${trackTag}</span>
             </div>
-            <div style="font-size: 0.95rem; font-weight: 600; color: ${tagColor}; margin-top: 4px;">
-              📝 Respuesta alumno: <span style="background: white; border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 4px;">${given}</span>
-            </div>
+            ${statusBadge}
           </div>
-        `;
-      }
-    }
 
-    if (foundCount === 0) {
-      html = `<div style="grid-column: 1 / -1; color: var(--text-muted); padding: 15px; text-align: center; background: #f8fafc; border-radius: 8px;">No se registraron respuestas de Listening en esta entrega.</div>`;
+          ${qTextDisplay}
+
+          <div style="display: flex; gap: 16px; font-size: 0.9rem; flex-wrap: wrap; margin-top: 4px;">
+            <div style="font-weight: 600; color: var(--dark);">
+              📝 Alumno marcó: <span style="background: white; border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 4px; font-weight: 700;">${given || 'Sin respuesta'}</span>
+            </div>
+            ${correctAns ? `
+              <div style="font-weight: 600; color: #047857;">
+                ✅ Respuesta correcta: <span style="background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 4px; font-weight: 700;">${correctAns}</span>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
     }
 
     container.innerHTML = html;
   }
 
-  /* --- Renderizar Lista de Respuestas de Reading & Writing en Modal --- */
-  function renderModalRWAnswers(answersObj) {
+  /* --- Renderizar Lista Completa de Respuestas de Reading & Writing --- */
+  function renderModalRWAnswers(answersObj, questionMap = {}) {
     const container = document.getElementById('modal-rw-answers-container');
     if (!container) return;
 
@@ -385,12 +470,47 @@ document.addEventListener('DOMContentLoaded', () => {
     Object.keys(answersObj).sort().forEach(key => {
       if (key.startsWith('rw_')) {
         foundCount++;
-        const val = answersObj[key];
+        const given = (answersObj[key] || '').toString().trim();
+        const qDef = questionMap[key] || {};
+        const correctAns = qDef.correctAnswer || '';
+
+        let statusBadge = '';
+        let cardBg = '#f8fafc';
+
+        if (!given) {
+          statusBadge = `<span style="background: #fef3c7; color: #b45309; font-weight: 700; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px;">⚠️ Sin responder</span>`;
+        } else {
+          const isMatch = (correctAns && given.toLowerCase() === correctAns.toLowerCase()) || 
+                          (qDef.acceptableAnswers && qDef.acceptableAnswers.some(a => a.toLowerCase() === given.toLowerCase()));
+          if (isMatch) {
+            statusBadge = `<span style="background: #dcfce7; color: #15803d; font-weight: 700; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px;">✅ Correcto (+1)</span>`;
+            cardBg = '#f0fdf4';
+          } else {
+            statusBadge = `<span style="background: #fee2e2; color: #b91c1c; font-weight: 700; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px;">❌ Incorrecto</span>`;
+            cardBg = '#fef2f2';
+          }
+        }
+
+        const qTextDisplay = qDef.text ? `<div style="font-size: 0.88rem; color: var(--dark); font-weight: 600; margin-bottom: 6px;">${qDef.text}</div>` : '';
+
         html += `
-          <div style="background: #f8fafc; border-left: 4px solid var(--primary); padding: 10px 14px; border-radius: var(--radius-sm);">
-            <div style="font-weight: 700; font-size: 0.85rem; color: var(--dark);">${key}:</div>
-            <div style="font-size: 0.95rem; font-weight: 600; color: var(--primary); margin-top: 2px;">
-              📝 Respuesta: <span style="background: var(--primary-light); padding: 2px 8px; border-radius: 4px;">${val}</span>
+          <div style="background: ${cardBg}; border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+              <span style="font-weight: 800; font-size: 0.9rem; color: var(--dark);">${key}:</span>
+              ${statusBadge}
+            </div>
+
+            ${qTextDisplay}
+
+            <div style="display: flex; gap: 16px; font-size: 0.9rem; flex-wrap: wrap; margin-top: 4px;">
+              <div style="font-weight: 600; color: var(--dark);">
+                📝 Alumno marcó: <span style="background: white; border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 4px; font-weight: 700;">${given || 'Sin respuesta'}</span>
+              </div>
+              ${correctAns ? `
+                <div style="font-weight: 600; color: #047857;">
+                  ✅ Respuesta correcta: <span style="background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 4px; font-weight: 700;">${correctAns}</span>
+                </div>
+              ` : ''}
             </div>
           </div>
         `;

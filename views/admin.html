@@ -122,7 +122,7 @@
 
   <!-- MODAL DE DETALLE DE ENTREGA DE ALUMNO -->
   <div id="detail-modal" class="modal-overlay">
-    <div class="modal-card" style="max-width: 850px;">
+    <div class="modal-card" style="max-width: 900px;">
       <button class="modal-close-btn" id="modal-close-btn">&times;</button>
       
       <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; border-bottom: 2px solid var(--primary-light); padding-bottom: 14px;">
@@ -137,59 +137,65 @@
       <div style="background: var(--primary-light); border-radius: var(--radius-md); padding: 18px; margin-bottom: 24px;">
         <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 10px;">📊 Calificación Automática Registrada</h4>
         <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
-          <div>🎧 <strong>Listening:</strong> <span id="modal-score-listening" style="font-weight: 700; color: #0891b2;">0/25</span></div>
+          <div>🎧 <strong>Listening:</strong> <span id="modal-score-listening" style="font-weight: 700; color: #0891b2;">0/100</span></div>
           <div>📖 <strong>Reading & Writing:</strong> <span id="modal-score-rw" style="font-weight: 700; color: var(--primary);">0/48</span></div>
-          <div>🏆 <strong>Puntaje Total Auto:</strong> <span id="modal-score-total" class="score-pill score-high">0/73</span></div>
+          <div>🏆 <strong>Puntaje Total Auto:</strong> <span id="modal-score-total" class="score-pill score-high">0/148</span></div>
         </div>
       </div>
 
       <!-- PESTAÑAS DE DETALLE DENTRO DEL MODAL -->
-      <div style="display: flex; gap: 10px; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-        <button type="button" class="btn" id="btn-modal-tab-listening" style="background: #e0f2fe; color: #0369a1; font-weight: 700; padding: 6px 14px; font-size: 0.85rem;">
-          🎧 Respuestas Listening (25 Preguntas)
+      <div style="display: flex; gap: 10px; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap;">
+        <button type="button" class="btn" id="btn-modal-tab-listening" style="background: #e0f2fe; color: #0369a1; font-weight: 700; padding: 8px 16px; font-size: 0.88rem;">
+          🎧 Respuestas Listening (100 Preguntas)
         </button>
-        <button type="button" class="btn" id="btn-modal-tab-rw" style="background: #f1f5f9; color: var(--text-muted); font-weight: 700; padding: 6px 14px; font-size: 0.85rem;">
-          📖 Reading & Writing
+        <button type="button" class="btn" id="btn-modal-tab-rw" style="background: #f1f5f9; color: var(--text-muted); font-weight: 700; padding: 8px 16px; font-size: 0.88rem;">
+          📖 Reading & Writing (48 Preguntas)
         </button>
-        <button type="button" class="btn" id="btn-modal-tab-writing" style="background: #f1f5f9; color: var(--text-muted); font-weight: 700; padding: 6px 14px; font-size: 0.85rem;">
-          ✍️ Producción Escrita
+        <button type="button" class="btn" id="btn-modal-tab-writing" style="background: #f1f5f9; color: var(--text-muted); font-weight: 700; padding: 8px 16px; font-size: 0.88rem;">
+          ✍️ Producción Escrita (Partes 6 y 7)
         </button>
       </div>
 
       <!-- DESGLOSE RESPUESTAS LISTENING -->
       <div id="modal-tab-listening-content" style="margin-bottom: 24px;">
-        <h4 style="font-weight: 700; color: #0891b2; margin-bottom: 12px;">
-          🎧 Respuestas Seleccionadas por el Alumno — Listening (Audio 1)
+        <h4 style="font-weight: 700; color: #0891b2; margin-bottom: 14px;">
+          🎧 Respuestas Seleccionadas por el Alumno — Listening (Audios 1, 2, 3 y 4)
         </h4>
-        <div id="modal-listening-answers-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px;">
+        <div id="modal-listening-answers-container" style="display: flex; flex-direction: column; gap: 12px; max-height: 500px; overflow-y: auto; padding-right: 8px;">
           <div style="color: var(--text-muted);">Cargando respuestas de Listening...</div>
         </div>
       </div>
 
       <!-- DESGLOSE RESPUESTAS READING & WRITING -->
       <div id="modal-tab-rw-content" style="margin-bottom: 24px; display: none;">
-        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 12px;">
+        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 14px;">
           📖 Respuestas Seleccionadas por el Alumno — Reading & Writing
         </h4>
-        <div id="modal-rw-answers-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px;">
+        <div id="modal-rw-answers-container" style="display: flex; flex-direction: column; gap: 12px; max-height: 500px; overflow-y: auto; padding-right: 8px;">
           <div style="color: var(--text-muted);">Cargando respuestas de Reading & Writing...</div>
         </div>
       </div>
 
       <!-- SECCIÓN WRITING PRODUCTIVO -->
       <div id="modal-tab-writing-content" style="margin-bottom: 24px; display: none;">
-        <h4 style="font-weight: 700; color: var(--dark); margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
-          ✍️ Producción Escrita (Writing)
+        <h4 style="font-weight: 700; color: var(--dark); margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          ✍️ Respuestas de Redacción del Alumno (Producción Escrita)
         </h4>
 
-        <div style="margin-bottom: 16px;">
-          <h5 style="font-weight: 600; color: var(--text-main); margin-bottom: 4px;">Part 6: Email a un amigo (Mínimo 25 palabras)</h5>
-          <div id="modal-writing-p6" class="context-box" style="white-space: pre-wrap; font-family: inherit;">Sin respuesta</div>
+        <div style="background: #f8fafc; border-left: 5px solid #6366f1; padding: 18px; border-radius: var(--radius-md); margin-bottom: 20px; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h5 style="font-weight: 700; color: #4338ca; font-size: 1rem; margin: 0;">✉️ Part 6: Email / Nota Corta (Mínimo 25 palabras)</h5>
+            <span id="badge-wordcount-p6" style="font-size: 0.8rem; font-weight: 700; background: #e0e7ff; color: #3730a3; padding: 4px 10px; border-radius: 20px;">0 palabras</span>
+          </div>
+          <div id="modal-writing-p6" style="white-space: pre-wrap; font-family: inherit; background: white; border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; font-size: 0.95rem; color: var(--dark); line-height: 1.6; min-height: 70px;">Sin respuesta redactada.</div>
         </div>
 
-        <div>
-          <h5 style="font-weight: 600; color: var(--text-main); margin-bottom: 4px;">Part 7: Historia en la playa (Mínimo 35 palabras)</h5>
-          <div id="modal-writing-p7" class="context-box" style="white-space: pre-wrap; font-family: inherit;">Sin respuesta</div>
+        <div style="background: #f8fafc; border-left: 5px solid #8b5cf6; padding: 18px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h5 style="font-weight: 700; color: #6d28d9; font-size: 1rem; margin: 0;">🖼️ Part 7: Historia Basada en Imágenes (Mínimo 35 palabras)</h5>
+            <span id="badge-wordcount-p7" style="font-size: 0.8rem; font-weight: 700; background: #f3e8ff; color: #5b21b6; padding: 4px 10px; border-radius: 20px;">0 palabras</span>
+          </div>
+          <div id="modal-writing-p7" style="white-space: pre-wrap; font-family: inherit; background: white; border: 1px solid var(--border-color); padding: 14px; border-radius: 8px; font-size: 0.95rem; color: var(--dark); line-height: 1.6; min-height: 70px;">Sin respuesta redactada.</div>
         </div>
       </div>
 

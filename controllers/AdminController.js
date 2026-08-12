@@ -1,5 +1,6 @@
 const path = require('path');
 const SubmissionModel = require('../models/SubmissionModel');
+const ExamModel = require('../models/ExamModel');
 
 const ADMIN_PASSCODE = process.env.ADMIN_PASSCODE || "ket2026";
 
@@ -35,6 +36,11 @@ class AdminController {
       if (!submission) {
         return res.status(404).json({ success: false, message: 'Entrega no encontrada.' });
       }
+
+      // Adjuntar datos completos del examen (incluyendo respuestas correctas y enunciados)
+      const rwVersion = ExamModel.getVersionForStudent(submission.student_id);
+      const listeningVersion = ExamModel.getListeningVersionForStudent(submission.student_id);
+      submission.fullExamData = ExamModel.getFullExamData(rwVersion, listeningVersion);
 
       res.json({ success: true, submission });
     } catch (error) {
