@@ -5,7 +5,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   let submissionsList = [];
   let currentPasscode = '';
-  let activeTab = 'main'; // 'main' o 'bonus'
 
   // Elementos DOM
   const loginOverlay = document.getElementById('admin-login-overlay');
@@ -21,28 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const detailModal = document.getElementById('detail-modal');
   const modalCloseBtn = document.getElementById('modal-close-btn');
   const btnLogout = document.getElementById('btn-admin-logout');
-
-  // Pestañas Principales Admin
-  const tabBtnMain = document.getElementById('tab-btn-main');
-  const tabBtnBonus = document.getElementById('tab-btn-bonus');
-
-  if (tabBtnMain) {
-    tabBtnMain.addEventListener('click', () => {
-      activeTab = 'main';
-      tabBtnMain.classList.add('active');
-      if (tabBtnBonus) tabBtnBonus.classList.remove('active');
-      loadSubmissions();
-    });
-  }
-
-  if (tabBtnBonus) {
-    tabBtnBonus.addEventListener('click', () => {
-      activeTab = 'bonus';
-      tabBtnBonus.classList.add('active');
-      if (tabBtnMain) tabBtnMain.classList.remove('active');
-      loadSubmissions();
-    });
-  }
 
   // Pestañas internas del Modal Detalle
   setupModalTabSwitcher();
@@ -108,8 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Cargando lista de entregas...</td></tr>`;
 
-      const endpoint = activeTab === 'bonus' ? '/api/bonus/submissions' : '/api/admin/submissions';
-      const res = await fetch(endpoint);
+      const res = await fetch('/api/admin/submissions');
       const data = await res.json();
 
       if (data.success) {
@@ -134,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const avg = list.length > 0 ? (totalScore / list.length).toFixed(1) : 0;
-    const maxSample = list.length > 0 ? list[0].max_auto_score : (activeTab === 'bonus' ? 33 : 148);
+    const maxSample = list.length > 0 ? list[0].max_auto_score : 148;
 
     const avgElem = document.getElementById('stat-avg-score');
     if (avgElem) avgElem.textContent = `${avg} / ${maxSample}`;
@@ -146,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tbody.innerHTML = `
         <tr>
           <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">
-            ${activeTab === 'bonus' ? 'No hay entregas registradas en el Examen Bonus aún.' : 'No hay respuestas registradas aún.'}
+            No hay respuestas registradas aún.
           </td>
         </tr>
       `;
@@ -165,55 +141,39 @@ document.addEventListener('DOMContentLoaded', () => {
         hour: '2-digit', minute: '2-digit', second: '2-digit'
       }) : 'No registrada';
 
-      if (activeTab === 'bonus') {
-        html += `
-          <tr>
-            <td><strong>#${sub.submission_id}</strong></td>
-            <td><div style="font-weight: 700; color: var(--dark);">${sub.first_name} ${sub.last_name}</div></td>
-            <td><span style="font-weight: 600; color: var(--primary);">${sub.grade}</span></td>
-            <td colspan="2"><span class="score-pill score-high">🚀 Bonus Completo</span></td>
-            <td><span class="score-pill ${badgeClass}">${sub.total_auto_score} / ${sub.max_auto_score} (${Math.round(percentage)}%)</span></td>
-            <td style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">🕒 ${formattedAttempt}</td>
-            <td>
-              <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="viewSubmissionDetail(${sub.submission_id})">👁️ Ver</button>
-            </td>
-          </tr>
-        `;
-      } else {
-        html += `
-          <tr>
-            <td><strong>#${sub.submission_id}</strong></td>
-            <td><div style="font-weight: 700; color: var(--dark);">${sub.first_name} ${sub.last_name}</div></td>
-            <td><span style="font-weight: 600; color: var(--primary);">${sub.grade}</span></td>
-            <td>
-              <span class="score-pill score-high" style="background: #e0f2fe; color: #0369a1;">
-                🎧 ${sub.score_listening || 0} / 100
-              </span>
-            </td>
-            <td>
-              <span class="score-pill score-med">
-                📖 ${sub.score_reading_writing || 0} / 48
-              </span>
-            </td>
-            <td>
-              <span class="score-pill ${badgeClass}">
-                🏆 ${sub.total_auto_score} / ${sub.max_auto_score || 148} (${Math.round(percentage)}%)
-              </span>
-            </td>
-            <td style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">🕒 ${formattedAttempt}</td>
-            <td>
-              <div style="display: flex; gap: 8px;">
-                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="viewSubmissionDetail(${sub.submission_id})">
-                  👁️ Ver
-                </button>
-                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="deleteSubmissionItem(${sub.submission_id})">
-                  🗑️
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }
+      html += `
+        <tr>
+          <td><strong>#${sub.submission_id}</strong></td>
+          <td><div style="font-weight: 700; color: var(--dark);">${sub.first_name} ${sub.last_name}</div></td>
+          <td><span style="font-weight: 600; color: var(--primary);">${sub.grade}</span></td>
+          <td>
+            <span class="score-pill score-high" style="background: #e0f2fe; color: #0369a1;">
+              🎧 ${sub.score_listening || 0} / 100
+            </span>
+          </td>
+          <td>
+            <span class="score-pill score-med">
+              📖 ${sub.score_reading_writing || 0} / 48
+            </span>
+          </td>
+          <td>
+            <span class="score-pill ${badgeClass}">
+              🏆 ${sub.total_auto_score} / ${sub.max_auto_score || 148} (${Math.round(percentage)}%)
+            </span>
+          </td>
+          <td style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">🕒 ${formattedAttempt}</td>
+          <td>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="viewSubmissionDetail(${sub.submission_id})">
+                👁️ Ver
+              </button>
+              <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="deleteSubmissionItem(${sub.submission_id})">
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
     });
 
     tbody.innerHTML = html;
@@ -322,8 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Ver Detalle de Entrega --- */
   window.viewSubmissionDetail = async function(id) {
     try {
-      const endpoint = activeTab === 'bonus' ? `/api/bonus/submissions/${id}` : `/api/admin/submissions/${id}`;
-      const res = await fetch(endpoint);
+      const res = await fetch(`/api/admin/submissions/${id}`);
       const data = await res.json();
 
       if (data.success) {
@@ -343,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (scoreTotalElem) scoreTotalElem.textContent = `${sub.total_auto_score} / ${sub.max_auto_score || 148}`;
 
         // Textos del Writing (Partes 6 y 7)
-        const p6Text = (sub.writing_part6 || sub.bonus_writing || '').trim();
+        const p6Text = (sub.writing_part6 || '').trim();
         const p7Text = (sub.writing_part7 || '').trim();
 
         const p6Words = p6Text ? p6Text.split(/\s+/).length : 0;
@@ -537,8 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!confirmDelete) return;
 
     try {
-      const endpoint = activeTab === 'bonus' ? `/api/bonus/submissions/${id}` : `/api/admin/submissions/${id}`;
-      const res = await fetch(endpoint, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/submissions/${id}`, { method: 'DELETE' });
       const data = await res.json();
 
       if (data.success) {
