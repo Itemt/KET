@@ -100,20 +100,70 @@ class ExamController {
 
       const rwVersion = ExamModel.getVersionForStudent(studentRecord.id);
       const listeningVersion = ExamModel.getListeningVersionForStudent(studentRecord.id);
-      const evaluation = ExamModel.evaluateAnswers(answers || {}, rwVersion, listeningVersion);
 
-      const submissionId = await SubmissionModel.save({
-        student_id: studentRecord.id,
-        attempt_time: attempt_time || student.startTime || student.attemptTime || new Date().toISOString(),
-        score_reading_writing: evaluation.score_reading_writing,
-        score_listening: evaluation.score_listening,
-        total_auto_score: evaluation.total_auto_score,
-        max_auto_score: evaluation.max_auto_score,
-        writing_part6: answers ? answers.writing_part6 || '' : '',
-        writing_part7: answers ? answers.writing_part7 || '' : '',
-        speaking_audio_url: speaking_audio_url || '',
-        raw_answers_json: answers || {}
-      });
+      // Verificar si ya existe una entrega previa de este estudiante para fusionar (MERGE)
+      const existingSubmission = await SubmissionModel.getByStudentId(studentRecord.id);
+
+      let mergedAnswers = {};
+      let finalWritingPart6 = '';
+      let finalWritingPart7 = '';
+
+      if (existingSubmission && existingSubmission.raw_answers_json) {
+        mergedAnswers = { ...existingSubmission.raw_answers_json };
+        finalWritingPart6 = existingSubmission.writing_part6 || '';
+        finalWritingPart7 = existingSubmission.writing_part7 || '';
+      }
+
+      // Fusionar las respuestas entrantes sobre las existentes (sin borrar la otra sección)
+      if (answers && typeof answers === 'object') {
+        Object.keys(answers).forEach(key => {
+          const val = answers[key];
+          if (val !== undefined && val !== null && val.toString().trim() !== '') {
+            mergedAnswers[key] = val.toString().trim();
+          }
+        });
+
+        if (answers.writing_part6 && answers.writing_part6.trim() !== '') {
+          finalWritingPart6 = answers.writing_part6.trim();
+        }
+        if (answers.writing_part7 && answers.writing_part7.trim() !== '') {
+          finalWritingPart7 = answers.writing_part7.trim();
+        }
+      }
+
+      // Evaluar sobre el conjunto fusionado completo
+      const evaluation = ExamModel.evaluateAnswers(mergedAnswers, rwVersion, listeningVersion);
+
+      let submissionId;
+      if (existingSubmission) {
+        // Actualizar la entrega existente conservando los datos de la otra sección
+        submissionId = existingSubmission.id || existingSubmission.submission_id;
+        await SubmissionModel.update(submissionId, {
+          attempt_time: attempt_time || existingSubmission.attempt_time || new Date().toISOString(),
+          score_reading_writing: evaluation.score_reading_writing,
+          score_listening: evaluation.score_listening,
+          total_auto_score: evaluation.total_auto_score,
+          max_auto_score: evaluation.max_auto_score,
+          writing_part6: finalWritingPart6,
+          writing_part7: finalWritingPart7,
+          speaking_audio_url: speaking_audio_url || existingSubmission.speaking_audio_url || '',
+          raw_answers_json: mergedAnswers
+        });
+      } else {
+        // Crear nueva entrega
+        submissionId = await SubmissionModel.save({
+          student_id: studentRecord.id,
+          attempt_time: attempt_time || new Date().toISOString(),
+          score_reading_writing: evaluation.score_reading_writing,
+          score_listening: evaluation.score_listening,
+          total_auto_score: evaluation.total_auto_score,
+          max_auto_score: evaluation.max_auto_score,
+          writing_part6: finalWritingPart6,
+          writing_part7: finalWritingPart7,
+          speaking_audio_url: speaking_audio_url || '',
+          raw_answers_json: mergedAnswers
+        });
+      }
 
       res.json({
         success: true,

@@ -496,14 +496,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleSubmission = async (e) => {
       if (e) e.preventDefault();
 
-      const confirmSubmit = confirm('¿Estás seguro de enviar tu Examen KET A2? Revisa bien que hayas completado tus respuestas de Audios 1, 2, 3, 4 y 5 y Reading & Writing.');
+      const confirmSubmit = confirm('¿Estás seguro de enviar tus respuestas del examen? Se guardará y actualizará el puntaje de tus respuestas.');
       if (!confirmSubmit) return;
 
       const formData = new FormData(form);
       const answersObj = {};
 
       formData.forEach((value, key) => {
-        answersObj[key] = value;
+        if (value !== undefined && value !== null && value.toString().trim() !== '') {
+          answersObj[key] = value.toString().trim();
+        }
       });
 
       const payload = {
