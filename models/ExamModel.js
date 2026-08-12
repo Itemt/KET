@@ -115,7 +115,7 @@ class ExamModel {
         },
 
         listening: {
-          title: "Listening Section (Audio 1 & Audio 2)",
+          title: "Listening Section (Audios 1, 2, 3, 4 & 5)",
           timeLimit: "30 minutes",
           versionId: lData.versionId,
           audios: lData.audios

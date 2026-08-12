@@ -1,16 +1,17 @@
 /**
- * MAESTRO DE 3 VERSIONES DE LISTENING KET (A2 KEY) - AUDIOS 1, 2, 3 Y 4
- * Cada versión contiene 100 preguntas de Listening divididas en los 4 Audios:
+ * MAESTRO DE 3 VERSIONES DE LISTENING KET (A2 KEY) - AUDIOS 1, 2, 3, 4 Y 5
+ * Cada versión contiene 125 preguntas de Listening divididas en los 5 Audios:
  * - Audio 1: /audio/audio1.mp3 (Technology Summer Camp) -> 25 preguntas (Q1-Q25)
  * - Audio 2: /audio/audio2.mp3 (School Stress & Healthy Habits) -> 25 preguntas (Q26-Q50)
  * - Audio 3: /audio/audio3.mp3 (End-of-term Party Dialogue: Sarah & Tom) -> 25 preguntas (Q51-Q75)
- * - Audio 4: /audio/audio4.mp3 (Mega Tech & Nature Park School Trip Announcement) -> 25 preguntas (Q76-Q100)
- * Total por versión: 100 preguntas de Listening (300 preguntas únicas en total)
+ * - Audio 4: /audio/audio4.mp3 (Mega Tech & Nature Park School Trip) -> 25 preguntas (Q76-Q100)
+ * - Audio 5: /audio/audio5.mp3 (Annual Young Inventors Competition) -> 25 preguntas (Q101-Q125)
+ * Total por versión: 125 preguntas de Listening (375 preguntas únicas en total)
  */
 
 const listeningVersions = [
   /* ==========================================================================
-     VERSION 0 (Set A - 100 Preguntas KET)
+     VERSION 0 (Set A - 125 Preguntas KET)
      ========================================================================== */
   {
     versionId: 0,
@@ -306,12 +307,85 @@ const listeningVersions = [
             ]
           }
         ]
+      },
+
+      {
+        id: "audio5",
+        audioUrl: "/audio/audio5.mp3",
+        audioTitle: "Audio 5: Annual Young Inventors Competition Announcement",
+        parts: [
+          {
+            part: 1,
+            title: "Audio 5 — Part 1: Event Details & Dates (Questions 101–105)",
+            instructions: "Listen to the announcement about the Young Inventors Competition. For questions 101–105, choose the correct answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q101", question: "101. What date will the Annual Young Inventors Competition take place?", options: { A: "Friday, October 10th", B: "Saturday, October 24th", C: "Saturday, November 24th" }, correctAnswer: "B" },
+              { id: "listening_q102", question: "102. What is the application deadline for entering the competition?", options: { A: "Friday, October 10th", B: "Saturday, October 24th", C: "Friday, November 1st" }, correctAnswer: "A" },
+              { id: "listening_q103", question: "103. Where will the competition be held?", options: { A: "Science Center", B: "Main school gymnasium", C: "School cafeteria" }, correctAnswer: "B" },
+              { id: "listening_q104", question: "104. How much is the registration fee for school student teams?", options: { A: "15 dollars", B: "10 dollars", C: "5 dollars" }, correctAnswer: "B" },
+              { id: "listening_q105", question: "105. What item MUST students bring from home?", options: { A: "Display table", B: "Lunch", C: "Water bottle" }, correctAnswer: "C" }
+            ]
+          },
+          {
+            part: 2,
+            title: "Audio 5 — Part 2: Information Completion (Questions 106–110)",
+            instructions: "Listen to the announcement and complete questions 106–110. Write ONE word, number, or time in each gap.",
+            type: "gap_fill",
+            questions: [
+              { id: "listening_q106", gapNumber: 106, label: "Doors Open for Setup:", prompt: "______ AM", correctAnswer: "8:30", acceptableAnswers: ["8:30", "8:30 am", "8:30 AM"] },
+              { id: "listening_q107", gapNumber: 107, label: "Team Registration Fee:", prompt: "$______", correctAnswer: "10", acceptableAnswers: ["10", "$10"] },
+              { id: "listening_q108", gapNumber: 108, label: "Maximum Team Members:", prompt: "______ students", correctAnswer: "3", acceptableAnswers: ["3", "three", "Three"] },
+              { id: "listening_q109", gapNumber: 109, label: "Student Coordinator:", prompt: "______", correctAnswer: "sarah", acceptableAnswers: ["sarah", "Sarah"] },
+              { id: "listening_q110", gapNumber: 110, label: "Overall First Place Prize:", prompt: "3D ______", correctAnswer: "printer", acceptableAnswers: ["printer", "Printer"] }
+            ]
+          },
+          {
+            part: 3,
+            title: "Audio 5 — Part 3: Schedule & Materials (Questions 111–115)",
+            instructions: "Listen to Audio 5 again. For questions 111–115, choose the best answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q111", question: "111. What time do project presentations start?", options: { A: "8:30 AM", B: "9:15 AM", C: "10:00 AM" }, correctAnswer: "B" },
+              { id: "listening_q112", question: "112. What materials does the speaker encourage students to use for their inventions?", options: { A: "Expensive tech kits", B: "Recycled materials like cardboard and plastic bottles", C: "Heavy metal" }, correctAnswer: "B" },
+              { id: "listening_q113", question: "113. Which of the following is STRICTLY FORBIDDEN due to safety rules?", options: { A: "Recycled cardboard", B: "Open flames or dangerous chemicals", C: "Participant badges" }, correctAnswer: "B" },
+              { id: "listening_q114", question: "114. Who will judge the Robotics and Smart Gadgets category?", options: { A: "Mr. Evans", B: "Ms. Davis", C: "Dr. Miller" }, correctAnswer: "A" },
+              { id: "listening_q115", question: "115. What time will the official awards ceremony take place?", options: { A: "2:00 PM", B: "3:00 PM", C: "4:00 PM" }, correctAnswer: "B" }
+            ]
+          },
+          {
+            part: 4,
+            title: "Audio 5 — Part 4: Detailed Comprehension (Questions 116–120)",
+            instructions: "For questions 116–120, choose the correct answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q116", question: "116. When was the competition originally planned before being moved forward?", options: { A: "In September", B: "In November", C: "In December" }, correctAnswer: "B" },
+              { id: "listening_q117", question: "117. What does the 10 dollar registration fee cover?", options: { A: "Display table and official participant badges", B: "3D printer and trophy", C: "Bus transport" }, correctAnswer: "A" },
+              { id: "listening_q118", question: "118. What document must every team submit to Sarah at the registration desk?", options: { A: "A ten-page report", B: "A one-page printed summary", C: "A photo of their team" }, correctAnswer: "B" },
+              { id: "listening_q119", question: "119. Who will judge the Green Energy and Recycling inventions category?", options: { A: "Mr. Evans", B: "Ms. Davis", C: "Dr. Miller" }, correctAnswer: "B" },
+              { id: "listening_q120", question: "120. What will the overall first-place winning team receive besides trophy cups?", options: { A: "100 dollars cash", B: "A 3D printer for the school tech lab", C: "Free entry next year" }, correctAnswer: "B" }
+            ]
+          },
+          {
+            part: 5,
+            title: "Audio 5 — Part 5: Final Review & Rules (Questions 121–125)",
+            instructions: "For questions 121–125, choose the correct answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q121", question: "121. How many students at maximum can work together in one team?", options: { A: "Two", B: "Three", C: "Five" }, correctAnswer: "B" },
+              { id: "listening_q122", question: "122. Do registered participants need to buy lunch at the event?", options: { A: "Yes, 15 dollars for lunch", B: "No, lunch is provided for all registered participants", C: "Only if they arrive after 12:00 PM" }, correctAnswer: "B" },
+              { id: "listening_q123", question: "123. Who is judging the Health Tech and Wellness devices category?", options: { A: "Mr. Evans", B: "Ms. Davis", C: "Dr. Miller" }, correctAnswer: "C" },
+              { id: "listening_q124", question: "124. Until what time can the public and judges visit project stands?", options: { A: "12:00 PM", B: "2:00 PM", C: "3:00 PM" }, correctAnswer: "B" },
+              { id: "listening_q125", question: "125. Where can Sarah, the student coordinator, be found on October 24th?", options: { A: "At the registration desk inside the gym lobby", B: "In the school tech lab", C: "Outside at the bus stop" }, correctAnswer: "A" }
+            ]
+          }
+        ]
       }
     ]
   },
 
   /* ==========================================================================
-     VERSION 1 (Set B - 100 Preguntas KET)
+     VERSION 1 (Set B - 125 Preguntas KET)
      ========================================================================== */
   {
     versionId: 1,
@@ -444,7 +518,7 @@ const listeningVersions = [
               { id: "listening_q42", question: "42. What days of the week does Leo go swimming?", options: { A: "Mondays and Wednesdays", B: "Tuesdays and Thursdays", C: "Saturdays and Sundays" }, correctAnswer: "B" },
               { id: "listening_q43", question: "43. What plan do Leo and Mark have for this Saturday afternoon?", options: { A: "Go to the sports center", B: "Play video games together", C: "Study for Math" }, correctAnswer: "B" },
               { id: "listening_q44", question: "44. Why couldn't Leo get help from Mr. Brown?", options: { A: "Mr. Brown was absent.", B: "Mr. Brown is always very busy.", C: "Mr. Brown charges money." }, correctAnswer: "B" },
-              { id: "listening_q45", question: "45. What advice does Leo give about stress at the end of his presentation?", options: { A: "Don't tell anyone.", B: "You should talk to someone and not keep it a secret.", C: "Sleep at midnight." }, correctAnswer: "B" }
+              { id: "listening_q45", question: "45. What advice does Leo give about stress at the end of his presentation?", options: { A: "Don't tell anyone.", B: "You should talk to someone and not keep it a secret.", C: "Stop playing video games." }, correctAnswer: "B" }
             ]
           },
           {
@@ -457,7 +531,7 @@ const listeningVersions = [
               { id: "listening_q47", question: "47. Who makes natural orange juice for Leo?", options: { A: "His sister Emma", B: "His mom", C: "The cafeteria staff" }, correctAnswer: "B" },
               { id: "listening_q48", question: "48. Where was Leo's leg injured last year?", options: { A: "Right leg", B: "Left leg", C: "Both legs" }, correctAnswer: "B" },
               { id: "listening_q49", question: "49. How old is Leo's sister Emma?", options: { A: "17", B: "19", C: "21" }, correctAnswer: "B" },
-              { id: "listening_q50", question: "50. What day of the week does Emma help Leo with Math?", options: { A: "Saturday afternoon", B: "Sunday morning", C: "Monday evening" }, correctAnswer: "B" }
+              { id: "listening_q50", question: "50. What day of the week does Emma help Leo with Math?", options: { A: "Saturday afternoon", B: "Sunday morning", C: "Friday nights" }, correctAnswer: "B" }
             ]
           }
         ]
@@ -474,11 +548,11 @@ const listeningVersions = [
             instructions: "Listen to the dialogue between Sarah and Tom about the party. For questions 51–55, choose the correct answer (A, B, or C).",
             type: "multiple_choice",
             questions: [
-              { id: "listening_q51", question: "51. What is Sarah hosting at her house on Saturday the 15th?", options: { A: "A birthday party", B: "An end-of-term party", C: "A study group" }, correctAnswer: "B" },
-              { id: "listening_q52", question: "52. What does Tom's mom insist he clean before going out?", options: { A: "The garage", B: "His bedroom", C: "The kitchen" }, correctAnswer: "B" },
-              { id: "listening_q53", question: "53. Does Tom have to take out the trash?", options: { A: "Yes, every day", B: "No, that is his older brother's job", C: "Yes, before 4:00 PM" }, correctAnswer: "B" },
-              { id: "listening_q54", question: "54. What time does the party official finish, and by when must everyone leave?", options: { A: "Finishes at 7:00 PM, leave by 8:00 PM", B: "Finishes at 8:00 PM, leave by 8:30 PM", C: "Finishes at 9:00 PM, leave by 9:30 PM" }, correctAnswer: "B" },
-              { id: "listening_q55", question: "55. What lesson does Tom have at 3:30 PM on Saturday?", options: { A: "Guitar lesson", B: "Piano lesson", C: "Swimming lesson" }, correctAnswer: "B" }
+              { id: "listening_q51", question: "51. What date is Sarah's end-of-term party taking place?", options: { A: "Saturday the 12th", B: "Saturday the 15th", C: "Sunday the 16th" }, correctAnswer: "B" },
+              { id: "listening_q52", question: "52. Why did Tom's mom initially say no to the party?", options: { A: "He didn't study for exams", B: "His bedroom was very messy", C: "He was sick" }, correctAnswer: "B" },
+              { id: "listening_q53", question: "53. Whose job is it to take out the trash at Tom's house?", options: { A: "Tom's", B: "Tom's older brother's", C: "Tom's mother's" }, correctAnswer: "B" },
+              { id: "listening_q54", question: "54. What time must everyone leave Sarah's house by?", options: { A: "8:00 PM", B: "8:30 PM", C: "9:00 PM" }, correctAnswer: "B" },
+              { id: "listening_q55", question: "55. Why will Tom arrive at the party at 4:30 PM instead of 4:00 PM?", options: { A: "He has a football match", B: "He has a piano lesson at 3:30 PM", C: "He takes the bus" }, correctAnswer: "B" }
             ]
           },
           {
@@ -487,11 +561,11 @@ const listeningVersions = [
             instructions: "Listen to the dialogue and complete questions 56–60. Write ONE word, number, or time in each gap.",
             type: "gap_fill",
             questions: [
-              { id: "listening_q56", gapNumber: 56, label: "Party Date:", prompt: "Saturday the ______", correctAnswer: "15", acceptableAnswers: ["15", "15th"] },
-              { id: "listening_q57", gapNumber: 57, label: "Brother's Job:", prompt: "Take out the ______", correctAnswer: "trash", acceptableAnswers: ["trash", "Trash", "garbage"] },
-              { id: "listening_q58", gapNumber: 58, label: "Sister's Bedtime:", prompt: "______ PM", correctAnswer: "9:00", acceptableAnswers: ["9:00", "9", "9:00 pm", "9:00 PM"] },
-              { id: "listening_q59", gapNumber: 59, label: "Pizza Price:", prompt: "$______", correctAnswer: "15", acceptableAnswers: ["15", "$15"] },
-              { id: "listening_q60", gapNumber: 60, label: "Game Genre:", prompt: "______ games", correctAnswer: "racing", acceptableAnswers: ["racing", "Racing"] }
+              { id: "listening_q56", gapNumber: 56, label: "Party Location:", prompt: "Living ______", correctAnswer: "room", acceptableAnswers: ["room", "Room"] },
+              { id: "listening_q57", gapNumber: 57, label: "Pizza Quantity:", prompt: "______ large pizzas", correctAnswer: "3", acceptableAnswers: ["3", "three", "Three"] },
+              { id: "listening_q58", gapNumber: 58, label: "Drinks Supplier:", prompt: "______", correctAnswer: "leo", acceptableAnswers: ["leo", "Leo"] },
+              { id: "listening_q59", gapNumber: 59, label: "Snack Tom is bringing:", prompt: "Potato ______", correctAnswer: "chips", acceptableAnswers: ["chips", "Chips"] },
+              { id: "listening_q60", gapNumber: 60, label: "Shoe Leaving Location:", prompt: "In the ______", correctAnswer: "hall", acceptableAnswers: ["hall", "Hall"] }
             ]
           },
           {
@@ -500,11 +574,11 @@ const listeningVersions = [
             instructions: "Listen to Audio 3 again. For questions 61–65, choose the best answer (A, B, or C).",
             type: "multiple_choice",
             questions: [
-              { id: "listening_q61", question: "61. Why won't the party be held in the garden?", options: { A: "It's raining", B: "It's too hot outside in the afternoon", C: "The garden has bees" }, correctAnswer: "B" },
-              { id: "listening_q62", question: "62. Who bought three large pizzas for the party?", options: { A: "Sarah", B: "Anna", C: "Mia" }, correctAnswer: "B" },
-              { id: "listening_q63", question: "63. What drinks is Leo bringing?", options: { A: "Sodas and water", B: "Orange juice", C: "Energy drinks" }, correctAnswer: "A" },
-              { id: "listening_q64", question: "64. What item is Mia bringing?", options: { A: "Video games", B: "The music speaker", C: "Potato chips" }, correctAnswer: "B" },
-              { id: "listening_q65", question: "65. What must guests do with their shoes inside Sarah's house?", options: { A: "Keep them on", B: "Leave them in the hall (mustn't wear shoes inside living room)", C: "Put them in a bag" }, correctAnswer: "B" }
+              { id: "listening_q61", question: "61. Why is the party taking place inside the living room instead of the garden?", options: { A: "Because of rain", B: "Because it is too hot outside in the afternoon", C: "Because the garden is under repair" }, correctAnswer: "B" },
+              { id: "listening_q62", question: "62. Who is paying for the three large pizzas?", options: { A: "Anna", B: "Sarah's parents", C: "Tom and Leo" }, correctAnswer: "B" },
+              { id: "listening_q63", question: "63. What is Mark bringing to the party?", options: { A: "A video game console to play racing games", B: "Drinks", C: "Potato chips" }, correctAnswer: "A" },
+              { id: "listening_q64", question: "64. What is Mia bringing to Sarah's party?", options: { A: "The music speaker", B: "The fan", C: "The pizzas" }, correctAnswer: "A" },
+              { id: "listening_q65", question: "65. What important house rule did Sarah mention?", options: { A: "No loud music", B: "Mustn't wear shoes inside the living room", C: "Must leave by 7:00 PM" }, correctAnswer: "B" }
             ]
           },
           {
@@ -513,11 +587,11 @@ const listeningVersions = [
             instructions: "For questions 66–70, choose the correct answer (A, B, or C).",
             type: "multiple_choice",
             questions: [
-              { id: "listening_q66", question: "66. When can Tom wash the dishes?", options: { A: "Immediately", B: "Tonight", C: "Tomorrow" }, correctAnswer: "B" },
-              { id: "listening_q67", question: "67. What time does the party start?", options: { A: "3:30 PM", B: "4:00 PM", C: "4:30 PM" }, correctAnswer: "B" },
-              { id: "listening_q68", question: "68. Who is paying for the pizzas?", options: { A: "Anna", B: "Sarah's parents", C: "Leo" }, correctAnswer: "B" },
-              { id: "listening_q69", question: "69. What is Mark bringing?", options: { A: "Music speaker", B: "His new video game console", C: "Potato chips" }, correctAnswer: "B" },
-              { id: "listening_q70", question: "70. What specific snack is Tom going to buy?", options: { A: "Sandwiches", B: "Potato chips", C: "Cookies" }, correctAnswer: "B" }
+              { id: "listening_q66", question: "66. What two chores did Tom's mom ask him to do?", options: { A: "Clean room and wash dishes", B: "Take out trash and wash cars", C: "Cook dinner and clean room" }, correctAnswer: "A" },
+              { id: "listening_q67", question: "67. What time does Sarah's little sister go to sleep?", options: { A: "8:00 PM", B: "8:30 PM", C: "9:00 PM" }, correctAnswer: "C" },
+              { id: "listening_q68", question: "68. How much did the three large pizzas cost in total?", options: { A: "10 dollars", B: "15 dollars", C: "20 dollars" }, correctAnswer: "B" },
+              { id: "listening_q69", question: "69. What drinks is Leo buying for the party?", options: { A: "Fruit juice and lemonade", B: "Sodas and water", C: "Energy drinks" }, correctAnswer: "B" },
+              { id: "listening_q70", question: "70. What type of video games are they going to play on Mark's console?", options: { A: "Football games", B: "Racing games", C: "Fighting games" }, correctAnswer: "B" }
             ]
           },
           {
@@ -543,15 +617,15 @@ const listeningVersions = [
         parts: [
           {
             part: 1,
-            title: "Audio 4 — Part 1: Trip Details & Costs (Questions 76–80)",
+            title: "Audio 4 — Part 1: Trip Details & Dates (Questions 76–80)",
             instructions: "Listen to the announcement about the school trip. For questions 76–80, choose the correct answer (A, B, or C).",
             type: "multiple_choice",
             questions: [
-              { id: "listening_q76", question: "76. What is the name of the destination for this term's school trip?", options: { A: "Tech City Park", B: "Mega Tech and Nature Park", C: "Green Science Center" }, correctAnswer: "B" },
-              { id: "listening_q77", question: "77. What day of the week is the trip taking place?", options: { A: "Wednesday", B: "Friday", C: "Saturday" }, correctAnswer: "B" },
-              { id: "listening_q78", question: "78. At what time will the bus depart from the school parking lot?", options: { A: "7:15 AM", B: "7:45 AM", C: "8:15 AM" }, correctAnswer: "B" },
-              { id: "listening_q79", question: "79. How much is the discount price for school group tickets compared to adult tickets (35 dollars)?", options: { A: "22 dollars for students", B: "15 dollars for students", C: "30 dollars for students" }, correctAnswer: "A" },
-              { id: "listening_q80", question: "80. What device will every student receive at the park entrance?", options: { A: "A laptop", B: "A digital tablet", C: "A camera" }, correctAnswer: "B" }
+              { id: "listening_q76", question: "76. Why was the trip date changed from October to September 18th?", options: { A: "The school was closed in October", B: "The park offered a better date this month", C: "Buses were not available" }, correctAnswer: "B" },
+              { id: "listening_q77", question: "77. At what time must students arrive at the school parking lot?", options: { A: "7:15 AM sharp", B: "7:45 AM", C: "8:00 AM" }, correctAnswer: "A" },
+              { id: "listening_q78", question: "78. How much is saved per ticket by booking as a school group (35 dollars vs 22 dollars)?", options: { A: "9 dollars", B: "13 dollars", C: "22 dollars" }, correctAnswer: "B" },
+              { id: "listening_q79", question: "79. What items MUST NOT be brought on the trip?", options: { A: "Small backpack", B: "Portable gaming consoles or expensive cameras", C: "Water bottle" }, correctAnswer: "B" },
+              { id: "listening_q80", question: "80. Who is Coach Sarah?", options: { A: "The school nurse", B: "The supervisor for afternoon outdoor activities and Zip-line", C: "The bus driver" }, correctAnswer: "B" }
             ]
           },
           {
@@ -560,24 +634,24 @@ const listeningVersions = [
             instructions: "Listen to the announcement and complete questions 81–85. Write ONE word, number, or time in each gap.",
             type: "gap_fill",
             questions: [
-              { id: "listening_q81", gapNumber: 81, label: "Trip Month & Day:", prompt: "September ______", correctAnswer: "18", acceptableAnswers: ["18", "18th"] },
-              { id: "listening_q82", gapNumber: 82, label: "Return Time at School:", prompt: "______ PM", correctAnswer: "5:30", acceptableAnswers: ["5:30", "5:30 pm", "5:30 PM"] },
-              { id: "listening_q83", gapNumber: 83, label: "Afternoon Instructor:", prompt: "Coach ______", correctAnswer: "sarah", acceptableAnswers: ["sarah", "Sarah"] },
-              { id: "listening_q84", gapNumber: 84, label: "Bus Driver:", prompt: "Mr. ______", correctAnswer: "bob", acceptableAnswers: ["bob", "Bob"] },
-              { id: "listening_q85", gapNumber: 85, label: "Permission Deadline:", prompt: "Wednesday, September ______", correctAnswer: "16", acceptableAnswers: ["16", "16th"] }
+              { id: "listening_q81", gapNumber: 81, label: "Student Ticket Price:", prompt: "$______", correctAnswer: "22", acceptableAnswers: ["22", "$22"] },
+              { id: "listening_q82", gapNumber: 82, label: "Extra Lunch Combo Price:", prompt: "$______", correctAnswer: "9", acceptableAnswers: ["9", "$9"] },
+              { id: "listening_q83", gapNumber: 83, label: "Morning Lab Subject:", prompt: "VR Simulator & ______", correctAnswer: "coding", acceptableAnswers: ["coding", "Coding"] },
+              { id: "listening_q84", gapNumber: 84, label: "Afternoon Challenge:", prompt: "______-line", correctAnswer: "zip", acceptableAnswers: ["zip", "Zip"] },
+              { id: "listening_q85", gapNumber: 85, label: "Bus Rule:", prompt: "No ______ inside the bus", correctAnswer: "eating", acceptableAnswers: ["eating", "Eating", "food"] }
             ]
           },
           {
             part: 3,
-            title: "Audio 4 — Part 3: Rules & Schedule (Questions 86–90)",
+            title: "Audio 4 — Part 3: Equipment & Schedule (Questions 86–90)",
             instructions: "Listen to Audio 4 again. For questions 86–90, choose the best answer (A, B, or C).",
             type: "multiple_choice",
             questions: [
-              { id: "listening_q86", question: "86. What clothes are suitable for the trip?", options: { A: "School uniform only", B: "Casual clothes like t-shirts and shorts with closed sneakers", C: "Formal dresses and suits" }, correctAnswer: "B" },
-              { id: "listening_q87", question: "87. Why must students NOT wear sandals or flip-flops?", options: { A: "Because of wet weather", B: "Because they will do climbing activities", C: "Because of bus regulations" }, correctAnswer: "B" },
-              { id: "listening_q88", question: "88. Where will students have lunch from 12:00 PM to 1:00 PM?", options: { A: "Inside the bus", B: "In the central pavilion", C: "At the entrance" }, correctAnswer: "B" },
-              { id: "listening_q89", question: "89. What activities are scheduled from 1:00 PM to 3:30 PM?", options: { A: "VR Simulator and Coding Lab", B: "Outdoor activities and Zip-line challenge", C: "Bus ride home" }, correctAnswer: "B" },
-              { id: "listening_q90", question: "90. Who should students inform if they get hurt or feel unwell?", options: { A: "Mr. Bob", B: "Mrs. Green, the school nurse", C: "Mr. Clark" }, correctAnswer: "B" }
+              { id: "listening_q86", question: "86. What will every student receive at the park entrance to record answers?", options: { A: "A notebook", B: "A digital tablet", C: "A clipboard" }, correctAnswer: "B" },
+              { id: "listening_q87", question: "87. Which items are required for every student to bring?", options: { A: "Refillable water bottle and small backpack", B: "Laptops and headphones", C: "Sandals and cameras" }, correctAnswer: "A" },
+              { id: "listening_q88", question: "88. What type of footwear must students wear for safety during climbing activities?", options: { A: "Sandals", B: "Flip-flops", C: "Closed sneakers" }, correctAnswer: "C" },
+              { id: "listening_q89", question: "89. What time does the afternoon outdoor activity session finish?", options: { A: "1:00 PM", B: "3:30 PM", C: "4:30 PM" }, correctAnswer: "B" },
+              { id: "listening_q90", question: "90. What is the role of Mrs. Green on the trip?", options: { A: "Bus driver", B: "School nurse", C: "Coding instructor" }, correctAnswer: "B" }
             ]
           },
           {
@@ -586,24 +660,97 @@ const listeningVersions = [
             instructions: "For questions 91–95, choose the correct answer (A, B, or C).",
             type: "multiple_choice",
             questions: [
-              { id: "listening_q91", question: "91. What happens if a student arrives at the parking lot after 7:45 AM?", options: { A: "The bus waits 10 minutes", B: "The bus leaves without them", C: "A teacher drives them" }, correctAnswer: "B" },
-              { id: "listening_q92", question: "92. What items are included in the 9-dollar lunch combo?", options: { A: "Pizza, salad, and water", B: "Chicken sandwich, fruit, and juice", C: "Ham sandwich, chips, and soda" }, correctAnswer: "B" },
-              { id: "listening_q93", question: "93. What item MUST students bring from home?", options: { A: "Pens", B: "A refillable water bottle and a small backpack", C: "Camera" }, correctAnswer: "B" },
-              { id: "listening_q94", question: "94. Why is eating prohibited inside the bus?", options: { A: "To avoid motion sickness", B: "Mr. Bob asked to keep the bus clean", C: "Bus has no seats" }, correctAnswer: "B" },
-              { id: "listening_q95", question: "95. What is the school policy regarding lost electronic devices?", options: { A: "The school refunds the money", B: "The school is not responsible for lost electronics", C: "The park replaces lost devices" }, correctAnswer: "B" }
+              { id: "listening_q91", question: "91. How much is the total cost for a student who buys the ticket and the park lunch combo (22 dollars + 9 dollars)?", options: { A: "22 dollars", B: "31 dollars", C: "35 dollars" }, correctAnswer: "B" },
+              { id: "listening_q92", question: "92. What drink is included in the special park lunch combo?", options: { A: "Soda", B: "Juice", C: "Water" }, correctAnswer: "B" },
+              { id: "listening_q93", question: "93. What time will the group leave the park in the afternoon?", options: { A: "3:30 PM", B: "4:30 PM", C: "5:30 PM" }, correctAnswer: "B" },
+              { id: "listening_q94", question: "94. Can students bring their own lunch from home instead of ordering the combo?", options: { A: "Yes, if they prefer", B: "No, park lunch is mandatory", C: "Only if they have allergies" }, correctAnswer: "A" },
+              { id: "listening_q95", question: "95. Why shouldn't students bring expensive cameras?", options: { A: "Cameras are forbidden by law", B: "The school is not responsible for lost electronics", C: "Park has no light" }, correctAnswer: "B" }
             ]
           },
           {
             part: 5,
-            title: "Audio 4 — Part 5: Final Review & Details (Questions 96–100)",
+            title: "Audio 4 — Part 5: Final Review & Permissions (Questions 96–100)",
             instructions: "For questions 96–100, choose the correct answer (A, B, or C).",
             type: "multiple_choice",
             questions: [
-              { id: "listening_q96", question: "96. How much does the trip cost if a student brings their own packed lunch?", options: { A: "22 dollars", B: "31 dollars", C: "35 dollars" }, correctAnswer: "A" },
-              { id: "listening_q97", question: "97. What lab activity takes place in the morning from 9:00 AM to 12:00 PM?", options: { A: "Swimming lab", B: "VR Simulator and Coding Lab", C: "Art studio" }, correctAnswer: "B" },
-              { id: "listening_q98", question: "98. What time does the group plan to leave the park?", options: { A: "3:30 PM", B: "4:30 PM", C: "5:30 PM" }, correctAnswer: "B" },
-              { id: "listening_q99", question: "99. What day of the week is the permission slip due?", options: { A: "Wednesday, September 16th", B: "Thursday, September 17th", C: "Friday, September 18th" }, correctAnswer: "A" },
-              { id: "listening_q100", question: "100. Who is leading the morning VR and Coding Lab session?", options: { A: "Coach Sarah", B: "Mr. Clark", C: "Mrs. Green" }, correctAnswer: "B" }
+              { id: "listening_q96", question: "96. On what day of the week is the permission slip due?", options: { A: "Wednesday, September 16th", B: "Friday, September 18th", C: "Monday, September 21st" }, correctAnswer: "A" },
+              { id: "listening_q97", question: "97. Who asked students to keep the bus clean by not eating inside?", options: { A: "Mr. Clark", B: "Mr. Bob (the bus driver)", C: "Mrs. Green" }, correctAnswer: "B" },
+              { id: "listening_q98", question: "98. Where will students be from 9:00 AM to 12:00 PM?", options: { A: "At the central pavilion", B: "At the indoor VR Simulator and Coding Lab", C: "On the Zip-line" }, correctAnswer: "B" },
+              { id: "listening_q99", question: "99. What casual clothes are permitted?", options: { A: "T-shirts and shorts with closed sneakers", B: "Swimming suits", C: "Pajamas" }, correctAnswer: "A" },
+              { id: "listening_q100", question: "100. What happens at 5:30 PM?", options: { A: "Bus leaves school", B: "Students arrive back at school", C: "Lunch begins" }, correctAnswer: "B" }
+            ]
+          }
+        ]
+      },
+
+      {
+        id: "audio5",
+        audioUrl: "/audio/audio5.mp3",
+        audioTitle: "Audio 5: Annual Young Inventors Competition Announcement",
+        parts: [
+          {
+            part: 1,
+            title: "Audio 5 — Part 1: Event Details & Dates (Questions 101–105)",
+            instructions: "Listen to the announcement about the Young Inventors Competition. For questions 101–105, choose the correct answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q101", question: "101. What is the name of the competition announced by the speaker?", options: { A: "Science Fair 2026", B: "Annual Young Inventors Competition", C: "Robot Challenge" }, correctAnswer: "B" },
+              { id: "listening_q102", question: "102. On what day of the week is the competition held?", options: { A: "Friday", B: "Saturday", C: "Sunday" }, correctAnswer: "B" },
+              { id: "listening_q103", question: "103. When do project presentations start in the gymnasium?", options: { A: "8:30 AM", B: "9:15 AM", C: "10:00 AM" }, correctAnswer: "B" },
+              { id: "listening_q104", question: "104. What is the commercial price charged by normal science competitions (15 dollars) versus school fee (10 dollars)?", options: { A: "10 dollars for school students", B: "5 dollars for school students", C: "Free" }, correctAnswer: "A" },
+              { id: "listening_q105", question: "105. Are students required to buy expensive technology kits?", options: { A: "Yes, mandatory", B: "No, recycled materials are strongly encouraged", C: "Only for robotics" }, correctAnswer: "B" }
+            ]
+          },
+          {
+            part: 2,
+            title: "Audio 5 — Part 2: Information Completion (Questions 106–110)",
+            instructions: "Listen to the announcement and complete questions 106–110. Write ONE word, number, or time in each gap.",
+            type: "gap_fill",
+            questions: [
+              { id: "listening_q106", gapNumber: 106, label: "Competition Date:", prompt: "October ______", correctAnswer: "24", acceptableAnswers: ["24", "24th"] },
+              { id: "listening_q107", gapNumber: 107, label: "Application Deadline:", prompt: "October ______", correctAnswer: "10", acceptableAnswers: ["10", "10th"] },
+              { id: "listening_q108", gapNumber: 108, label: "Awards Ceremony Time:", prompt: "______ PM", correctAnswer: "3:00", acceptableAnswers: ["3:00", "3", "3:00 pm", "3:00 PM"] },
+              { id: "listening_q109", gapNumber: 109, label: "Green Energy Judge:", prompt: "Ms. ______", correctAnswer: "davis", acceptableAnswers: ["davis", "Davis"] },
+              { id: "listening_q110", gapNumber: 110, label: "Health Tech Judge:", prompt: "Dr. ______", correctAnswer: "miller", acceptableAnswers: ["miller", "Miller"] }
+            ]
+          },
+          {
+            part: 3,
+            title: "Audio 5 — Part 3: Rules & Categories (Questions 111–115)",
+            instructions: "Listen to Audio 5 again. For questions 111–115, choose the best answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q111", question: "111. What time do doors open for setup in the school gymnasium?", options: { A: "8:00 AM", B: "8:30 AM", C: "9:00 AM" }, correctAnswer: "B" },
+              { id: "listening_q112", question: "112. Is food provided for registered participants?", options: { A: "Yes, lunch is provided", B: "No, students must buy food", C: "Only drinks are provided" }, correctAnswer: "A" },
+              { id: "listening_q113", question: "113. What happens to any project that uses hazardous materials or open flames?", options: { A: "It receives a warning", B: "It will be disqualified immediately", C: "It loses 5 points" }, correctAnswer: "B" },
+              { id: "listening_q114", question: "114. What category is Mr. Evans responsible for judging?", options: { A: "Robotics and Smart Gadgets", B: "Green Energy", C: "Health Tech" }, correctAnswer: "A" },
+              { id: "listening_q115", question: "115. Where should teams hand in their one-page summary upon arrival?", options: { A: "To Mr. Evans in the lab", B: "To Sarah at the registration desk in the gym lobby", C: "To the principal" }, correctAnswer: "B" }
+            ]
+          },
+          {
+            part: 4,
+            title: "Audio 5 — Part 4: Detailed Comprehension (Questions 116–120)",
+            instructions: "For questions 116–120, choose the correct answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q116", question: "116. Can a student participate individually in the competition?", options: { A: "Yes, individually or in teams up to 3 students", B: "No, teams of 3 are mandatory", C: "Only pairs allowed" }, correctAnswer: "A" },
+              { id: "listening_q117", question: "117. What must students bring to stay hydrated during the day?", options: { A: "Energy drinks", B: "Own water bottle", C: "Orange juice" }, correctAnswer: "B" },
+              { id: "listening_q118", question: "118. What item will Sarah give each team at the registration desk?", options: { A: "A 3D printer", B: "Table assignment", C: "Lunch box" }, correctAnswer: "B" },
+              { id: "listening_q119", question: "119. Which category covers recycling inventions?", options: { A: "Robotics", B: "Green Energy and Recycling", C: "Wellness" }, correctAnswer: "B" },
+              { id: "listening_q120", question: "120. What prize will be placed in the school tech lab by the winning team?", options: { A: "A 3D printer", B: "A smart TV", C: "10 computers" }, correctAnswer: "A" }
+            ]
+          },
+          {
+            part: 5,
+            title: "Audio 5 — Part 5: Final Review & Rules (Questions 121–125)",
+            instructions: "For questions 121–125, choose the correct answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q121", question: "121. When is the deadline to submit the team application form?", options: { A: "Friday, October 10th", B: "Saturday, October 24th", C: "November 1st" }, correctAnswer: "A" },
+              { id: "listening_q122", question: "122. What time does stand visiting for judges and public end?", options: { A: "1:00 PM", B: "2:00 PM", C: "3:00 PM" }, correctAnswer: "B" },
+              { id: "listening_q123", question: "123. What materials are recommended for building prototypes?", options: { A: "Cardboard, plastic bottles, and old electronics", B: "Gold and silver", C: "Glass and fire" }, correctAnswer: "A" },
+              { id: "listening_q124", question: "124. What participant item is included in the 10 dollar registration fee besides the table?", options: { A: "Official participant badges", B: "T-shirts", C: "Water bottle" }, correctAnswer: "A" },
+              { id: "listening_q125", question: "125. What is Dr. Miller's judging specialty?", options: { A: "Robotics", B: "Health Tech and Wellness devices", C: "Green Energy" }, correctAnswer: "B" }
             ]
           }
         ]
@@ -612,7 +759,7 @@ const listeningVersions = [
   },
 
   /* ==========================================================================
-     VERSION 2 (Set C - 100 Preguntas KET)
+     VERSION 2 (Set C - 125 Preguntas KET)
      ========================================================================== */
   {
     versionId: 2,
@@ -905,6 +1052,79 @@ const listeningVersions = [
               { id: "listening_q98", question: "98. Where will students be from 9:00 AM to 12:00 PM?", options: { A: "At the central pavilion", B: "At the indoor VR Simulator and Coding Lab", C: "On the Zip-line" }, correctAnswer: "B" },
               { id: "listening_q99", question: "99. What casual clothes are permitted?", options: { A: "T-shirts and shorts with closed sneakers", B: "Swimming suits", C: "Pajamas" }, correctAnswer: "A" },
               { id: "listening_q100", question: "100. What happens at 5:30 PM?", options: { A: "Bus leaves school", B: "Students arrive back at school", C: "Lunch begins" }, correctAnswer: "B" }
+            ]
+          }
+        ]
+      },
+
+      {
+        id: "audio5",
+        audioUrl: "/audio/audio5.mp3",
+        audioTitle: "Audio 5: Annual Young Inventors Competition Announcement",
+        parts: [
+          {
+            part: 1,
+            title: "Audio 5 — Part 1: Event Details & Dates (Questions 101–105)",
+            instructions: "Listen to the announcement about the Young Inventors Competition. For questions 101–105, choose the correct answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q101", question: "101. What month was the Annual Young Inventors Competition originally planned for?", options: { A: "October", B: "November", C: "December" }, correctAnswer: "B" },
+              { id: "listening_q102", question: "102. What is the deadline for turning in team application forms?", options: { A: "Friday, October 10th", B: "Saturday, October 24th", C: "Friday, October 30th" }, correctAnswer: "A" },
+              { id: "listening_q103", question: "103. What time does the awards ceremony start?", options: { A: "1:00 PM", B: "2:00 PM", C: "3:00 PM" }, correctAnswer: "C" },
+              { id: "listening_q104", question: "104. What safety rule must all projects follow?", options: { A: "Must use high-voltage electricity", B: "Mustn't use dangerous chemicals, open flames, or high-voltage", C: "Must be built of metal" }, correctAnswer: "B" },
+              { id: "listening_q105", question: "105. What is the grand prize for the overall first-place team?", options: { A: "A 3D printer for the school tech lab and trophy cups", B: "$100 gift card", C: "Trip to Tech Park" }, correctAnswer: "A" }
+            ]
+          },
+          {
+            part: 2,
+            title: "Audio 5 — Part 2: Information Completion (Questions 106–110)",
+            instructions: "Listen to the announcement and complete questions 106–110. Write ONE word, number, or time in each gap.",
+            type: "gap_fill",
+            questions: [
+              { id: "listening_q106", gapNumber: 106, label: "Setup Time:", prompt: "______ AM", correctAnswer: "8:30", acceptableAnswers: ["8:30", "8:30 am", "8:30 AM"] },
+              { id: "listening_q107", gapNumber: 107, label: "Presentation Start Time:", prompt: "______ AM", correctAnswer: "9:15", acceptableAnswers: ["9:15", "9:15 am", "9:15 AM"] },
+              { id: "listening_q108", gapNumber: 108, label: "Registration Fee:", prompt: "$______", correctAnswer: "10", acceptableAnswers: ["10", "$10"] },
+              { id: "listening_q109", gapNumber: 109, label: "Summary Page Length:", prompt: "______ page", correctAnswer: "1", acceptableAnswers: ["1", "one", "One"] },
+              { id: "listening_q110", gapNumber: 110, label: "Robotics Judge:", prompt: "Mr. ______", correctAnswer: "evans", acceptableAnswers: ["evans", "Evans"] }
+            ]
+          },
+          {
+            part: 3,
+            title: "Audio 5 — Part 3: Monologue Comprehension (Questions 111–115)",
+            instructions: "Listen to Audio 5 again. For questions 111–115, choose the best answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q111", question: "111. Where in the gymnasium will Sarah be stationed?", options: { A: "On stage", B: "At the registration desk inside the gym lobby", C: "In the cafeteria" }, correctAnswer: "B" },
+              { id: "listening_q112", question: "112. Are late entries accepted after Friday, October 10th?", options: { A: "Yes, with $5 extra", B: "No, late entries will NOT be accepted", C: "Only for 6th graders" }, correctAnswer: "B" },
+              { id: "listening_q113", question: "113. What is included with the 10-dollar registration fee?", options: { A: "Display table and official participant badges", B: "3D printer", C: "Water bottle" }, correctAnswer: "A" },
+              { id: "listening_q114", question: "114. What must every team hand in to Sarah upon registration?", options: { A: "Their working prototype", B: "A one-page printed summary explaining their invention", C: "Entry money" }, correctAnswer: "B" },
+              { id: "listening_q115", question: "115. Who judges the Health Tech and Wellness devices category?", options: { A: "Mr. Evans", B: "Ms. Davis", C: "Dr. Miller" }, correctAnswer: "C" }
+            ]
+          },
+          {
+            part: 4,
+            title: "Audio 5 — Part 4: Detailed Comprehension (Questions 116–120)",
+            instructions: "For questions 116–120, choose the correct answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q116", question: "116. How many judges will be evaluating the three project categories?", options: { A: "Two", B: "Three", C: "Five" }, correctAnswer: "B" },
+              { id: "listening_q117", question: "117. What should students bring to stay hydrated?", options: { A: "Sodas", B: "Refillable water bottle", C: "Milk" }, correctAnswer: "B" },
+              { id: "listening_q118", question: "118. What category does Ms. Davis evaluate?", options: { A: "Robotics and Smart Gadgets", B: "Green Energy and Recycling inventions", C: "Health Tech" }, correctAnswer: "B" },
+              { id: "listening_q119", question: "119. Can a team have 4 members?", options: { A: "Yes, up to 5", B: "No, maximum team size is 3 students", C: "Unlimited" }, correctAnswer: "B" },
+              { id: "listening_q20", question: "120. What time do project presentations begin on October 24th?", options: { A: "8:30 AM", B: "9:15 AM sharp", C: "12:00 PM" }, correctAnswer: "B" }
+            ]
+          },
+          {
+            part: 5,
+            title: "Audio 5 — Part 5: Matching & Rules Details (Questions 121–125)",
+            instructions: "For questions 121–125, choose the correct answer (A, B, or C).",
+            type: "multiple_choice",
+            questions: [
+              { id: "listening_q121", question: "121. Where will project presentations take place?", options: { A: "Main school gymnasium", B: "City hall", C: "Library" }, correctAnswer: "A" },
+              { id: "listening_q122", question: "122. What happens at 2:00 PM?", options: { A: "Setup begins", B: "Public and judges stand visits end", C: "Lunch is served" }, correctAnswer: "B" },
+              { id: "listening_q123", question: "123. What materials are recommended for the inventions?", options: { A: "Expensive tech kits", B: "Recycled materials like cardboard and plastic bottles", C: "Gold wires" }, correctAnswer: "B" },
+              { id: "listening_q124", question: "124. What happens if a team uses open flames or dangerous chemicals?", options: { A: "Project is disqualified immediately", B: "They pay $10 fine", C: "They get warning" }, correctAnswer: "A" },
+              { id: "listening_q125", question: "125. What individual awards will first-place team members receive?", options: { A: "Trophy cups", B: "Laptops", C: "Medals only" }, correctAnswer: "A" }
             ]
           }
         ]

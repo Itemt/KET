@@ -3,54 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Examen KET A2 Key en Vivo - 6to Grado</title>
+  <title>Cambridge KET A2 Key — Official Mock Exam</title>
   <link rel="stylesheet" href="/css/styles.css">
-  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎧</text></svg>">
+  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
 </head>
 <body>
 
+  <!-- ENCABEZADO OFICIAL -->
   <header class="app-header">
     <div class="container header-content">
       <a href="/" class="logo-badge">
-        <div class="logo-icon">KET</div>
+        <div class="logo-icon">🎓</div>
         <div class="logo-text">
-          <h1>Cambridge English: A2 Key</h1>
-          <p>Examen de Simulacro Oficial</p>
+          <h1>Cambridge English A2 Key (KET)</h1>
+          <p>Mock Exam System — 6th Grade</p>
         </div>
       </a>
-      <div id="student-badge-container" class="student-info-tag">
-        <div class="student-avatar" id="avatar-initials">--</div>
-        <div>
-          <div class="student-name" id="student-display-name">Cargando...</div>
-          <div class="student-grade" id="student-display-grade">Grado --</div>
-        </div>
+
+      <!-- BOTÓN REGRESAR / SALIR -->
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button id="btn-exit-exam" class="btn" style="background: #f1f5f9; color: var(--dark); font-size: 0.85rem;">
+          🚪 Salir del Examen
+        </button>
       </div>
     </div>
   </header>
 
-  <main class="container">
-    
-    <!-- Barra de Metadatos y Temporizador -->
+  <main class="container" style="margin-top: 24px; margin-bottom: 60px;">
+
+    <!-- BARRA DE INFORMACIÓN DE ESTUDIANTE -->
     <div class="exam-meta-bar">
-      <div>
-        <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--dark);" id="exam-title-text">
-          Cambridge A2 Key for Schools
-        </h2>
-        <span style="font-size: 0.85rem; color: var(--text-muted);">Selecciona la sección que deseas realizar o navega con las pestañas.</span>
+      <div class="student-info-badge">
+        <div class="student-avatar" id="student-avatar-initials">--</div>
+        <div>
+          <div style="font-weight: 800; font-size: 1.1rem; color: var(--dark);" id="display-student-fullname">Cargando datos...</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted);" id="display-student-grade">Grado: --</div>
+        </div>
       </div>
 
-      <div style="font-weight: 700; color: var(--primary); font-size: 0.9rem; background: var(--primary-light); padding: 8px 16px; border-radius: var(--radius-md);">
-        ✨ Sin Límite de Tiempo
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 0.85rem; font-weight: 700; color: var(--success); background: var(--success-light); padding: 6px 14px; border-radius: 20px;">
+          ⏱️ Sin Límite de Tiempo (A tu propio ritmo)
+        </span>
       </div>
     </div>
 
-    <!-- PANTALLA INICIAL DE SELECCIÓN DE MÓDULO -->
-    <div id="module-selection-screen" class="card" style="padding: 36px 28px; text-align: center; margin-bottom: 30px;">
+    <!-- PANTALLA DE BIENVENIDA Y SELECCIÓN DE MÓDULO -->
+    <div id="welcome-module-selection" class="card" style="padding: 32px; text-align: center;">
+      <div style="font-size: 3.2rem; margin-bottom: 12px;">🎉</div>
       <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--dark); margin-bottom: 8px;">
-        👋 ¡Bienvenido(a) a tu examen KET!
+        ¡Bienvenido(a) a tu Examen de Cambridge KET A2!
       </h2>
-      <p style="color: var(--text-muted); font-size: 1rem; max-width: 600px; margin: 0 auto 24px;">
-        Selecciona la sección que deseas comenzar a responder ahora:
+      <p style="font-size: 0.95rem; color: var(--text-muted); max-width: 650px; margin: 0 auto 24px; line-height: 1.6;">
+        Selecciona el módulo por el cual deseas comenzar. Puedes alternar entre ellos libremente o realizar primero el <strong>Listening (Audios 1, 2, 3, 4 y 5)</strong> o el <strong>Reading & Writing</strong>.
       </p>
 
       <div class="module-selector-grid">
@@ -59,8 +64,8 @@
           <div class="module-icon-badge module-icon-listening">🎧</div>
           <div class="module-title">Listening Exam</div>
           <div class="module-subtitle">
-            <strong>Audios 1, 2, 3 y 4</strong>: Camp, Stress, Party & Mega Tech Park<br>
-            Preguntas tipo KET asignadas aleatoriamente
+            <strong>Audios 1, 2, 3, 4 y 5</strong>: Camp, Stress, Party, Tech Park & Inventors<br>
+            125 Preguntas KET asignadas aleatoriamente
           </div>
           <button type="button" class="btn btn-primary btn-block" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); border: none;">
             🎧 Iniciar Listening
@@ -85,7 +90,7 @@
     <!-- BARRA NAVEGADORA DE PESTAÑAS (Módulos) -->
     <div id="exam-tabs-bar" style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 2px solid var(--border-color); padding-bottom: 12px;">
       <button type="button" class="tab-btn active" data-tab="tab-listening" id="tab-btn-listening">
-        🎧 Listening (Audios 1, 2, 3 & 4)
+        🎧 Listening (Audios 1, 2, 3, 4 & 5)
       </button>
       <button type="button" class="tab-btn" data-tab="tab-reading-writing" id="tab-btn-rw">
         📖 Reading & Writing
@@ -99,56 +104,51 @@
       <section id="tab-listening" class="exam-section-content active">
 
         <!-- SUB-PESTAÑAS DE AUDIOS EN LISTENING -->
-        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-          <button type="button" class="btn active" id="btn-audio-track-1" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); color: white; font-weight: 700; border: none; padding: 8px 14px; font-size: 0.85rem;">
+        <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+          <button type="button" class="btn active" id="btn-audio-track-1" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); color: white; font-weight: 700; border: none; padding: 6px 12px; font-size: 0.82rem;">
             🎧 Audio 1: Summer Camp (Q1–Q25)
           </button>
-          <button type="button" class="btn" id="btn-audio-track-2" style="background: #f1f5f9; color: var(--dark); font-weight: 700; border: none; padding: 8px 14px; font-size: 0.85rem;">
+          <button type="button" class="btn" id="btn-audio-track-2" style="background: #f1f5f9; color: var(--dark); font-weight: 700; border: none; padding: 6px 12px; font-size: 0.82rem;">
             🎧 Audio 2: School Stress (Q26–Q50)
           </button>
-          <button type="button" class="btn" id="btn-audio-track-3" style="background: #f1f5f9; color: var(--dark); font-weight: 700; border: none; padding: 8px 14px; font-size: 0.85rem;">
+          <button type="button" class="btn" id="btn-audio-track-3" style="background: #f1f5f9; color: var(--dark); font-weight: 700; border: none; padding: 6px 12px; font-size: 0.82rem;">
             🎧 Audio 3: End-of-term Party (Q51–Q75)
           </button>
-          <button type="button" class="btn" id="btn-audio-track-4" style="background: #f1f5f9; color: var(--dark); font-weight: 700; border: none; padding: 8px 14px; font-size: 0.85rem;">
+          <button type="button" class="btn" id="btn-audio-track-4" style="background: #f1f5f9; color: var(--dark); font-weight: 700; border: none; padding: 6px 12px; font-size: 0.82rem;">
             🎧 Audio 4: Mega Tech Park (Q76–Q100)
+          </button>
+          <button type="button" class="btn" id="btn-audio-track-5" style="background: #f1f5f9; color: var(--dark); font-weight: 700; border: none; padding: 6px 12px; font-size: 0.82rem;">
+            🎧 Audio 5: Young Inventors (Q101–Q125)
           </button>
         </div>
 
         <!-- CONTENEDOR AUDIO 1 -->
         <div id="audio-track-1-container">
-          <!-- REPRODUCTOR DE AUDIO 1 -->
           <div class="audio-player-card">
-            <div class="audio-header">
-              <div class="audio-title-tag">
-                <span class="audio-badge">🎧 Listening Audio 1</span>
-                <span style="font-weight: 700; font-size: 0.95rem;">Technology Summer Camp</span>
+            <div class="audio-header-compact">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="audio-badge">🎧 Audio 1</span>
+                <span style="font-weight: 700; font-size: 0.88rem;">Technology Summer Camp</span>
               </div>
-              <span style="font-size: 0.8rem; color: #94a3b8;">Cambridge KET A2</span>
+              <span style="font-size: 0.75rem; color: #94a3b8;">KET A2</span>
             </div>
 
             <audio id="audio-element-1" preload="auto">
               <source src="/audio/audio1.mp3" type="audio/mpeg">
             </audio>
 
-            <div class="audio-main-controls">
-              <button type="button" class="btn-audio-seek" id="btn-rewind-5-a1" title="Retroceder 5 segundos">⏪ -5s</button>
-              <button type="button" class="btn-audio-play" id="btn-play-a1" title="Reproducir / Pausar">▶️</button>
-              <button type="button" class="btn-audio-seek" id="btn-forward-5-a1" title="Adelantar 5 segundos">+5s ⏩</button>
-            </div>
+            <div class="audio-controls-row">
+              <button type="button" class="btn-audio-play" id="btn-play-a1" title="Play/Pause">▶️</button>
+              <button type="button" class="btn-audio-seek" id="btn-rewind-5-a1" title="-5s">⏪ -5s</button>
+              <button type="button" class="btn-audio-seek" id="btn-forward-5-a1" title="+5s">+5s ⏩</button>
 
-            <div class="audio-timeline-box">
-              <span class="audio-time-label" id="time-current-a1">00:00</span>
-              <input type="range" id="seek-bar-a1" class="audio-slider" min="0" max="100" value="0">
-              <span class="audio-time-label" id="time-duration-a1">00:00</span>
-            </div>
-
-            <div class="audio-extra-controls">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span>🔊 Volume:</span>
-                <input type="range" id="vol-bar-a1" class="audio-slider" style="width: 80px;" min="0" max="1" step="0.05" value="1">
+              <div class="audio-timeline-box">
+                <span class="audio-time-label" id="time-current-a1">00:00</span>
+                <input type="range" id="seek-bar-a1" class="audio-slider" min="0" max="100" value="0">
+                <span class="audio-time-label" id="time-duration-a1">00:00</span>
               </div>
+
               <div class="speed-selector-group">
-                <span style="color: #94a3b8;">Speed:</span>
                 <button type="button" class="btn-speed btn-speed-a1" data-speed="0.9">0.9x</button>
                 <button type="button" class="btn-speed btn-speed-a1 active" data-speed="1.0">1.0x</button>
                 <button type="button" class="btn-speed btn-speed-a1" data-speed="1.1">1.1x</button>
@@ -156,7 +156,6 @@
             </div>
           </div>
 
-          <!-- Preguntas Audio 1 -->
           <div id="listening-questions-a1">
             <div style="text-align: center; padding: 40px; color: var(--text-muted);">Cargando preguntas de Audio 1...</div>
           </div>
@@ -164,39 +163,31 @@
 
         <!-- CONTENEDOR AUDIO 2 -->
         <div id="audio-track-2-container" style="display: none;">
-          <!-- REPRODUCTOR DE AUDIO 2 -->
           <div class="audio-player-card" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);">
-            <div class="audio-header">
-              <div class="audio-title-tag">
-                <span class="audio-badge" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">🎧 Listening Audio 2</span>
-                <span style="font-weight: 700; font-size: 0.95rem;">School Stress & Healthy Habits (Leo's Presentation)</span>
+            <div class="audio-header-compact">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="audio-badge" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">🎧 Audio 2</span>
+                <span style="font-weight: 700; font-size: 0.88rem;">School Stress & Healthy Habits</span>
               </div>
-              <span style="font-size: 0.8rem; color: #cbd5e1;">Cambridge KET A2</span>
+              <span style="font-size: 0.75rem; color: #cbd5e1;">KET A2</span>
             </div>
 
             <audio id="audio-element-2" preload="auto">
               <source src="/audio/audio2.mp3" type="audio/mpeg">
             </audio>
 
-            <div class="audio-main-controls">
-              <button type="button" class="btn-audio-seek" id="btn-rewind-5-a2" title="Retroceder 5 segundos">⏪ -5s</button>
-              <button type="button" class="btn-audio-play" id="btn-play-a2" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);" title="Reproducir / Pausar">▶️</button>
-              <button type="button" class="btn-audio-seek" id="btn-forward-5-a2" title="Adelantar 5 segundos">+5s ⏩</button>
-            </div>
+            <div class="audio-controls-row">
+              <button type="button" class="btn-audio-play" id="btn-play-a2" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);" title="Play/Pause">▶️</button>
+              <button type="button" class="btn-audio-seek" id="btn-rewind-5-a2" title="-5s">⏪ -5s</button>
+              <button type="button" class="btn-audio-seek" id="btn-forward-5-a2" title="+5s">+5s ⏩</button>
 
-            <div class="audio-timeline-box">
-              <span class="audio-time-label" id="time-current-a2">00:00</span>
-              <input type="range" id="seek-bar-a2" class="audio-slider" min="0" max="100" value="0">
-              <span class="audio-time-label" id="time-duration-a2">00:00</span>
-            </div>
-
-            <div class="audio-extra-controls">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span>🔊 Volume:</span>
-                <input type="range" id="vol-bar-a2" class="audio-slider" style="width: 80px;" min="0" max="1" step="0.05" value="1">
+              <div class="audio-timeline-box">
+                <span class="audio-time-label" id="time-current-a2">00:00</span>
+                <input type="range" id="seek-bar-a2" class="audio-slider" min="0" max="100" value="0">
+                <span class="audio-time-label" id="time-duration-a2">00:00</span>
               </div>
+
               <div class="speed-selector-group">
-                <span style="color: #cbd5e1;">Speed:</span>
                 <button type="button" class="btn-speed btn-speed-a2" data-speed="0.9">0.9x</button>
                 <button type="button" class="btn-speed btn-speed-a2 active" data-speed="1.0">1.0x</button>
                 <button type="button" class="btn-speed btn-speed-a2" data-speed="1.1">1.1x</button>
@@ -204,7 +195,6 @@
             </div>
           </div>
 
-          <!-- Preguntas Audio 2 -->
           <div id="listening-questions-a2">
             <div style="text-align: center; padding: 40px; color: var(--text-muted);">Cargando preguntas de Audio 2...</div>
           </div>
@@ -212,39 +202,31 @@
 
         <!-- CONTENEDOR AUDIO 3 -->
         <div id="audio-track-3-container" style="display: none;">
-          <!-- REPRODUCTOR DE AUDIO 3 -->
           <div class="audio-player-card" style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%);">
-            <div class="audio-header">
-              <div class="audio-title-tag">
-                <span class="audio-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎧 Listening Audio 3</span>
-                <span style="font-weight: 700; font-size: 0.95rem;">End-of-term Party Dialogue (Sarah & Tom)</span>
+            <div class="audio-header-compact">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="audio-badge" style="background: linear-gradient(135deg, #10b981, #059669);">🎧 Audio 3</span>
+                <span style="font-weight: 700; font-size: 0.88rem;">End-of-term Party Dialogue (Sarah & Tom)</span>
               </div>
-              <span style="font-size: 0.8rem; color: #a7f3d0;">Cambridge KET A2</span>
+              <span style="font-size: 0.75rem; color: #a7f3d0;">KET A2</span>
             </div>
 
             <audio id="audio-element-3" preload="auto">
               <source src="/audio/audio3.mp3" type="audio/mpeg">
             </audio>
 
-            <div class="audio-main-controls">
-              <button type="button" class="btn-audio-seek" id="btn-rewind-5-a3" title="Retroceder 5 segundos">⏪ -5s</button>
-              <button type="button" class="btn-audio-play" id="btn-play-a3" style="background: linear-gradient(135deg, #10b981, #059669);" title="Reproducir / Pausar">▶️</button>
-              <button type="button" class="btn-audio-seek" id="btn-forward-5-a3" title="Adelantar 5 segundos">+5s ⏩</button>
-            </div>
+            <div class="audio-controls-row">
+              <button type="button" class="btn-audio-play" id="btn-play-a3" style="background: linear-gradient(135deg, #10b981, #059669);" title="Play/Pause">▶️</button>
+              <button type="button" class="btn-audio-seek" id="btn-rewind-5-a3" title="-5s">⏪ -5s</button>
+              <button type="button" class="btn-audio-seek" id="btn-forward-5-a3" title="+5s">+5s ⏩</button>
 
-            <div class="audio-timeline-box">
-              <span class="audio-time-label" id="time-current-a3">00:00</span>
-              <input type="range" id="seek-bar-a3" class="audio-slider" min="0" max="100" value="0">
-              <span class="audio-time-label" id="time-duration-a3">00:00</span>
-            </div>
-
-            <div class="audio-extra-controls">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span>🔊 Volume:</span>
-                <input type="range" id="vol-bar-a3" class="audio-slider" style="width: 80px;" min="0" max="1" step="0.05" value="1">
+              <div class="audio-timeline-box">
+                <span class="audio-time-label" id="time-current-a3">00:00</span>
+                <input type="range" id="seek-bar-a3" class="audio-slider" min="0" max="100" value="0">
+                <span class="audio-time-label" id="time-duration-a3">00:00</span>
               </div>
+
               <div class="speed-selector-group">
-                <span style="color: #a7f3d0;">Speed:</span>
                 <button type="button" class="btn-speed btn-speed-a3" data-speed="0.9">0.9x</button>
                 <button type="button" class="btn-speed btn-speed-a3 active" data-speed="1.0">1.0x</button>
                 <button type="button" class="btn-speed btn-speed-a3" data-speed="1.1">1.1x</button>
@@ -252,7 +234,6 @@
             </div>
           </div>
 
-          <!-- Preguntas Audio 3 -->
           <div id="listening-questions-a3">
             <div style="text-align: center; padding: 40px; color: var(--text-muted);">Cargando preguntas de Audio 3...</div>
           </div>
@@ -260,39 +241,31 @@
 
         <!-- CONTENEDOR AUDIO 4 -->
         <div id="audio-track-4-container" style="display: none;">
-          <!-- REPRODUCTOR DE AUDIO 4 -->
-          <div class="audio-player-card" style="background: linear-gradient(135deg, #854d0e 0%, #a16207 100%);">
-            <div class="audio-header">
-              <div class="audio-title-tag">
-                <span class="audio-badge" style="background: linear-gradient(135deg, #eab308, #ca8a04);">🎧 Listening Audio 4</span>
-                <span style="font-weight: 700; font-size: 0.95rem;">School Trip to Mega Tech & Nature Park</span>
+          <div class="audio-player-card" style="background: linear-gradient(135deg, #78350f 0%, #b45309 100%);">
+            <div class="audio-header-compact">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="audio-badge" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🎧 Audio 4</span>
+                <span style="font-weight: 700; font-size: 0.88rem;">Mega Tech & Nature Park School Trip</span>
               </div>
-              <span style="font-size: 0.8rem; color: #fef08a;">Cambridge KET A2</span>
+              <span style="font-size: 0.75rem; color: #fde68a;">KET A2</span>
             </div>
 
             <audio id="audio-element-4" preload="auto">
               <source src="/audio/audio4.mp3" type="audio/mpeg">
             </audio>
 
-            <div class="audio-main-controls">
-              <button type="button" class="btn-audio-seek" id="btn-rewind-5-a4" title="Retroceder 5 segundos">⏪ -5s</button>
-              <button type="button" class="btn-audio-play" id="btn-play-a4" style="background: linear-gradient(135deg, #eab308, #ca8a04);" title="Reproducir / Pausar">▶️</button>
-              <button type="button" class="btn-audio-seek" id="btn-forward-5-a4" title="Adelantar 5 segundos">+5s ⏩</button>
-            </div>
+            <div class="audio-controls-row">
+              <button type="button" class="btn-audio-play" id="btn-play-a4" style="background: linear-gradient(135deg, #f59e0b, #d97706);" title="Play/Pause">▶️</button>
+              <button type="button" class="btn-audio-seek" id="btn-rewind-5-a4" title="-5s">⏪ -5s</button>
+              <button type="button" class="btn-audio-seek" id="btn-forward-5-a4" title="+5s">+5s ⏩</button>
 
-            <div class="audio-timeline-box">
-              <span class="audio-time-label" id="time-current-a4">00:00</span>
-              <input type="range" id="seek-bar-a4" class="audio-slider" min="0" max="100" value="0">
-              <span class="audio-time-label" id="time-duration-a4">00:00</span>
-            </div>
-
-            <div class="audio-extra-controls">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span>🔊 Volume:</span>
-                <input type="range" id="vol-bar-a4" class="audio-slider" style="width: 80px;" min="0" max="1" step="0.05" value="1">
+              <div class="audio-timeline-box">
+                <span class="audio-time-label" id="time-current-a4">00:00</span>
+                <input type="range" id="seek-bar-a4" class="audio-slider" min="0" max="100" value="0">
+                <span class="audio-time-label" id="time-duration-a4">00:00</span>
               </div>
+
               <div class="speed-selector-group">
-                <span style="color: #fef08a;">Speed:</span>
                 <button type="button" class="btn-speed btn-speed-a4" data-speed="0.9">0.9x</button>
                 <button type="button" class="btn-speed btn-speed-a4 active" data-speed="1.0">1.0x</button>
                 <button type="button" class="btn-speed btn-speed-a4" data-speed="1.1">1.1x</button>
@@ -300,25 +273,63 @@
             </div>
           </div>
 
-          <!-- Preguntas Audio 4 -->
           <div id="listening-questions-a4">
             <div style="text-align: center; padding: 40px; color: var(--text-muted);">Cargando preguntas de Audio 4...</div>
+          </div>
+        </div>
+
+        <!-- CONTENEDOR AUDIO 5 -->
+        <div id="audio-track-5-container" style="display: none;">
+          <div class="audio-player-card" style="background: linear-gradient(135deg, #701a75 0%, #a21caf 100%);">
+            <div class="audio-header-compact">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="audio-badge" style="background: linear-gradient(135deg, #d946ef, #c026d3);">🎧 Audio 5</span>
+                <span style="font-weight: 700; font-size: 0.88rem;">Annual Young Inventors Competition</span>
+              </div>
+              <span style="font-size: 0.75rem; color: #f5d0fe;">KET A2</span>
+            </div>
+
+            <audio id="audio-element-5" preload="auto">
+              <source src="/audio/audio5.mp3" type="audio/mpeg">
+            </audio>
+
+            <div class="audio-controls-row">
+              <button type="button" class="btn-audio-play" id="btn-play-a5" style="background: linear-gradient(135deg, #d946ef, #c026d3);" title="Play/Pause">▶️</button>
+              <button type="button" class="btn-audio-seek" id="btn-rewind-5-a5" title="-5s">⏪ -5s</button>
+              <button type="button" class="btn-audio-seek" id="btn-forward-5-a5" title="+5s">+5s ⏩</button>
+
+              <div class="audio-timeline-box">
+                <span class="audio-time-label" id="time-current-a5">00:00</span>
+                <input type="range" id="seek-bar-a5" class="audio-slider" min="0" max="100" value="0">
+                <span class="audio-time-label" id="time-duration-a5">00:00</span>
+              </div>
+
+              <div class="speed-selector-group">
+                <button type="button" class="btn-speed btn-speed-a5" data-speed="0.9">0.9x</button>
+                <button type="button" class="btn-speed btn-speed-a5 active" data-speed="1.0">1.0x</button>
+                <button type="button" class="btn-speed btn-speed-a5" data-speed="1.1">1.1x</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="listening-questions-a5">
+            <div style="text-align: center; padding: 40px; color: var(--text-muted);">Cargando preguntas de Audio 5...</div>
           </div>
         </div>
 
       </section>
 
       <!-- SECCIÓN READING & WRITING -->
-      <section id="tab-reading-writing" class="exam-section-content">
+      <section id="tab-reading-writing" class="exam-section-content" style="display: none;">
         <div id="reading-writing-container">
           <div style="text-align: center; padding: 40px; color: var(--text-muted);">Cargando preguntas de Reading & Writing...</div>
         </div>
       </section>
 
-      <!-- Botón de Envío Global -->
+      <!-- BOTÓN PRINCIPAL DE ENVÍO FINAL -->
       <div style="margin-top: 30px; text-align: center;">
-        <button type="button" id="btn-submit-exam" class="btn btn-primary" style="padding: 16px 36px; font-size: 1.15rem; width: 100%; max-width: 400px;">
-          📥 Enviar Examen Final
+        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, var(--success), #059669); border: none; padding: 16px 36px; font-size: 1.15rem; width: 100%; max-width: 450px;">
+          🚀 Enviar Examen Completo
         </button>
       </div>
 
@@ -326,44 +337,38 @@
 
   </main>
 
-  <!-- Modal de Resultados post-envío -->
+  <!-- MODAL DE RESULTADOS AUTOMÁTICOS -->
   <div id="results-modal" class="modal-overlay">
-    <div class="modal-card" style="text-align: center; padding: 40px 30px;">
-      <div style="font-size: 3.5rem; margin-bottom: 10px;">🎉</div>
-      <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--dark); margin-bottom: 10px;">
-        ¡Examen Completado y Enviado!
-      </h2>
-      <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 24px;">
-        Tus respuestas de Listening (Audios 1, 2, 3 & 4), Reading & Writing han sido registradas exitosamente.
-      </p>
+    <div class="modal-card" style="text-align: center;">
+      <div style="font-size: 3.5rem; margin-bottom: 10px;">🏆</div>
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--dark); margin-bottom: 6px;">Examen Enviado Correctamente</h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">¡Felicidades! Tus respuestas han sido guardadas en la base de datos.</p>
 
-      <div style="background: var(--primary-light); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px; text-align: left;">
-        <h3 style="font-size: 1.1rem; color: var(--primary); margin-bottom: 12px;">Resumen de Puntaje Automático:</h3>
-        
-        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600;">
-          <span>🎧 Listening (Audios 1, 2, 3 & 4):</span>
-          <span id="res-listening-score" style="color: var(--primary); font-weight: 700;">0/100</span>
+      <div style="background: var(--bg-light); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px; text-align: left;">
+        <h3 style="font-size: 1.05rem; color: var(--primary); margin-bottom: 12px;">Calificación Automática:</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; justify-content: space-between; font-weight: 600;">
+            <span>🎧 Listening (125 Preguntas):</span>
+            <span id="res-score-listening" style="color: #0369a1; font-weight: 800;">0 / 125</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-weight: 600;">
+            <span>📖 Reading & Writing (Auto):</span>
+            <span id="res-score-rw" style="color: var(--primary); font-weight: 800;">0 / 48</span>
+          </div>
+          <div style="border-top: 1px solid var(--border-color); padding-top: 10px; display: flex; justify-content: space-between; font-weight: 800; font-size: 1.1rem;">
+            <span>🏆 Puntaje Automático Total:</span>
+            <span id="res-score-total" class="score-pill score-high">0 / 173</span>
+          </div>
         </div>
-
-        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600;">
-          <span>📖 Reading & Writing:</span>
-          <span id="res-rw-score" style="color: var(--primary); font-weight: 700;">0/48</span>
-        </div>
-        
-        <hr style="border: none; border-top: 1px solid var(--border-color); margin: 12px 0;">
-        
-        <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.15rem; color: var(--dark);">
-          <span>Puntaje Total Auto:</span>
-          <span id="res-total-score">0/148</span>
-        </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
-          * Las secciones de Writing (Partes 6 y 7) serán revisadas y calificadas por tu profesor en el Panel Docente.
-        </p>
       </div>
 
-      <a href="/" class="btn btn-primary btn-block" onclick="localStorage.removeItem('ket_student');">
-        Regresar al Inicio
-      </a>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+        * Nota: Tus redacciones escritas (Writing Part 6 & Part 7) serán calificadas por tu profesor en el panel administrativo.
+      </p>
+
+      <button type="button" id="btn-modal-finish" class="btn btn-primary btn-block">
+        Finalizar y Volver al Inicio
+      </button>
     </div>
   </div>
 

@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const avg = list.length > 0 ? (totalScore / list.length).toFixed(1) : 0;
-    const maxSample = list.length > 0 ? list[0].max_auto_score : 148;
+    const maxSample = list.length > 0 ? list[0].max_auto_score : 173;
 
     const avgElem = document.getElementById('stat-avg-score');
     if (avgElem) avgElem.textContent = `${avg} / ${maxSample}`;
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td><span style="font-weight: 600; color: var(--primary);">${sub.grade}</span></td>
           <td>
             <span class="score-pill score-high" style="background: #e0f2fe; color: #0369a1;">
-              🎧 ${sub.score_listening || 0} / 100
+              🎧 ${sub.score_listening || 0} / ${sub.max_listening || 125}
             </span>
           </td>
           <td>
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </td>
           <td>
             <span class="score-pill ${badgeClass}">
-              🏆 ${sub.total_auto_score} / ${sub.max_auto_score || 148} (${Math.round(percentage)}%)
+              🏆 ${sub.total_auto_score} / ${sub.max_auto_score || 173} (${Math.round(percentage)}%)
             </span>
           </td>
           <td style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">🕒 ${formattedAttempt}</td>
@@ -293,13 +293,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-student-avatar').textContent = (sub.first_name.charAt(0) + sub.last_name.charAt(0)).toUpperCase();
 
         const scoreListElem = document.getElementById('modal-score-listening');
-        if (scoreListElem) scoreListElem.textContent = `${sub.score_listening || 0} / 100`;
+        if (scoreListElem) scoreListElem.textContent = `${sub.score_listening || 0} / ${sub.max_listening || 125}`;
 
         const scoreRwElem = document.getElementById('modal-score-rw');
         if (scoreRwElem) scoreRwElem.textContent = `${sub.score_reading_writing || 0} / 48`;
 
         const scoreTotalElem = document.getElementById('modal-score-total');
-        if (scoreTotalElem) scoreTotalElem.textContent = `${sub.total_auto_score} / ${sub.max_auto_score || 148}`;
+        if (scoreTotalElem) scoreTotalElem.textContent = `${sub.total_auto_score} / ${sub.max_auto_score || 173}`;
 
         // Textos del Writing (Partes 6 y 7)
         const p6Text = (sub.writing_part6 || '').trim();
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const questionMap = buildQuestionMap(sub.fullExamData);
 
-        // Renderizar las respuestas individuales de Listening (100 Preguntas)
+        // Renderizar las respuestas individuales de Listening (125 Preguntas)
         renderModalListeningAnswers(sub.raw_answers_json || {}, questionMap);
         renderModalRWAnswers(sub.raw_answers_json || {}, questionMap);
 
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  /* --- Renderizar Lista Completa de Respuestas de Listening (100 Preguntas) --- */
+  /* --- Renderizar Lista Completa de Respuestas de Listening (125 Preguntas) --- */
   function renderModalListeningAnswers(answersObj, questionMap = {}) {
     const container = document.getElementById('modal-listening-answers-container');
     if (!container) return;
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let html = '';
     let answeredCount = 0;
 
-    for (let i = 1; i <= 100; i++) {
+    for (let i = 1; i <= 125; i++) {
       const qKey = `listening_q${i}`;
       const given = answersObj[qKey] !== undefined && answersObj[qKey] !== null ? answersObj[qKey].toString().trim() : '';
       const qDef = questionMap[qKey] || {};
@@ -360,11 +360,16 @@ document.addEventListener('DOMContentLoaded', () => {
         trackBorder = '#10b981';
         tagBg = '#d1fae5';
         tagColor = '#047857';
-      } else if (i >= 76) {
+      } else if (i >= 76 && i <= 100) {
         trackTag = 'Audio 4';
-        trackBorder = '#eab308';
-        tagBg = '#fef9c3';
-        tagColor = '#a16207';
+        trackBorder = '#f59e0b';
+        tagBg = '#fef3c7';
+        tagColor = '#b45309';
+      } else if (i >= 101) {
+        trackTag = 'Audio 5';
+        trackBorder = '#d946ef';
+        tagBg = '#f5d0fe';
+        tagColor = '#a21caf';
       }
 
       const correctAns = qDef.correctAnswer || '';
