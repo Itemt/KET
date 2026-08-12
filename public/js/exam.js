@@ -16,8 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Variables de Estado
   let examData = null;
-  let timerInterval = null;
-  let remainingSeconds = 90 * 60; // 90 Minutos
 
   // Cargar Examen desde API
   fetchExamData();
@@ -28,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupAudioPlayer('2');
   setupAudioPlayer('3');
   setupAudioPlayer('4');
-  startGlobalTimer();
   setupFormSubmission(student);
 
   /* --- Cargar Datos del Examen desde Backend --- */
@@ -479,30 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* --- Temporizador Global del Examen --- */
-  function startGlobalTimer() {
-    const clock = document.getElementById('timer-clock');
-    const timerBox = document.getElementById('timer-display');
 
-    timerInterval = setInterval(() => {
-      remainingSeconds--;
-
-      if (remainingSeconds <= 300) {
-        timerBox.classList.add('warning');
-      }
-
-      if (remainingSeconds <= 0) {
-        clearInterval(timerInterval);
-        alert('⏰ El tiempo del examen ha terminado. Tu examen se enviará automáticamente.');
-        document.getElementById('ket-exam-form').dispatchEvent(new Event('submit'));
-        return;
-      }
-
-      const mins = Math.floor(remainingSeconds / 60);
-      const secs = remainingSeconds % 60;
-      clock.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }, 1000);
-  }
 
   /* --- Envío Final del Examen --- */
   function setupFormSubmission(student) {
@@ -543,7 +517,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await response.json();
 
         if (result.success) {
-          clearInterval(timerInterval);
           showResultsModal(result.score);
         } else {
           alert(`Error: ${result.message}`);

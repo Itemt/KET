@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 // ============================================================
-// Motor de Base de Datos Unificado
+// Motor de Base de Datos Unificado (Turso Cloud / SQLite Local)
 // - En Vercel / Serverless: usa Turso (libSQL en la nube)
 // - En local sin TURSO_DATABASE_URL: usa SQLite nativo (better-sqlite3)
 // ============================================================
@@ -85,12 +85,31 @@ async function initTurso() {
     )
   `);
 
-  // Índices para búsquedas rápidas por username
-  await client.execute(`
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_students_username ON students(username) WHERE username IS NOT NULL AND username != ''
-  `);
+  // Migraciones defensivas (Safe Alter) para asegurar que bases de datos existentes no fallen jamás
+  const safeAlter = async (sql) => {
+    try { await client.execute(sql); } catch (e) { /* Columna ya existe */ }
+  };
 
-  console.log('✅ Base de Datos Turso (libSQL en la nube) conectada y lista.');
+  await safeAlter(`ALTER TABLE students ADD COLUMN username TEXT;`);
+  await safeAlter(`ALTER TABLE students ADD COLUMN last_login_at TEXT;`);
+  await safeAlter(`ALTER TABLE submissions ADD COLUMN attempt_time TEXT;`);
+  await safeAlter(`ALTER TABLE submissions ADD COLUMN score_reading_writing INTEGER DEFAULT 0;`);
+  await safeAlter(`ALTER TABLE submissions ADD COLUMN score_listening INTEGER DEFAULT 0;`);
+  await safeAlter(`ALTER TABLE submissions ADD COLUMN total_auto_score INTEGER DEFAULT 0;`);
+  await safeAlter(`ALTER TABLE submissions ADD COLUMN max_auto_score INTEGER DEFAULT 0;`);
+  await safeAlter(`ALTER TABLE submissions ADD COLUMN writing_part6 TEXT;`);
+  await safeAlter(`ALTER TABLE submissions ADD COLUMN writing_part7 TEXT;`);
+  await safeAlter(`ALTER TABLE submissions ADD COLUMN speaking_audio_url TEXT;`);
+  await safeAlter(`ALTER TABLE submissions ADD COLUMN raw_answers_json TEXT DEFAULT '{}';`);
+
+  // Índices para búsquedas rápidas
+  try {
+    await client.execute(`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_students_username ON students(username) WHERE username IS NOT NULL AND username != ''
+    `);
+  } catch (e) {}
+
+  console.log('✅ Base de Datos Turso (libSQL en la nube) conectada y verificada.');
   return client;
 }
 
@@ -100,10 +119,8 @@ async function initTurso() {
 const TURSO_CONFIGURED = !!process.env.TURSO_DATABASE_URL;
 
 if (TURSO_CONFIGURED) {
-  // Turso disponible (Vercel o local con variable de entorno configurada)
   console.log('ℹ️ Usando motor Turso (libSQL en la nube)...');
 
-  // Crear un proxy async que inicializa el cliente la primera vez
   let _tursoClient = null;
   let _initPromise = null;
 
@@ -122,7 +139,6 @@ if (TURSO_CONFIGURED) {
     isTurso: true,
     getClient: getTursoClient,
 
-    // Métodos helper para mantener compatibilidad con el código existente
     async execute(sql, args = []) {
       const client = await getTursoClient();
       return client.execute({ sql, args });
@@ -130,12 +146,12 @@ if (TURSO_CONFIGURED) {
 
     async queryAll(sql, args = []) {
       const result = await this.execute(sql, args);
-      return result.rows;
+      return result && result.rows ? result.rows : [];
     },
 
     async queryOne(sql, args = []) {
       const result = await this.execute(sql, args);
-      return result.rows[0] || null;
+      return result && result.rows && result.rows[0] ? result.rows[0] : null;
     },
 
     async run(sql, args = []) {
@@ -147,7 +163,6 @@ if (TURSO_CONFIGURED) {
     }
   };
 
-  // Inicializar inmediatamente en background
   getTursoClient().catch(err => {
     console.error('❌ Error al conectar con Turso:', err.message);
   });
@@ -194,10 +209,23 @@ if (TURSO_CONFIGURED) {
       );
     `);
 
-    try { nativeDb.exec(`ALTER TABLE students ADD COLUMN username TEXT;`); } catch (e) {}
-    try { nativeDb.exec(`ALTER TABLE submissions ADD COLUMN attempt_time DATETIME;`); } catch (e) {}
+    // Migraciones defensivas (Safe Alter) para SQLite local
+    const safeAlterNative = (sql) => {
+      try { nativeDb.exec(sql); } catch (e) {}
+    };
 
-    // Envolver el DB nativo en la misma interfaz async para compatibilidad
+    safeAlterNative(`ALTER TABLE students ADD COLUMN username TEXT;`);
+    safeAlterNative(`ALTER TABLE students ADD COLUMN last_login_at DATETIME;`);
+    safeAlterNative(`ALTER TABLE submissions ADD COLUMN attempt_time DATETIME;`);
+    safeAlterNative(`ALTER TABLE submissions ADD COLUMN score_reading_writing INTEGER DEFAULT 0;`);
+    safeAlterNative(`ALTER TABLE submissions ADD COLUMN score_listening INTEGER DEFAULT 0;`);
+    safeAlterNative(`ALTER TABLE submissions ADD COLUMN total_auto_score INTEGER DEFAULT 0;`);
+    safeAlterNative(`ALTER TABLE submissions ADD COLUMN max_auto_score INTEGER DEFAULT 0;`);
+    safeAlterNative(`ALTER TABLE submissions ADD COLUMN writing_part6 TEXT;`);
+    safeAlterNative(`ALTER TABLE submissions ADD COLUMN writing_part7 TEXT;`);
+    safeAlterNative(`ALTER TABLE submissions ADD COLUMN speaking_audio_url TEXT;`);
+    safeAlterNative(`ALTER TABLE submissions ADD COLUMN raw_answers_json TEXT DEFAULT '{}';`);
+
     db = {
       isTurso: false,
       _native: nativeDb,
@@ -208,7 +236,7 @@ if (TURSO_CONFIGURED) {
       },
 
       async queryAll(sql, args = []) {
-        return nativeDb.prepare(sql).all(...args);
+        return nativeDb.prepare(sql).all(...args) || [];
       },
 
       async queryOne(sql, args = []) {
@@ -224,11 +252,10 @@ if (TURSO_CONFIGURED) {
       }
     };
 
-    console.log('✅ Base de Datos SQLite local cargada (modo desarrollo).');
+    console.log('✅ Base de Datos SQLite local cargada y verificada.');
 
   } catch (err) {
     console.error('❌ Error crítico al inicializar la base de datos:', err.message);
-    console.error('💡 Configura TURSO_DATABASE_URL para usar la base de datos en la nube.');
     throw err;
   }
 }
