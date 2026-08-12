@@ -29,6 +29,47 @@
     </div>
   </header>
 
+  <!-- MODAL BLOQUEANTE DE SELECCIÓN DE MÓDULO INICIAL (ALERT CON ESTILO) -->
+  <div id="module-selection-modal" class="modal-overlay active">
+    <div class="modal-card" style="max-width: 750px; text-align: center; padding: 36px 28px;">
+      <div style="font-size: 3.2rem; margin-bottom: 10px;">🎉</div>
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--dark); margin-bottom: 8px;">
+        ¡Bienvenido(a) a tu Examen de Cambridge KET A2!
+      </h2>
+      <p style="font-size: 0.95rem; color: var(--text-muted); max-width: 650px; margin: 0 auto 24px; line-height: 1.6;">
+        Para comenzar el examen, debes seleccionar la sección por la cual deseas iniciar. No podrás acceder a las preguntas hasta que elijas una opción:
+      </p>
+
+      <div class="module-selector-grid">
+        <!-- Tarjeta Listening -->
+        <div class="module-card" id="btn-select-listening">
+          <div class="module-icon-badge module-icon-listening">🎧</div>
+          <div class="module-title">Listening Exam</div>
+          <div class="module-subtitle">
+            <strong>Audios 1, 2, 3, 4 y 5</strong>: Camp, Stress, Party, Tech Park & Inventors<br>
+            125 Preguntas KET asignadas
+          </div>
+          <button type="button" class="btn btn-primary btn-block" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); border: none; font-size: 1rem; padding: 14px;">
+            🎧 Iniciar Listening
+          </button>
+        </div>
+
+        <!-- Tarjeta Reading & Writing -->
+        <div class="module-card" id="btn-select-rw">
+          <div class="module-icon-badge module-icon-reading">📖</div>
+          <div class="module-title">Reading & Writing</div>
+          <div class="module-subtitle">
+            7 Partes Oficiales KET A2 Key<br>
+            <strong>Lecturas, Gramática y Redacción</strong>
+          </div>
+          <button type="button" class="btn btn-primary btn-block" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-size: 1rem; padding: 14px;">
+            📖 Iniciar Reading & Writing
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <main class="container" style="margin-top: 24px; margin-bottom: 60px;">
 
     <!-- BARRA DE INFORMACIÓN DE ESTUDIANTE -->
@@ -45,45 +86,6 @@
         <span style="font-size: 0.85rem; font-weight: 700; color: var(--success); background: var(--success-light); padding: 6px 14px; border-radius: 20px;">
           ⏱️ Sin Límite de Tiempo (A tu propio ritmo)
         </span>
-      </div>
-    </div>
-
-    <!-- PANTALLA DE BIENVENIDA Y SELECCIÓN DE MÓDULO -->
-    <div id="welcome-module-selection" class="card" style="padding: 32px; text-align: center;">
-      <div style="font-size: 3.2rem; margin-bottom: 12px;">🎉</div>
-      <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--dark); margin-bottom: 8px;">
-        ¡Bienvenido(a) a tu Examen de Cambridge KET A2!
-      </h2>
-      <p style="font-size: 0.95rem; color: var(--text-muted); max-width: 650px; margin: 0 auto 24px; line-height: 1.6;">
-        Selecciona el módulo por el cual deseas comenzar. Puedes alternar entre ellos libremente o realizar primero el <strong>Listening (Audios 1, 2, 3, 4 y 5)</strong> o el <strong>Reading & Writing</strong>.
-      </p>
-
-      <div class="module-selector-grid">
-        <!-- Tarjeta Listening -->
-        <div class="module-card" id="btn-select-listening">
-          <div class="module-icon-badge module-icon-listening">🎧</div>
-          <div class="module-title">Listening Exam</div>
-          <div class="module-subtitle">
-            <strong>Audios 1, 2, 3, 4 y 5</strong>: Camp, Stress, Party, Tech Park & Inventors<br>
-            125 Preguntas KET asignadas aleatoriamente
-          </div>
-          <button type="button" class="btn btn-primary btn-block" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); border: none;">
-            🎧 Iniciar Listening
-          </button>
-        </div>
-
-        <!-- Tarjeta Reading & Writing -->
-        <div class="module-card" id="btn-select-rw">
-          <div class="module-icon-badge module-icon-reading">📖</div>
-          <div class="module-title">Reading & Writing</div>
-          <div class="module-subtitle">
-            7 Partes Oficiales KET A2 Key<br>
-            <strong>Lecturas, Gramática y Redacción</strong>
-          </div>
-          <button type="button" class="btn btn-primary btn-block" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none;">
-            📖 Iniciar Reading & Writing
-          </button>
-        </div>
       </div>
     </div>
 

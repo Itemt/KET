@@ -71,19 +71,19 @@ document.addEventListener('DOMContentLoaded', () => {
   function setupModuleSelector() {
     const btnSelectListening = document.getElementById('btn-select-listening');
     const btnSelectRW = document.getElementById('btn-select-rw');
-    const moduleScreen = document.getElementById('welcome-module-selection');
+    const modalOverlay = document.getElementById('module-selection-modal');
 
     if (btnSelectListening) {
       btnSelectListening.addEventListener('click', () => {
         switchTab('tab-listening');
-        if (moduleScreen) moduleScreen.style.display = 'none';
+        if (modalOverlay) modalOverlay.classList.remove('active');
       });
     }
 
     if (btnSelectRW) {
       btnSelectRW.addEventListener('click', () => {
         switchTab('tab-reading-writing');
-        if (moduleScreen) moduleScreen.style.display = 'none';
+        if (modalOverlay) modalOverlay.classList.remove('active');
       });
     }
   }
