@@ -295,14 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    speedBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        speedBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const speed = parseFloat(btn.getAttribute('data-speed') || '1.0');
-        audio.playbackRate = speed;
-      });
-    });
+
   }
 
   /* --- Renderizar Sección Reading & Writing --- */
