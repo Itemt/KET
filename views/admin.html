@@ -50,7 +50,7 @@
       <!-- NAVEGACIÓN POR PESTAÑAS DEL DOCENTE -->
       <nav class="section-tabs" style="margin-bottom: 24px;">
         <button class="tab-btn active" id="tab-btn-main">
-          📘 Examen Principal (Reading & Writing)
+          📘 Examen Principal (Listening + Reading & Writing)
         </button>
         <button class="tab-btn" id="tab-btn-bonus" style="background: #f3e8ff; color: #7c3aed;">
           🚀 Examen Bonus (Desafío Rápidos)
@@ -65,7 +65,7 @@
         </div>
 
         <div class="card" style="padding: 20px; margin-bottom: 0;">
-          <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">PROMEDIO READING & WRITING</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">PROMEDIO TOTAL GENERAL</div>
           <div style="font-size: 2.2rem; font-weight: 800; color: var(--success); margin-top: 4px;" id="stat-avg-score">0 / 0</div>
         </div>
       </div>
@@ -100,10 +100,10 @@
                 <th># ID</th>
                 <th>Estudiante</th>
                 <th>Grado</th>
-                <th>Score Auto</th>
-                <th>Writing P6 & P7</th>
+                <th>🎧 Listening</th>
+                <th>📖 Reading & Writing</th>
+                <th>🏆 Total Auto</th>
                 <th>Hora Intento</th>
-                <th>Fecha Envío</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -122,7 +122,7 @@
 
   <!-- MODAL DE DETALLE DE ENTREGA DE ALUMNO -->
   <div id="detail-modal" class="modal-overlay">
-    <div class="modal-card">
+    <div class="modal-card" style="max-width: 850px;">
       <button class="modal-close-btn" id="modal-close-btn">&times;</button>
       
       <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; border-bottom: 2px solid var(--primary-light); padding-bottom: 14px;">
@@ -134,16 +134,50 @@
       </div>
 
       <!-- PUNTAJES AUTOMÁTICOS -->
-      <div style="background: var(--primary-light); border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px;">
-        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 10px;">📊 Calificación Opción Múltiple (Reading & Writing)</h4>
-        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-          <div><strong>Reading & Writing:</strong> <span id="modal-score-rw">0</span></div>
-          <div><strong>Puntaje Total Auto:</strong> <span id="modal-score-total" class="score-pill score-high">0/0</span></div>
+      <div style="background: var(--primary-light); border-radius: var(--radius-md); padding: 18px; margin-bottom: 24px;">
+        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 10px;">📊 Calificación Automática Registrada</h4>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
+          <div>🎧 <strong>Listening:</strong> <span id="modal-score-listening" style="font-weight: 700; color: #0891b2;">0/25</span></div>
+          <div>📖 <strong>Reading & Writing:</strong> <span id="modal-score-rw" style="font-weight: 700; color: var(--primary);">0/48</span></div>
+          <div>🏆 <strong>Puntaje Total Auto:</strong> <span id="modal-score-total" class="score-pill score-high">0/73</span></div>
+        </div>
+      </div>
+
+      <!-- PESTAÑAS DE DETALLE DENTRO DEL MODAL -->
+      <div style="display: flex; gap: 10px; margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        <button type="button" class="btn" id="btn-modal-tab-listening" style="background: #e0f2fe; color: #0369a1; font-weight: 700; padding: 6px 14px; font-size: 0.85rem;">
+          🎧 Respuestas Listening (25 Preguntas)
+        </button>
+        <button type="button" class="btn" id="btn-modal-tab-rw" style="background: #f1f5f9; color: var(--text-muted); font-weight: 700; padding: 6px 14px; font-size: 0.85rem;">
+          📖 Reading & Writing
+        </button>
+        <button type="button" class="btn" id="btn-modal-tab-writing" style="background: #f1f5f9; color: var(--text-muted); font-weight: 700; padding: 6px 14px; font-size: 0.85rem;">
+          ✍️ Producción Escrita
+        </button>
+      </div>
+
+      <!-- DESGLOSE RESPUESTAS LISTENING -->
+      <div id="modal-tab-listening-content" style="margin-bottom: 24px;">
+        <h4 style="font-weight: 700; color: #0891b2; margin-bottom: 12px;">
+          🎧 Respuestas Seleccionadas por el Alumno — Listening (Audio 1)
+        </h4>
+        <div id="modal-listening-answers-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px;">
+          <div style="color: var(--text-muted);">Cargando respuestas de Listening...</div>
+        </div>
+      </div>
+
+      <!-- DESGLOSE RESPUESTAS READING & WRITING -->
+      <div id="modal-tab-rw-content" style="margin-bottom: 24px; display: none;">
+        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 12px;">
+          📖 Respuestas Seleccionadas por el Alumno — Reading & Writing
+        </h4>
+        <div id="modal-rw-answers-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px;">
+          <div style="color: var(--text-muted);">Cargando respuestas de Reading & Writing...</div>
         </div>
       </div>
 
       <!-- SECCIÓN WRITING PRODUCTIVO -->
-      <div style="margin-bottom: 24px;">
+      <div id="modal-tab-writing-content" style="margin-bottom: 24px; display: none;">
         <h4 style="font-weight: 700; color: var(--dark); margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
           ✍️ Producción Escrita (Writing)
         </h4>

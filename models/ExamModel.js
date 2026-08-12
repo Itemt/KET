@@ -1,18 +1,14 @@
 /**
  * MODELO DE EXAMEN KET (A2 Key) - CAMBRIDGE ENGLISH FOR 6TH GRADE
- * Soporta 10 versiones dinámicas de examen asignadas por ID de estudiante.
+ * Soporta 10 versiones dinámicas de Reading & Writing y 3 versiones de Listening (Audios 1 y 2).
  */
 
 const examVersions = require('./ExamVersions');
+const listeningVersions = require('./ListeningVersions');
 
 class ExamModel {
   /**
-   * Calcula determinísticamente la versión del examen para un estudiante.
-   * studentId 1 -> versión 0
-   * studentId 2 -> versión 1
-   * ...
-   * studentId 10 -> versión 9
-   * studentId 11 -> versión 0
+   * Versión determinística de Reading & Writing según ID de alumno.
    */
   static getVersionForStudent(studentId) {
     const parsedId = parseInt(studentId, 10);
@@ -20,22 +16,38 @@ class ExamModel {
     return (parsedId - 1) % examVersions.length;
   }
 
+  /**
+   * Versión determinística de Listening (0, 1 o 2) según ID de alumno.
+   */
+  static getListeningVersionForStudent(studentId) {
+    const parsedId = parseInt(studentId, 10);
+    if (isNaN(parsedId) || parsedId <= 0) return 0;
+    return (parsedId - 1) % listeningVersions.length;
+  }
+
   static getVersionData(versionIndex = 0) {
     const idx = Math.abs(parseInt(versionIndex, 10) || 0) % examVersions.length;
     return examVersions[idx] || examVersions[0];
   }
 
-  static getFullExamData(versionIndex = 0) {
+  static getListeningVersionData(listeningVersionIndex = 0) {
+    const idx = Math.abs(parseInt(listeningVersionIndex, 10) || 0) % listeningVersions.length;
+    return listeningVersions[idx] || listeningVersions[0];
+  }
+
+  static getFullExamData(versionIndex = 0, listeningVersionIndex = 0) {
     const vData = this.getVersionData(versionIndex);
+    const lData = this.getListeningVersionData(listeningVersionIndex);
 
     return {
       title: vData.title || "Cambridge KET (A2 Key) for Schools — Official Practice Exam",
-      timeAllowedMinutes: 75,
+      timeAllowedMinutes: 90,
       version: vData.versionId,
+      listeningVersion: lData.versionId,
       sections: {
         reading_writing: {
           title: "Reading & Writing Section",
-          timeLimit: "75 minutes",
+          timeLimit: "60 minutes",
           totalParts: 7,
           parts: [
             /* PART 1: SHORT NOTICES & MESSAGES (Q1-10) */
@@ -100,56 +112,112 @@ class ExamModel {
               fieldName: "writing_part7"
             }
           ]
+        },
+
+        listening: {
+          title: "Listening Section (Audio 1 & Audio 2)",
+          timeLimit: "30 minutes",
+          versionId: lData.versionId,
+          audios: lData.audios
         }
       }
     };
   }
 
-  static getSanitizedExamData(versionIndex = 0) {
-    const fullData = JSON.parse(JSON.stringify(this.getFullExamData(versionIndex)));
+  static getSanitizedExamData(versionIndex = 0, listeningVersionIndex = 0) {
+    const fullData = JSON.parse(JSON.stringify(this.getFullExamData(versionIndex, listeningVersionIndex)));
 
-    fullData.sections.reading_writing.parts.forEach(part => {
-      if (part.questions) {
-        part.questions.forEach(q => {
-          delete q.correctAnswer;
-          delete q.acceptableAnswers;
-        });
-      }
-    });
+    // Sanitizar Reading & Writing
+    if (fullData.sections && fullData.sections.reading_writing) {
+      fullData.sections.reading_writing.parts.forEach(part => {
+        if (part.questions) {
+          part.questions.forEach(q => {
+            delete q.correctAnswer;
+            delete q.acceptableAnswers;
+          });
+        }
+      });
+    }
+
+    // Sanitizar Listening Audios
+    if (fullData.sections && fullData.sections.listening && fullData.sections.listening.audios) {
+      fullData.sections.listening.audios.forEach(audioObj => {
+        if (audioObj.parts) {
+          audioObj.parts.forEach(part => {
+            if (part.questions) {
+              part.questions.forEach(q => {
+                delete q.correctAnswer;
+                delete q.acceptableAnswers;
+              });
+            }
+          });
+        }
+      });
+    }
 
     return fullData;
   }
 
-  static evaluateAnswers(studentAnswers, versionIndex = 0) {
-    const fullData = this.getFullExamData(versionIndex);
+  static evaluateAnswers(studentAnswers, versionIndex = 0, listeningVersionIndex = 0) {
+    const fullData = this.getFullExamData(versionIndex, listeningVersionIndex);
     let scoreRW = 0;
     let maxRW = 0;
+    let scoreList = 0;
+    let maxList = 0;
 
-    fullData.sections.reading_writing.parts.forEach(part => {
-      if (part.questions) {
-        part.questions.forEach(q => {
-          if (q.correctAnswer || q.acceptableAnswers) {
-            maxRW++;
-            const given = (studentAnswers[q.id] || "").toString().trim().toLowerCase();
+    // Evaluación de Reading & Writing
+    if (fullData.sections && fullData.sections.reading_writing) {
+      fullData.sections.reading_writing.parts.forEach(part => {
+        if (part.questions) {
+          part.questions.forEach(q => {
+            if (q.correctAnswer || q.acceptableAnswers) {
+              maxRW++;
+              const given = (studentAnswers[q.id] || "").toString().trim().toLowerCase();
 
-            if (q.correctAnswer && given === q.correctAnswer.toLowerCase()) {
-              scoreRW++;
-            } else if (q.acceptableAnswers) {
-              const isOk = q.acceptableAnswers.some(ans => ans.toLowerCase() === given);
-              if (isOk) scoreRW++;
+              if (q.correctAnswer && given === q.correctAnswer.toLowerCase()) {
+                scoreRW++;
+              } else if (q.acceptableAnswers) {
+                const isOk = q.acceptableAnswers.some(ans => ans.toLowerCase() === given);
+                if (isOk) scoreRW++;
+              }
             }
-          }
-        });
-      }
-    });
+          });
+        }
+      });
+    }
+
+    // Evaluación de Listening Audios
+    if (fullData.sections && fullData.sections.listening && fullData.sections.listening.audios) {
+      fullData.sections.listening.audios.forEach(audioObj => {
+        if (audioObj.parts) {
+          audioObj.parts.forEach(part => {
+            if (part.questions) {
+              part.questions.forEach(q => {
+                if (q.correctAnswer || q.acceptableAnswers) {
+                  maxList++;
+                  const given = (studentAnswers[q.id] || "").toString().trim().toLowerCase();
+
+                  if (q.correctAnswer && given === q.correctAnswer.toLowerCase()) {
+                    scoreList++;
+                  } else if (q.acceptableAnswers) {
+                    const isOk = q.acceptableAnswers.some(ans => ans.toLowerCase() === given);
+                    if (isOk) scoreList++;
+                  }
+                }
+              });
+            }
+          });
+        }
+      });
+    }
 
     return {
       score_reading_writing: scoreRW,
       max_reading_writing: maxRW,
-      score_listening: 0,
-      max_listening: 0,
-      total_auto_score: scoreRW,
-      max_auto_score: maxRW
+      score_listening: scoreList,
+      max_listening: maxList,
+      total_auto_score: scoreRW + scoreList,
+      max_auto_score: maxRW + maxList
     };
   }
 }

@@ -34,14 +34,16 @@ class ExamController {
         });
       }
 
-      const version = ExamModel.getVersionForStudent(studentRecord.id);
+      const rwVersion = ExamModel.getVersionForStudent(studentRecord.id);
+      const listeningVersion = ExamModel.getListeningVersionForStudent(studentRecord.id);
 
       res.json({
         success: true,
         message: '¡Bienvenido(a) al examen!',
         student: {
           ...studentRecord,
-          examVersion: version
+          examVersion: rwVersion,
+          listeningVersion: listeningVersion
         }
       });
     } catch (err) {
@@ -53,15 +55,28 @@ class ExamController {
   static getExamData(req, res) {
     try {
       const studentId = req.query.studentId || req.query.student_id;
-      let version = 0;
+      let rwVersion = 0;
+      let listeningVersion = 0;
+
       if (studentId) {
-        version = ExamModel.getVersionForStudent(studentId);
-      } else if (req.query.version !== undefined) {
-        version = parseInt(req.query.version, 10) || 0;
+        rwVersion = ExamModel.getVersionForStudent(studentId);
+        listeningVersion = ExamModel.getListeningVersionForStudent(studentId);
+      } else {
+        if (req.query.version !== undefined) {
+          rwVersion = parseInt(req.query.version, 10) || 0;
+        }
+        if (req.query.listeningVersion !== undefined) {
+          listeningVersion = parseInt(req.query.listeningVersion, 10) || 0;
+        }
       }
 
-      const sanitizedExam = ExamModel.getSanitizedExamData(version);
-      res.json({ success: true, exam: sanitizedExam, version });
+      const sanitizedExam = ExamModel.getSanitizedExamData(rwVersion, listeningVersion);
+      res.json({
+        success: true,
+        exam: sanitizedExam,
+        version: rwVersion,
+        listeningVersion: listeningVersion
+      });
     } catch (error) {
       console.error('Error al obtener datos del examen:', error);
       res.status(500).json({ success: false, message: 'Error al cargar el examen.' });
@@ -83,8 +98,9 @@ class ExamController {
 
       const studentRecord = await StudentModel.createOrGet(firstName, lastName, grade, username);
 
-      const version = ExamModel.getVersionForStudent(studentRecord.id);
-      const evaluation = ExamModel.evaluateAnswers(answers || {}, version);
+      const rwVersion = ExamModel.getVersionForStudent(studentRecord.id);
+      const listeningVersion = ExamModel.getListeningVersionForStudent(studentRecord.id);
+      const evaluation = ExamModel.evaluateAnswers(answers || {}, rwVersion, listeningVersion);
 
       const submissionId = await SubmissionModel.save({
         student_id: studentRecord.id,
@@ -107,7 +123,9 @@ class ExamController {
           total: evaluation.total_auto_score,
           max: evaluation.max_auto_score,
           reading_writing: evaluation.score_reading_writing,
-          listening: evaluation.score_listening
+          max_reading_writing: evaluation.max_reading_writing,
+          listening: evaluation.score_listening,
+          max_listening: evaluation.max_listening
         }
       });
     } catch (error) {
