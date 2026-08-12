@@ -231,8 +231,14 @@ if (TURSO_CONFIGURED) {
       _native: nativeDb,
 
       async execute(sql, args = []) {
-        const rows = nativeDb.prepare(sql).all(...args);
-        return { rows };
+        const stmt = nativeDb.prepare(sql);
+        if (stmt.reader) {
+          const rows = stmt.all(...args);
+          return { rows };
+        } else {
+          const info = stmt.run(...args);
+          return { rows: [], lastInsertRowid: info.lastInsertRowid, rowsAffected: info.changes };
+        }
       },
 
       async queryAll(sql, args = []) {

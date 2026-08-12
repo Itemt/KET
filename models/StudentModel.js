@@ -47,10 +47,10 @@ class StudentModel {
     // Buscar estudiante existente por username o nombre completo
     const existing = await db.queryOne(
       `SELECT * FROM students 
-       WHERE (username IS NOT NULL AND username != '' AND LOWER(username) = ?)
+       WHERE (LENGTH(?) > 0 AND username IS NOT NULL AND LOWER(username) = ?)
           OR (LOWER(first_name) = ? AND LOWER(last_name) = ?)
        ORDER BY id DESC LIMIT 1`,
-      [cleanUser, cleanFirst.toLowerCase(), cleanLast.toLowerCase()]
+      [cleanUser, cleanUser, cleanFirst.toLowerCase(), cleanLast.toLowerCase()]
     );
 
     if (existing) {
