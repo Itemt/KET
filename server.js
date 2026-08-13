@@ -5,8 +5,6 @@ require('dotenv').config();
 
 // Inicializar la base de datos
 require('./config/db');
-const autoSeed = require('./config/autoSeed');
-autoSeed();
 
 const webRoutes = require('./routes/webRoutes');
 const apiRoutes = require('./routes/apiRoutes');
