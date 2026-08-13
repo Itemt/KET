@@ -3,30 +3,26 @@ const studentsList = require('./students.json');
 const ExamModel = require('../models/ExamModel');
 
 const targets6B = [
-  { username: 'miguelavila', keyword: 'avila', score: 43 },
-  { username: 'estebancorrea', keyword: 'correa', score: 44 },
-  { username: 'izzacristancho', keyword: 'cristancho', score: 38 },
-  { username: 'lorenguevara', keyword: 'guevara', score: 44 },
-  { username: 'emilialozano', keyword: 'lozano', score: 38 },
-  { username: 'marianamartinez', keyword: 'martinez', score: 43 },
-  { username: 'thomasmelendez', keyword: 'melendez', score: 14 },
-  { username: 'juanjosemeza', keyword: 'meza', score: 16 },
-  { username: 'laurenmunoz', keyword: 'munoz', score: 37 },
-  { username: 'ariortiz', keyword: 'ortiz', score: 41 },
-  { username: 'giselleperez', keyword: 'perez', score: 43 },
-  { username: 'juandiegoponton', keyword: 'ponton', score: 40 },
-  { username: 'sofiaposada', keyword: 'posada', score: 43 },
-  { username: 'emmanuelrojas', keyword: 'rojas', score: 26 },
-  { username: 'rudinsanchez', keyword: 'sanchez', score: 45 },
-  { username: 'santiagosilva', keyword: 'silva', score: 39 },
-  { username: 'salomevanegas', keyword: 'vanegas', score: 43 },
-  { username: 'matiasvelandia', keyword: 'velandia', score: 39 },
-  { username: 'valeriazarate', keyword: 'zarate', score: 39 }
+  { keywords: ['miguelavila', 'ávila silva', 'avila silva'], username: 'miguelavila', score: 43 },
+  { keywords: ['estebancorrea', 'correa arias'], username: 'estebancorrea', score: 44 },
+  { keywords: ['izzacristancho', 'cristancho martínez', 'cristancho martinez'], username: 'izzacristancho', score: 38 },
+  { keywords: ['lorenguevara', 'guevara carreño', 'guevara carreno'], username: 'lorenguevara', score: 44 },
+  { keywords: ['emilialozano', 'lozano velásquez', 'lozano velasquez'], username: 'emilialozano', score: 38 },
+  { keywords: ['marianamartinez', 'martínez gélvez', 'martinez gelvez'], username: 'marianamartinez', score: 43 },
+  { keywords: ['thomasmelendez', 'meléndez anaya', 'melendez anaya'], username: 'thomasmelendez', score: 14 },
+  { keywords: ['juanjosemeza', 'meza viloria'], username: 'juanjosemeza', score: 16 },
+  { keywords: ['laurenmunoz', 'muñoz morales', 'munoz morales'], username: 'laurenmunoz', score: 37 },
+  { keywords: ['ariortiz', 'ortiz rodríguez', 'ortiz rodriguez'], username: 'ariortiz', score: 41 },
+  { keywords: ['giselleperez', 'pérez bermeo', 'perez bermeo'], username: 'giselleperez', score: 43 },
+  { keywords: ['juandiegoponton', 'pontón sánchez', 'ponton sanchez'], username: 'juandiegoponton', score: 40 },
+  { keywords: ['sofiaposada', 'posada arévalo', 'posada arevalo'], username: 'sofiaposada', score: 43 },
+  { keywords: ['emmanuelrojas', 'rojas quintero'], username: 'emmanuelrojas', score: 26 },
+  { keywords: ['rudinsanchez', 'sánchez noguera', 'sanchez noguera'], username: 'rudinsanchez', score: 45 },
+  { keywords: ['santiagosilva', 'silva cubides'], username: 'santiagosilva', score: 39 },
+  { keywords: ['salomevanegas', 'vanegas quintana'], username: 'salomevanegas', score: 43 },
+  { keywords: ['matiasvelandia', 'velandia meneses'], username: 'matiasvelandia', score: 39 },
+  { keywords: ['valeriazarate', 'zárate mercado', 'zarate mercado'], username: 'valeriazarate', score: 39 }
 ];
-
-function normalizeText(text) {
-  return (text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-}
 
 async function seed6BSubmissions() {
   try {
@@ -53,81 +49,56 @@ async function seed6BSubmissions() {
       });
     }
 
-    // Obtener todos los alumnos y entregas de la base de datos (Cloud / Local)
-    const allDBStudents = await db.queryAll(`SELECT * FROM students`);
-    const allDBSubmissions = await db.queryAll(`SELECT * FROM submissions`);
+    // 1. Obtener TODAS las entregas existentes en la base de datos (con JOIN de estudiantes)
+    const existingSubmissions = await db.queryAll(`
+      SELECT 
+        s.id as sub_id, 
+        s.student_id, 
+        s.score_listening, 
+        s.score_reading_writing, 
+        s.raw_answers_json, 
+        st.first_name, 
+        st.last_name, 
+        st.grade, 
+        st.username 
+      FROM submissions s 
+      JOIN students st ON s.student_id = st.id
+    `);
 
-    for (const item of targets6B) {
-      const official = studentsList.find(s => s.username === item.username);
-      if (!official) continue;
+    const updatedStudentIds = new Set();
 
-      const officialNormFirst = normalizeText(official.firstName);
-      const officialNormLast = normalizeText(official.lastName);
-      const officialNormFull = normalizeText(official.fullName);
-      const targetKw = normalizeText(item.keyword);
+    // 2. Actualizar entregas existentes en la base de datos
+    for (const sub of existingSubmissions) {
+      const studentNameStr = `${sub.first_name || ''} ${sub.last_name || ''} ${sub.username || ''}`.toLowerCase();
+      
+      const target = targets6B.find(t => 
+        (sub.username && sub.username.toLowerCase() === t.username) ||
+        t.keywords.some(kw => studentNameStr.includes(kw))
+      );
 
-      // Buscar estudiante en la BD por username o coincidencia difusa de nombre/palabra clave
-      let stRecord = allDBStudents.find(st => {
-        const u = normalizeText(st.username);
-        if (u && u === official.username.toLowerCase()) return true;
-        const dbFull = normalizeText(`${st.first_name || ''} ${st.last_name || ''}`);
-        return dbFull.includes(targetKw) || (dbFull.includes(officialNormFirst) && dbFull.includes(officialNormLast));
-      });
+      if (target) {
+        updatedStudentIds.add(sub.student_id);
 
-      if (!stRecord) {
-        const res = await db.run(
-          `INSERT INTO students (first_name, last_name, grade, username, last_login_at) VALUES (?, ?, ?, ?, ?)`,
-          [official.firstName, official.lastName, official.grade, official.username, new Date().toISOString()]
-        );
-        stRecord = { id: Number(res.lastInsertRowid), first_name: official.firstName, last_name: official.lastName, grade: official.grade };
-        allDBStudents.push(stRecord);
-      } else if (!stRecord.username) {
-        await db.run(`UPDATE students SET username = ? WHERE id = ?`, [official.username, stRecord.id]);
-      }
-
-      // Buscar si este estudiante ya tiene una entrega previa registrada (por student_id)
-      let existingSub = allDBSubmissions.find(sub => sub.student_id === stRecord.id);
-
-      // Si no se encontró por ID, buscar entregas huérfanas por coincidencia de nombre
-      if (!existingSub) {
-        existingSub = allDBSubmissions.find(sub => {
-          const subStudent = allDBStudents.find(s => s.id === sub.student_id);
-          if (!subStudent) return false;
-          const subFull = normalizeText(`${subStudent.first_name || ''} ${subStudent.last_name || ''}`);
-          return subFull.includes(targetKw);
+        const rwAnswers = {};
+        rwQuestions.forEach((q, idx) => {
+          rwAnswers[q.id] = (idx < target.score) ? q.correct : q.wrong;
         });
-      }
 
-      // Generar respuestas exactas de Reading & Writing para la nota objetivo
-      const rwAnswers = {};
-      rwQuestions.forEach((q, idx) => {
-        if (idx < item.score) {
-          rwAnswers[q.id] = q.correct;
-        } else {
-          rwAnswers[q.id] = q.wrong;
-        }
-      });
-
-      const evalRes = ExamModel.evaluateAnswers(rwAnswers, 0, 0);
-
-      if (existingSub) {
-        // PRESERVAR EL PUNTAJE REAL DE LISTENING DEL ESTUDIANTE DE TURSO/VERCEL
-        const currentListening = Number(existingSub.score_listening || 0);
+        const evalRes = ExamModel.evaluateAnswers(rwAnswers, 0, 0);
+        const currentListening = Number(sub.score_listening || 0);
         const newRWScore = Number(evalRes.score_reading_writing);
         const newTotal = currentListening + newRWScore;
 
         let mergedAnswers = {};
-        if (existingSub.raw_answers_json) {
+        if (sub.raw_answers_json) {
           try {
-            mergedAnswers = typeof existingSub.raw_answers_json === 'string'
-              ? JSON.parse(existingSub.raw_answers_json)
-              : existingSub.raw_answers_json;
+            mergedAnswers = typeof sub.raw_answers_json === 'string'
+              ? JSON.parse(sub.raw_answers_json)
+              : sub.raw_answers_json;
           } catch (e) {
             mergedAnswers = {};
           }
         }
-
-        // Combinar respuestas existentes (Listening) con las nuevas (Reading & Writing)
         Object.assign(mergedAnswers, rwAnswers);
 
         await db.run(
@@ -142,37 +113,65 @@ async function seed6BSubmissions() {
             newTotal,
             173,
             JSON.stringify(mergedAnswers),
-            existingSub.id
+            sub.sub_id
           ]
         );
 
-        console.log(`✅ [6B Preservado] Entrega #${existingSub.id} (${official.fullName}): Listening ${currentListening}/125 + RW ${newRWScore}/48 = Total ${newTotal}/173`);
-
-      } else {
-        // Crear entrega si no existía registro previo
-        const res = await db.run(
-          `INSERT INTO submissions (
-            student_id, attempt_time, score_reading_writing, score_listening, total_auto_score, max_auto_score, writing_part6, writing_part7, speaking_audio_url, raw_answers_json
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            stRecord.id,
-            new Date(Date.now() - Math.floor(Math.random() * 3600000 * 24)).toISOString(),
-            evalRes.score_reading_writing,
-            0,
-            evalRes.score_reading_writing,
-            173,
-            '',
-            '',
-            '',
-            JSON.stringify(rwAnswers)
-          ]
-        );
-
-        const newSub = { id: Number(res.lastInsertRowid), student_id: stRecord.id, score_listening: 0, score_reading_writing: evalRes.score_reading_writing };
-        allDBSubmissions.push(newSub);
-        console.log(`✅ [6B Nueva] Creada entrega de ${official.fullName}: RW ${evalRes.score_reading_writing}/48`);
+        console.log(`✅ [DB Update] Entrega #${sub.sub_id} (${sub.first_name} ${sub.last_name}): Listening ${currentListening} + RW ${newRWScore} = Total ${newTotal}`);
       }
     }
+
+    // 3. Crear entregas para los estudiantes de 6°B que aún no tengan registros en submissions
+    for (const target of targets6B) {
+      const official = studentsList.find(s => s.username === target.username);
+      if (!official) continue;
+
+      let stRecord = await db.queryOne(
+        `SELECT * FROM students WHERE username = ? OR (LOWER(first_name) = ? AND LOWER(last_name) = ?) LIMIT 1`,
+        [official.username, official.firstName.toLowerCase(), official.lastName.toLowerCase()]
+      );
+
+      if (!stRecord) {
+        const res = await db.run(
+          `INSERT INTO students (first_name, last_name, grade, username, last_login_at) VALUES (?, ?, ?, ?, ?)`,
+          [official.firstName, official.lastName, official.grade, official.username, new Date().toISOString()]
+        );
+        stRecord = { id: Number(res.lastInsertRowid) };
+      }
+
+      if (updatedStudentIds.has(stRecord.id)) continue;
+
+      const hasSub = await db.queryOne(`SELECT id FROM submissions WHERE student_id = ?`, [stRecord.id]);
+      if (hasSub) continue;
+
+      const rwAnswers = {};
+      rwQuestions.forEach((q, idx) => {
+        rwAnswers[q.id] = (idx < target.score) ? q.correct : q.wrong;
+      });
+
+      const evalRes = ExamModel.evaluateAnswers(rwAnswers, 0, 0);
+
+      await db.run(
+        `INSERT INTO submissions (
+          student_id, attempt_time, score_reading_writing, score_listening, total_auto_score, max_auto_score, writing_part6, writing_part7, speaking_audio_url, raw_answers_json
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          stRecord.id,
+          new Date(Date.now() - Math.floor(Math.random() * 3600000 * 24)).toISOString(),
+          evalRes.score_reading_writing,
+          0,
+          evalRes.score_reading_writing,
+          173,
+          '',
+          '',
+          '',
+          JSON.stringify(rwAnswers)
+        ]
+      );
+
+      console.log(`✅ [DB Insert] Creada entrega de ${official.fullName}: RW ${evalRes.score_reading_writing}/48`);
+    }
+
   } catch (err) {
     console.error('AutoSeed 6B notice:', err.message);
   }
