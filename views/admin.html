@@ -48,27 +48,48 @@
 
     <div id="admin-dashboard-content" style="display: none;">
 
-      <!-- TARJETAS DE ESTADÍSTICAS -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 26px;">
-        <div class="card" style="padding: 20px; margin-bottom: 0;">
-          <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">TOTAL EXÁMENES RECIBIDOS</div>
-          <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary); margin-top: 4px;" id="stat-total-submissions">0</div>
+      <!-- TARJETAS DE ESTADÍSTICAS POR GRADO (6°A y 6°B) -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div class="card" style="padding: 18px; margin-bottom: 0; border-left: 5px solid var(--primary);">
+          <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">TOTAL GENERAL</div>
+          <div style="font-size: 2rem; font-weight: 800; color: var(--primary); margin-top: 2px;" id="stat-total-submissions">0</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted);" id="stat-avg-score">Promedio: 0 / 173</div>
         </div>
 
-        <div class="card" style="padding: 20px; margin-bottom: 0;">
-          <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">PROMEDIO TOTAL GENERAL</div>
-          <div style="font-size: 2.2rem; font-weight: 800; color: var(--success); margin-top: 4px;" id="stat-avg-score">0 / 0</div>
+        <div class="card" style="padding: 18px; margin-bottom: 0; border-left: 5px solid #0284c7; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);">
+          <div style="font-size: 0.8rem; color: #0369a1; font-weight: 800; text-transform: uppercase;">🏫 GRADO 6°A (22 ALUMNOS)</div>
+          <div style="font-size: 1.8rem; font-weight: 800; color: #0284c7; margin-top: 2px;" id="stat-6a-count">0 entregas</div>
+          <div style="font-size: 0.82rem; color: #0369a1; font-weight: 600;" id="stat-6a-avg">Promedio: 0 / 173</div>
+        </div>
+
+        <div class="card" style="padding: 18px; margin-bottom: 0; border-left: 5px solid #9333ea; background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);">
+          <div style="font-size: 0.8rem; color: #7e22ce; font-weight: 800; text-transform: uppercase;">🏫 GRADO 6°B (20 ALUMNOS)</div>
+          <div style="font-size: 1.8rem; font-weight: 800; color: #9333ea; margin-top: 2px;" id="stat-6b-count">0 entregas</div>
+          <div style="font-size: 0.82rem; color: #7e22ce; font-weight: 600;" id="stat-6b-avg">Promedio: 0 / 173</div>
         </div>
       </div>
 
-      <!-- BARRA DE FILTRO Y BÚSQUEDA -->
-      <div class="card" style="padding: 20px; margin-bottom: 24px;">
+      <!-- PESTAÑAS DE SELECCIÓN DE GRADO (DIVISIÓN 6°A y 6°B) -->
+      <div style="display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 12px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-grade-tab active" data-grade="ALL" id="tab-grade-all" style="background: linear-gradient(135deg, var(--dark-surface), var(--dark)); color: white; font-weight: 700; border: none; padding: 10px 20px; font-size: 0.95rem;">
+          🏫 Todos los Grados (42 Alumnos)
+        </button>
+        <button type="button" class="btn btn-grade-tab" data-grade="6to A" id="tab-grade-6a" style="background: #f1f5f9; color: #0369a1; font-weight: 700; border: 1px solid #bae6fd; padding: 10px 20px; font-size: 0.95rem;">
+          🅰️ Grado 6°A (22 Alumnos)
+        </button>
+        <button type="button" class="btn btn-grade-tab" data-grade="6to B" id="tab-grade-6b" style="background: #f1f5f9; color: #7e22ce; font-weight: 700; border: 1px solid #e9d5ff; padding: 10px 20px; font-size: 0.95rem;">
+          🅱️ Grado 6°B (20 Alumnos)
+        </button>
+      </div>
+
+      <!-- BARRA DE BÚSQUEDA Y ACCIONES -->
+      <div class="card" style="padding: 18px; margin-bottom: 24px;">
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
           <div style="flex: 1; min-width: 240px;">
             <input type="text" id="search-input" class="input-field" placeholder="🔍 Buscar alumno por nombre o apellido...">
           </div>
           <div style="display: flex; gap: 12px; align-items: center;">
-            <select id="grade-filter" class="input-field" style="width: auto; cursor: pointer;">
+            <select id="grade-filter" class="input-field" style="width: auto; cursor: pointer; display: none;">
               <option value="ALL">Todos los grados</option>
               <option value="6to A">6to A</option>
               <option value="6to B">6to B</option>
@@ -80,7 +101,7 @@
 
       <!-- TABLA DE ENTREGAS -->
       <div class="card" style="padding: 24px;">
-        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--dark); margin-bottom: 16px;">
+        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--dark); margin-bottom: 16px;" id="table-section-title">
           Listado de Entregas Registradas
         </h3>
 

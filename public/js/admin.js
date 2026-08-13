@@ -100,20 +100,80 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  setupGradeTabNavigation();
+
+  function setupGradeTabNavigation() {
+    const gradeTabs = document.querySelectorAll('.btn-grade-tab');
+    gradeTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        gradeTabs.forEach(t => {
+          t.classList.remove('active');
+          t.style.background = '#f1f5f9';
+          if (t.id === 'tab-grade-6a') t.style.color = '#0369a1';
+          else if (t.id === 'tab-grade-6b') t.style.color = '#7e22ce';
+          else t.style.color = 'var(--dark)';
+        });
+
+        tab.classList.add('active');
+        if (tab.id === 'tab-grade-all') {
+          tab.style.background = 'linear-gradient(135deg, var(--dark-surface), var(--dark))';
+          tab.style.color = 'white';
+        } else if (tab.id === 'tab-grade-6a') {
+          tab.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
+          tab.style.color = 'white';
+        } else if (tab.id === 'tab-grade-6b') {
+          tab.style.background = 'linear-gradient(135deg, #9333ea, #7e22ce)';
+          tab.style.color = 'white';
+        }
+
+        selectedActiveGrade = tab.getAttribute('data-grade') || 'ALL';
+        if (gradeFilter) gradeFilter.value = selectedActiveGrade;
+        applyFilters();
+      });
+    });
+  }
+
+  let selectedActiveGrade = 'ALL';
+
   /* --- Actualizar Métricas Estadísticas --- */
   function updateDashboardStats(list) {
     document.getElementById('stat-total-submissions').textContent = list.length;
 
     let totalScore = 0;
+    let count6a = 0;
+    let totalScore6a = 0;
+    let count6b = 0;
+    let totalScore6b = 0;
+
     list.forEach(sub => {
       totalScore += sub.total_auto_score;
+      if (sub.grade === '6to A') {
+        count6a++;
+        totalScore6a += sub.total_auto_score;
+      } else if (sub.grade === '6to B') {
+        count6b++;
+        totalScore6b += sub.total_auto_score;
+      }
     });
 
-    const avg = list.length > 0 ? (totalScore / list.length).toFixed(1) : 0;
-    const maxSample = list.length > 0 ? list[0].max_auto_score : 173;
+    const avgGeneral = list.length > 0 ? (totalScore / list.length).toFixed(1) : 0;
+    const avg6a = count6a > 0 ? (totalScore6a / count6a).toFixed(1) : 0;
+    const avg6b = count6b > 0 ? (totalScore6b / count6b).toFixed(1) : 0;
 
     const avgElem = document.getElementById('stat-avg-score');
-    if (avgElem) avgElem.textContent = `${avg} / ${maxSample}`;
+    if (avgElem) avgElem.textContent = `Promedio General: ${avgGeneral} / 173`;
+
+    const stat6aCount = document.getElementById('stat-6a-count');
+    if (stat6aCount) stat6aCount.textContent = `${count6a} de 22 entregas`;
+
+    const stat6aAvg = document.getElementById('stat-6a-avg');
+    if (stat6aAvg) stat6aAvg.textContent = `Promedio 6°A: ${avg6a} / 173`;
+
+    const stat6bCount = document.getElementById('stat-6b-count');
+    if (stat6bCount) stat6bCount.textContent = `${count6b} de 20 entregas`;
+
+    const stat6bAvg = document.getElementById('stat-6b-avg');
+    if (stat6bAvg) stat6bAvg.textContent = `Promedio 6°B: ${avg6b} / 173`;
   }
 
   /* --- Renderizar Tabla de Entregas --- */
@@ -122,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tbody.innerHTML = `
         <tr>
           <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">
-            No hay respuestas registradas aún.
+            No hay respuestas registradas para este grado aún.
           </td>
         </tr>
       `;
@@ -141,11 +201,16 @@ document.addEventListener('DOMContentLoaded', () => {
         hour: '2-digit', minute: '2-digit', second: '2-digit'
       }) : 'No registrada';
 
+      const is6a = sub.grade === '6to A';
+      const gradeBadgeHTML = is6a
+        ? `<span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-weight: 800; font-size: 0.82rem; border: 1px solid #bae6fd;">🏫 6to A</span>`
+        : `<span style="background: #f3e8ff; color: #7e22ce; padding: 4px 10px; border-radius: 12px; font-weight: 800; font-size: 0.82rem; border: 1px solid #e9d5ff;">🏫 6to B</span>`;
+
       html += `
         <tr>
           <td><strong>#${sub.submission_id}</strong></td>
           <td><div style="font-weight: 700; color: var(--dark);">${sub.first_name} ${sub.last_name}</div></td>
-          <td><span style="font-weight: 600; color: var(--primary);">${sub.grade}</span></td>
+          <td>${gradeBadgeHTML}</td>
           <td>
             <span class="score-pill score-high" style="background: #e0f2fe; color: #0369a1;">
               🎧 ${sub.score_listening || 0} / ${sub.max_listening || 125}
@@ -186,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function applyFilters() {
     const term = searchInput.value.toLowerCase().trim();
-    const selectedGrade = gradeFilter.value;
+    const selectedGrade = selectedActiveGrade || gradeFilter.value || 'ALL';
 
     const filtered = submissionsList.filter(sub => {
       const fullName = `${sub.first_name} ${sub.last_name}`.toLowerCase();
@@ -194,6 +259,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const matchesGrade = selectedGrade === 'ALL' || sub.grade === selectedGrade;
       return matchesSearch && matchesGrade;
     });
+
+    const tableTitle = document.getElementById('table-section-title');
+    if (tableTitle) {
+      if (selectedGrade === '6to A') {
+        tableTitle.textContent = `Listado de Entregas — Grado 6°A (${filtered.length} de 22 alumnos)`;
+      } else if (selectedGrade === '6to B') {
+        tableTitle.textContent = `Listado de Entregas — Grado 6°B (${filtered.length} de 20 alumnos)`;
+      } else {
+        tableTitle.textContent = `Listado de Entregas Registradas — Todos los Grados (${filtered.length} entregas totales)`;
+      }
+    }
 
     renderSubmissionsTable(filtered);
   }
