@@ -332,189 +332,114 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --- Renderizar Sección Reading & Writing --- */
-  function renderReadingWritingSection(rwData) {
+  function renderReadingWritingSection(section) {
     const container = document.getElementById('reading-writing-container');
-    if (!container) return;
-
+    if (!container || !section || !section.parts) return;
     let html = '';
 
-    // Part 1
-    if (rwData.p1 && rwData.p1.length > 0) {
-      html += `<div class="part-card">
-        <div class="part-header">
-          <span class="part-badge">Part 1</span>
-          <h2>Notices & Short Messages (Questions 1–10)</h2>
-        </div>
-        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
-          Read the notice or text and choose the correct answer (A, B, or C).
-        </p>`;
+    section.parts.forEach(part => {
+      html += `
+        <div class="card" style="margin-bottom: 20px;">
+          <div class="part-header" style="border-left: 4px solid var(--primary); padding-left: 12px; margin-bottom: 16px;">
+            <h3 class="part-title" style="color: var(--primary); font-size: 1.1rem; font-weight: 800;">📘 Part ${part.part}</h3>
+            <p class="instructions" style="font-size: 0.9rem; color: var(--text-muted);">${part.instructions || ''}</p>
+          </div>
+      `;
 
-      rwData.p1.forEach((q, idx) => {
-        html += `<div class="question-box">
-          <div class="context-box">${q.context}</div>
-          <div class="question-title">${q.question}</div>
-          <div class="options-group">`;
+      if (part.passage) {
+        html += `<div class="context-box" style="white-space: pre-line; line-height: 1.6; margin-bottom: 20px;">${part.passage}</div>`;
+      }
 
-        Object.keys(q.options).forEach(optKey => {
-          html += `<label class="option-label">
-            <input type="radio" name="${q.id}" value="${optKey}">
-            <span class="option-text"><strong>${optKey}.</strong> ${q.options[optKey]}</span>
-          </label>`;
+      if (part.notices) {
+        html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 24px;">`;
+        part.notices.forEach(not => {
+          html += `
+            <div style="background: #f8fafc; border-left: 4px solid var(--primary); padding: 14px 16px; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);">
+              <h4 style="color: var(--primary); font-weight: 700; font-size: 0.95rem; margin-bottom: 6px;">${not.title}</h4>
+              <p style="font-size: 0.88rem; color: var(--dark); line-height: 1.5;">${not.text}</p>
+            </div>
+          `;
         });
+        html += `</div>`;
+      }
 
-        html += `</div></div>`;
-      });
-
-      html += `</div>`;
-    }
-
-    // Part 2
-    if (rwData.p2Questions && rwData.p2Questions.length > 0) {
-      html += `<div class="part-card">
-        <div class="part-header">
-          <span class="part-badge">Part 2</span>
-          <h2>Matching Notices A–H (Questions 11–20)</h2>
-        </div>
-        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
-          Match each statement to the correct Notice (A–H).
-        </p>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 24px;">`;
-
-      (rwData.p2Notices || []).forEach(n => {
-        html += `<div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px;">
-          <strong style="color: var(--primary);">${n.title}</strong>
-          <p style="font-size: 0.85rem; color: var(--dark); margin-top: 4px;">${n.text}</p>
-        </div>`;
-      });
-
-      html += `</div>`;
-
-      rwData.p2Questions.forEach(q => {
-        html += `<div class="question-box">
-          <div class="question-title">${q.question}</div>
-          <div class="options-group" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">`;
-
-        Object.keys(q.options).forEach(optKey => {
-          html += `<label class="option-label">
-            <input type="radio" name="${q.id}" value="${optKey}">
-            <span class="option-text"><strong>${optKey}</strong></span>
-          </label>`;
+      if (part.texts) {
+        html += `<div class="context-box" style="margin-bottom: 20px;">`;
+        part.texts.forEach(txt => {
+          html += `<p style="margin-bottom: 8px;"><strong>${txt.name}:</strong> ${txt.content}</p>`;
         });
+        html += `</div>`;
+      }
 
-        html += `</div></div>`;
-      });
+      if (part.questions) {
+        part.questions.forEach((q) => {
+          html += `<div class="question-block">`;
+          if (q.context) {
+            html += `<div class="context-box">${q.context}</div>`;
+          }
+          if (q.question) {
+            html += `<p class="question-text" style="font-weight: 700; color: var(--dark); font-size: 0.98rem; margin-bottom: 12px;">${q.question}</p>`;
+          }
 
-      html += `</div>`;
-    }
+          if (q.options) {
+            html += `<div class="options-group">`;
+            Object.keys(q.options).forEach(optKey => {
+              html += `
+                <label class="option-item">
+                  <input type="radio" name="${q.id}" value="${optKey}">
+                  <span><strong>${optKey}.</strong> ${q.options[optKey]}</span>
+                </label>
+              `;
+            });
+            html += `</div>`;
+          } else if (part.type === 'open_cloze') {
+            html += `
+              <div style="margin-top: 10px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <label style="font-weight: 700; color: var(--dark);">Gap (${q.gapNumber}):</label>
+                <input type="text" name="${q.id}" class="input-field" placeholder="Escribe tu respuesta aquí..." style="max-width: 240px;">
+              </div>
+            `;
+          }
 
-    // Part 3
-    if (rwData.p3Questions && rwData.p3Questions.length > 0) {
-      html += `<div class="part-card">
-        <div class="part-header">
-          <span class="part-badge">Part 3</span>
-          <h2>Multiple Choice Profiles (Questions 21–30)</h2>
-        </div>
-        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
-          Read the 3 profiles and select which person matches each question.
-        </p>`;
-
-      rwData.p3Questions.forEach(q => {
-        html += `<div class="question-box">
-          <div class="question-title">${q.question}</div>
-          <div class="options-group">`;
-
-        Object.keys(q.options).forEach(optKey => {
-          html += `<label class="option-label">
-            <input type="radio" name="${q.id}" value="${optKey}">
-            <span class="option-text"><strong>${optKey}.</strong> ${q.options[optKey]}</span>
-          </label>`;
+          html += `</div>`;
         });
+      }
 
-        html += `</div></div>`;
-      });
-
-      html += `</div>`;
-    }
-
-    // Part 4
-    if (rwData.p4Questions && rwData.p4Questions.length > 0) {
-      html += `<div class="part-card">
-        <div class="part-header">
-          <span class="part-badge">Part 4</span>
-          <h2>Reading Comprehension Text (Questions 31–40)</h2>
-        </div>
-        <div class="context-box" style="white-space: pre-line; line-height: 1.6; margin-bottom: 20px;">${rwData.p4Text || ''}</div>`;
-
-      rwData.p4Questions.forEach(q => {
-        html += `<div class="question-box">
-          <div class="question-title">${q.question}</div>
-          <div class="options-group">`;
-
-        Object.keys(q.options).forEach(optKey => {
-          html += `<label class="option-label">
-            <input type="radio" name="${q.id}" value="${optKey}">
-            <span class="option-text"><strong>${optKey}.</strong> ${q.options[optKey]}</span>
-          </label>`;
-        });
-
-        html += `</div></div>`;
-      });
+      if (part.type === 'text_production') {
+        html += `
+          <div class="question-block">
+            <textarea name="${part.fieldName}" id="${part.fieldName}" class="input-field writing-area" rows="6" data-minwords="${part.minWords}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1.5px solid var(--border-color);" placeholder="Write your text here in English..."></textarea>
+            <div class="word-count-badge" id="badge-${part.fieldName}" style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">Palabras: 0 / mín. ${part.minWords}</div>
+          </div>
+        `;
+      }
 
       html += `</div>`;
-    }
-
-    // Part 5
-    if (rwData.p5Questions && rwData.p5Questions.length > 0) {
-      html += `<div class="part-card">
-        <div class="part-header">
-          <span class="part-badge">Part 5</span>
-          <h2>Grammar Gap Fill (Questions 41–48)</h2>
-        </div>
-        <div class="context-box" style="white-space: pre-line; line-height: 1.6; margin-bottom: 20px;">${rwData.p5Text || ''}</div>`;
-
-      rwData.p5Questions.forEach(q => {
-        html += `<div class="question-box">
-          <div class="question-title">${q.question}</div>
-          <div class="options-group">`;
-
-        Object.keys(q.options).forEach(optKey => {
-          html += `<label class="option-label">
-            <input type="radio" name="${q.id}" value="${optKey}">
-            <span class="option-text"><strong>${optKey}.</strong> ${q.options[optKey]}</span>
-          </label>`;
-        });
-
-        html += `</div></div>`;
-      });
-
-      html += `</div>`;
-    }
-
-    // Part 6
-    if (rwData.p6) {
-      html += `<div class="part-card">
-        <div class="part-header">
-          <span class="part-badge">Part 6</span>
-          <h2>Short Email / Note (Writing)</h2>
-        </div>
-        <p style="font-size: 0.9rem; color: var(--dark); margin-bottom: 12px; line-height: 1.5;">${rwData.p6.prompt || ''}</p>
-        <textarea name="writing_part6" rows="5" class="form-control" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);" placeholder="Write your email here (25 words or more)..."></textarea>
-      </div>`;
-    }
-
-    // Part 7
-    if (rwData.p7) {
-      html += `<div class="part-card">
-        <div class="part-header">
-          <span class="part-badge">Part 7</span>
-          <h2>Picture Story (Writing)</h2>
-        </div>
-        <p style="font-size: 0.9rem; color: var(--dark); margin-bottom: 12px; line-height: 1.5;">${rwData.p7.prompt || ''}</p>
-        <textarea name="writing_part7" rows="7" class="form-control" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);" placeholder="Write your story here (35 words or more)..."></textarea>
-      </div>`;
-    }
+    });
 
     container.innerHTML = html;
+    setupWritingCounters();
+  }
+
+  function setupWritingCounters() {
+    const textareas = document.querySelectorAll('.writing-area');
+    textareas.forEach(ta => {
+      ta.addEventListener('input', () => {
+        const text = ta.value.trim();
+        const words = text ? text.split(/\s+/).length : 0;
+        const minWords = parseInt(ta.getAttribute('data-minwords') || '0', 10);
+        const badge = document.getElementById(`badge-${ta.id}`);
+
+        if (badge) {
+          badge.textContent = `Palabras: ${words} / mín. ${minWords}`;
+          if (words >= minWords) {
+            badge.style.color = 'var(--success)';
+          } else {
+            badge.style.color = 'var(--text-muted)';
+          }
+        }
+      });
+    });
   }
 
   /* --- Renderizar Sección Listening (Audios 1, 2, 3, 4 y 5) --- */
