@@ -203,8 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const is6a = sub.grade === '6to A';
       const gradeBadgeHTML = is6a
-        ? `<span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-weight: 800; font-size: 0.82rem; border: 1px solid #bae6fd;">🏫 6to A</span>`
-        : `<span style="background: #f3e8ff; color: #7e22ce; padding: 4px 10px; border-radius: 12px; font-weight: 800; font-size: 0.82rem; border: 1px solid #e9d5ff;">🏫 6to B</span>`;
+        ? `<span style="white-space: nowrap; display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-weight: 800; font-size: 0.82rem; border: 1px solid #bae6fd;">🏫 6to A</span>`
+        : `<span style="white-space: nowrap; display: inline-block; background: #f3e8ff; color: #7e22ce; padding: 4px 10px; border-radius: 12px; font-weight: 800; font-size: 0.82rem; border: 1px solid #e9d5ff;">🏫 6to B</span>`;
 
       html += `
         <tr>

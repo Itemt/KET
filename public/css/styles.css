@@ -578,3 +578,36 @@ body {
   z-index: 9999;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
+
+/* --- Tabla de Administración Docente (Sin Texto Partido) --- */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap !important;
+  vertical-align: middle;
+}
+
+.admin-table th {
+  background: #f8fafc;
+  color: var(--dark);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-table tbody tr:hover {
+  background: #f1f5f9;
+}
