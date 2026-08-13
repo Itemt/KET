@@ -16,5 +16,6 @@ router.post('/admin/login', AdminController.login);
 router.get('/admin/submissions', AdminController.getSubmissions);
 router.get('/admin/submissions/:id', AdminController.getSubmissionDetail);
 router.delete('/admin/submissions/:id', AdminController.deleteSubmission);
+router.post('/admin/seed-6b-rw', AdminController.seed6BRW);
 
 module.exports = router;

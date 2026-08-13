@@ -113,29 +113,7 @@ class SubmissionModel {
     return submissionId;
   }
 
-  static async resetReadingWriting6B() {
-    try {
-      await db.execute(`
-        UPDATE submissions 
-        SET score_reading_writing = 0, 
-            total_auto_score = score_listening 
-        WHERE student_id IN (SELECT id FROM students WHERE grade = '6to B')
-      `);
-
-      await db.execute(`
-        DELETE FROM submissions 
-        WHERE (score_listening IS NULL OR score_listening = 0)
-          AND (score_reading_writing IS NULL OR score_reading_writing = 0)
-          AND student_id IN (SELECT id FROM students WHERE grade = '6to B')
-      `);
-    } catch (err) {
-      console.error('Reset 6B RW error:', err.message);
-    }
-  }
-
   static async getAllWithStudent() {
-    await this.resetReadingWriting6B();
-
     const rows = await db.queryAll(`
       SELECT 
         s.id AS submission_id,
