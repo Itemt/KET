@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.success) {
         submissionsList = data.submissions;
         updateDashboardStats(submissionsList);
-        renderSubmissionsTable(submissionsList);
+        applyFilters();
       } else {
         tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--danger); padding: 30px;">Error al cargar las entregas.</td></tr>`;
       }
