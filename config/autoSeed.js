@@ -66,37 +66,80 @@ async function seed6BSubmissions() {
         stRecord = { id: Number(res.lastInsertRowid) };
       }
 
-      const existingSub = await db.queryOne(`SELECT * FROM submissions WHERE student_id = ?`, [stRecord.id]);
-      if (existingSub) continue;
-
-      const answersObj = {};
+      // Generar respuestas de RW
+      const rwAnswers = {};
       rwQuestions.forEach((q, idx) => {
         if (idx < item.score) {
-          answersObj[q.id] = q.correct;
+          rwAnswers[q.id] = q.correct;
         } else {
-          answersObj[q.id] = q.wrong;
+          rwAnswers[q.id] = q.wrong;
         }
       });
 
-      const evalRes = ExamModel.evaluateAnswers(answersObj, 0, 0);
+      const evalRes = ExamModel.evaluateAnswers(rwAnswers, 0, 0);
 
-      await db.run(
-        `INSERT INTO submissions (
-          student_id, attempt_time, score_reading_writing, score_listening, total_auto_score, max_auto_score, writing_part6, writing_part7, speaking_audio_url, raw_answers_json
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          stRecord.id,
-          new Date(Date.now() - Math.floor(Math.random() * 3600000 * 24)).toISOString(),
-          evalRes.score_reading_writing,
-          0,
-          evalRes.score_reading_writing,
-          173,
-          '',
-          '',
-          '',
-          JSON.stringify(answersObj)
-        ]
-      );
+      const existingSub = await db.queryOne(`SELECT * FROM submissions WHERE student_id = ?`, [stRecord.id]);
+
+      if (existingSub) {
+        // PRESERVAR EL PUNTAJE REAL DE LISTENING DEL ESTUDIANTE
+        const currentListening = Number(existingSub.score_listening || 0);
+        const newRWScore = Number(evalRes.score_reading_writing);
+        const newTotal = currentListening + newRWScore;
+
+        let mergedAnswers = {};
+        if (existingSub.raw_answers_json) {
+          try {
+            mergedAnswers = typeof existingSub.raw_answers_json === 'string'
+              ? JSON.parse(existingSub.raw_answers_json)
+              : existingSub.raw_answers_json;
+          } catch (e) {
+            mergedAnswers = {};
+          }
+        }
+
+        // Combinar respuestas existentes (Listening) con las nuevas (Reading & Writing)
+        Object.assign(mergedAnswers, rwAnswers);
+
+        await db.run(
+          `UPDATE submissions SET 
+            score_reading_writing = ?,
+            total_auto_score = ?,
+            max_auto_score = ?,
+            raw_answers_json = ?
+          WHERE id = ?`,
+          [
+            newRWScore,
+            newTotal,
+            173,
+            JSON.stringify(mergedAnswers),
+            existingSub.id
+          ]
+        );
+
+        console.log(`✅ [6B Preservado] Actualizada entrega #${existingSub.id} de ${official.fullName}: Listening ${currentListening}/125 + RW ${newRWScore}/48 = Total ${newTotal}/173`);
+
+      } else {
+        // Nueva entrega si el alumno no tenía registro previo
+        await db.run(
+          `INSERT INTO submissions (
+            student_id, attempt_time, score_reading_writing, score_listening, total_auto_score, max_auto_score, writing_part6, writing_part7, speaking_audio_url, raw_answers_json
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            stRecord.id,
+            new Date(Date.now() - Math.floor(Math.random() * 3600000 * 24)).toISOString(),
+            evalRes.score_reading_writing,
+            0,
+            evalRes.score_reading_writing,
+            173,
+            '',
+            '',
+            '',
+            JSON.stringify(rwAnswers)
+          ]
+        );
+
+        console.log(`✅ [6B Nueva] Creada entrega de ${official.fullName}: RW ${evalRes.score_reading_writing}/48`);
+      }
     }
   } catch (err) {
     console.error('AutoSeed 6B notice:', err.message);
