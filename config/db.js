@@ -58,32 +58,7 @@ async function initTurso() {
     )
   `);
 
-  // Tablas Bonus
-  await client.execute(`
-    CREATE TABLE IF NOT EXISTS bonus_students (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      first_name TEXT NOT NULL,
-      last_name TEXT NOT NULL,
-      grade TEXT NOT NULL,
-      username TEXT,
-      last_login_at TEXT,
-      created_at TEXT DEFAULT (datetime('now'))
-    )
-  `);
 
-  await client.execute(`
-    CREATE TABLE IF NOT EXISTS bonus_submissions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      student_id INTEGER NOT NULL,
-      attempt_time TEXT,
-      total_auto_score INTEGER DEFAULT 0,
-      max_auto_score INTEGER DEFAULT 0,
-      bonus_writing TEXT,
-      raw_answers_json TEXT NOT NULL DEFAULT '{}',
-      submitted_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (student_id) REFERENCES bonus_students(id) ON DELETE CASCADE
-    )
-  `);
 
   // Migraciones defensivas (Safe Alter) para asegurar que bases de datos existentes no fallen jamás
   const safeAlter = async (sql) => {
@@ -108,6 +83,10 @@ async function initTurso() {
       CREATE UNIQUE INDEX IF NOT EXISTS idx_students_username ON students(username) WHERE username IS NOT NULL AND username != ''
     `);
   } catch (e) {}
+
+  // Eliminar tablas bonus si existen (limpieza)
+  try { await client.execute(`DROP TABLE IF EXISTS bonus_submissions`); } catch (e) {}
+  try { await client.execute(`DROP TABLE IF EXISTS bonus_students`); } catch (e) {}
 
   console.log('✅ Base de Datos Turso (libSQL en la nube) conectada y verificada.');
   return client;
@@ -225,6 +204,10 @@ if (TURSO_CONFIGURED) {
     safeAlterNative(`ALTER TABLE submissions ADD COLUMN writing_part7 TEXT;`);
     safeAlterNative(`ALTER TABLE submissions ADD COLUMN speaking_audio_url TEXT;`);
     safeAlterNative(`ALTER TABLE submissions ADD COLUMN raw_answers_json TEXT DEFAULT '{}';`);
+
+    // Eliminar tablas bonus si existen (limpieza)
+    safeAlterNative(`DROP TABLE IF EXISTS bonus_submissions;`);
+    safeAlterNative(`DROP TABLE IF EXISTS bonus_students;`);
 
     db = {
       isTurso: false,
