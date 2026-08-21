@@ -170,7 +170,30 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /* --- Alternar entre Sub-Pestañas de Audios 1, 2, 3, 4 y 5 --- */
+  /* --- Alternar entre Sub-Pestañas de Audios 1, 2, 3, 4 y 5 con Lazy Loading --- */
+  function prepareTrackAudio(trackNum) {
+    const audio = document.getElementById(`audio-element-${trackNum}`);
+    if (audio && (audio.preload === 'none' || audio.readyState === 0)) {
+      audio.preload = 'metadata';
+      audio.load();
+    }
+  }
+
+  function pauseAllAudiosExcept(keepPlayingId = null) {
+    ['1', '2', '3', '4', '5'].forEach(id => {
+      if (id !== keepPlayingId) {
+        const a = document.getElementById(`audio-element-${id}`);
+        const btn = document.getElementById(`btn-play-a${id}`);
+        if (a && !a.paused) {
+          a.pause();
+        }
+        if (btn && btn.innerHTML !== '▶️') {
+          btn.innerHTML = '▶️';
+        }
+      }
+    });
+  }
+
   function setupAudioTrackSwitcher() {
     const btnTrack1 = document.getElementById('btn-audio-track-1');
     const btnTrack2 = document.getElementById('btn-audio-track-2');
@@ -199,56 +222,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnTrack1) {
       btnTrack1.addEventListener('click', () => {
+        pauseAllAudiosExcept('1');
         resetTrackBtns();
         btnTrack1.classList.add('active');
         btnTrack1.style.background = 'linear-gradient(135deg, #06b6d4, #3b82f6)';
         btnTrack1.style.color = 'white';
         container1.style.display = 'block';
+        prepareTrackAudio('1');
       });
     }
 
     if (btnTrack2) {
       btnTrack2.addEventListener('click', () => {
+        pauseAllAudiosExcept('2');
         resetTrackBtns();
         btnTrack2.classList.add('active');
         btnTrack2.style.background = 'linear-gradient(135deg, #8b5cf6, #ec4899)';
         btnTrack2.style.color = 'white';
         container2.style.display = 'block';
+        prepareTrackAudio('2');
       });
     }
 
     if (btnTrack3) {
       btnTrack3.addEventListener('click', () => {
+        pauseAllAudiosExcept('3');
         resetTrackBtns();
         btnTrack3.classList.add('active');
         btnTrack3.style.background = 'linear-gradient(135deg, #10b981, #059669)';
         btnTrack3.style.color = 'white';
         container3.style.display = 'block';
+        prepareTrackAudio('3');
       });
     }
 
     if (btnTrack4) {
       btnTrack4.addEventListener('click', () => {
+        pauseAllAudiosExcept('4');
         resetTrackBtns();
         btnTrack4.classList.add('active');
         btnTrack4.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
         btnTrack4.style.color = 'white';
         container4.style.display = 'block';
+        prepareTrackAudio('4');
       });
     }
 
     if (btnTrack5) {
       btnTrack5.addEventListener('click', () => {
+        pauseAllAudiosExcept('5');
         resetTrackBtns();
         btnTrack5.classList.add('active');
         btnTrack5.style.background = 'linear-gradient(135deg, #d946ef, #c026d3)';
         btnTrack5.style.color = 'white';
         container5.style.display = 'block';
+        prepareTrackAudio('5');
       });
     }
   }
 
-  /* --- Control Genérico de Reproductor de Audio (1, 2, 3, 4 o 5) --- */
+  /* --- Control Optimizado de Reproductor de Audio (1, 2, 3, 4 o 5) --- */
   function setupAudioPlayer(idSuffix) {
     const audio = document.getElementById(`audio-element-${idSuffix}`);
     const btnPlay = document.getElementById(`btn-play-a${idSuffix}`);
@@ -261,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!audio) return;
 
     function formatTime(seconds) {
-      if (isNaN(seconds) || seconds < 0) return '00:00';
+      if (isNaN(seconds) || seconds < 0 || !isFinite(seconds)) return '00:00';
       const m = Math.floor(seconds / 60);
       const s = Math.floor(seconds % 60);
       return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
@@ -270,15 +303,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnPlay) {
       btnPlay.addEventListener('click', () => {
         if (audio.paused) {
-          ['1', '2', '3', '4', '5'].forEach(otherId => {
-            if (otherId !== idSuffix) {
-              const otherAudio = document.getElementById(`audio-element-${otherId}`);
-              if (otherAudio && !otherAudio.paused) otherAudio.pause();
-            }
-          });
+          pauseAllAudiosExcept(idSuffix);
 
-          audio.play();
-          btnPlay.innerHTML = '⏸️';
+          if (audio.readyState === 0) {
+            audio.load();
+          }
+
+          btnPlay.innerHTML = '⏳';
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => {
+                btnPlay.innerHTML = '⏸️';
+              })
+              .catch(err => {
+                console.warn(`Error al reproducir audio ${idSuffix}:`, err);
+                btnPlay.innerHTML = '▶️';
+              });
+          }
         } else {
           audio.pause();
           btnPlay.innerHTML = '▶️';
@@ -290,27 +332,60 @@ document.addEventListener('DOMContentLoaded', () => {
       if (btnPlay) btnPlay.innerHTML = '⏸️';
     });
 
+    audio.addEventListener('playing', () => {
+      if (btnPlay) btnPlay.innerHTML = '⏸️';
+    });
+
     audio.addEventListener('pause', () => {
       if (btnPlay) btnPlay.innerHTML = '▶️';
     });
 
+    audio.addEventListener('waiting', () => {
+      if (btnPlay) btnPlay.innerHTML = '⏳';
+    });
+
+    audio.addEventListener('canplay', () => {
+      if (!audio.paused && btnPlay) {
+        btnPlay.innerHTML = '⏸️';
+      }
+      if (durationLabel && isFinite(audio.duration)) {
+        durationLabel.textContent = formatTime(audio.duration);
+      }
+    });
+
     audio.addEventListener('loadedmetadata', () => {
-      if (durationLabel) durationLabel.textContent = formatTime(audio.duration);
+      if (durationLabel && isFinite(audio.duration)) {
+        durationLabel.textContent = formatTime(audio.duration);
+      }
+    });
+
+    audio.addEventListener('durationchange', () => {
+      if (durationLabel && isFinite(audio.duration)) {
+        durationLabel.textContent = formatTime(audio.duration);
+      }
     });
 
     audio.addEventListener('timeupdate', () => {
       if (currentLabel) currentLabel.textContent = formatTime(audio.currentTime);
-      if (durationLabel && (!audio.duration || durationLabel.textContent === '00:00')) {
+      if (durationLabel && (!audio.duration || durationLabel.textContent === '00:00') && isFinite(audio.duration)) {
         durationLabel.textContent = formatTime(audio.duration);
       }
-      if (seekBar && audio.duration) {
+      if (seekBar && isFinite(audio.duration) && audio.duration > 0) {
         seekBar.value = (audio.currentTime / audio.duration) * 100;
+      }
+    });
+
+    audio.addEventListener('error', (e) => {
+      console.error(`Error de red o decodificación en Audio ${idSuffix}:`, e);
+      if (btnPlay) {
+        btnPlay.innerHTML = '🔄';
+        btnPlay.title = 'Error cargando audio. Haz clic para reintentar.';
       }
     });
 
     if (seekBar) {
       seekBar.addEventListener('input', () => {
-        if (audio.duration) {
+        if (isFinite(audio.duration) && audio.duration > 0) {
           audio.currentTime = (seekBar.value / 100) * audio.duration;
         }
       });
@@ -324,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnForward) {
       btnForward.addEventListener('click', () => {
-        if (audio.duration) {
+        if (isFinite(audio.duration) && audio.duration > 0) {
           audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
         }
       });

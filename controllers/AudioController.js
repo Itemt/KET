@@ -2,27 +2,12 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 
-// Asegurar directorio de destino
-const uploadDir = path.join(__dirname, '../uploads/speaking');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configuración de almacenamiento Multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname) || '.webm';
-    cb(null, `speaking-${uniqueSuffix}${ext}`);
-  }
-});
+// Usar memoryStorage para compatibilidad total con Serverless (Vercel) y entornos de solo lectura
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 25 * 1024 * 1024 } // Límite de 25 MB
+  limits: { fileSize: 15 * 1024 * 1024 } // Límite de 15 MB
 }).single('audio');
 
 class AudioController {
@@ -34,7 +19,7 @@ class AudioController {
       if (err instanceof multer.MulterError) {
         return res.status(400).json({ success: false, message: `Error de carga de audio: ${err.message}` });
       } else if (err) {
-        return res.status(500).json({ success: false, message: 'Error interno guardando el audio.' });
+        return res.status(500).json({ success: false, message: 'Error interno procesando el audio.' });
       }
       next();
     });
@@ -49,14 +34,27 @@ class AudioController {
         return res.status(400).json({ success: false, message: 'No se recibió ningún archivo de audio.' });
       }
 
-      // Generar URL pública relativa
-      const relativeUrl = `/uploads/speaking/${req.file.filename}`;
+      // Convertir audio a Data URL Base64 para persistencia serverless garantizada en base de datos
+      const mime = req.file.mimetype || 'audio/webm';
+      const base64Audio = `data:${mime};base64,${req.file.buffer.toString('base64')}`;
+
+      // En desarrollo local con disco escribible, intentar guardar copia física en uploads
+      let filename = `speaking-${Date.now()}-${Math.round(Math.random() * 1E9)}.webm`;
+      try {
+        const uploadDir = path.join(__dirname, '../uploads/speaking');
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        fs.writeFileSync(path.join(uploadDir, filename), req.file.buffer);
+      } catch (diskErr) {
+        // En Vercel Serverless el disco es de solo lectura; se utiliza de forma transparente el base64Audio
+      }
 
       res.json({
         success: true,
-        message: 'Audio de Speaking subido correctamente.',
-        audioUrl: relativeUrl,
-        filename: req.file.filename
+        message: 'Audio de Speaking procesado correctamente.',
+        audioUrl: base64Audio,
+        filename: filename
       });
     } catch (error) {
       console.error('Error en controlador de audio:', error);

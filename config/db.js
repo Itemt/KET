@@ -12,7 +12,10 @@ let db = null;
 // ============================================================
 // MOTOR TURSO / libSQL (Serverless - siempre persistente)
 // ============================================================
-async function initTurso() {
+let _tursoClient = null;
+
+function getTursoClientSync() {
+  if (_tursoClient) return _tursoClient;
   const { createClient } = require('@libsql/client');
 
   const tursoUrl = process.env.TURSO_DATABASE_URL;
@@ -22,131 +25,101 @@ async function initTurso() {
     throw new Error('TURSO_DATABASE_URL no configurado');
   }
 
-  const client = createClient({
+  _tursoClient = createClient({
     url: tursoUrl,
     authToken: tursoToken || undefined
   });
 
-  // Crear tablas si no existen
-  await client.execute(`
-    CREATE TABLE IF NOT EXISTS students (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      first_name TEXT NOT NULL,
-      last_name TEXT NOT NULL,
-      grade TEXT NOT NULL,
-      username TEXT,
-      last_login_at TEXT,
-      created_at TEXT DEFAULT (datetime('now'))
-    )
-  `);
+  return _tursoClient;
+}
 
-  await client.execute(`
-    CREATE TABLE IF NOT EXISTS submissions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      student_id INTEGER NOT NULL,
-      attempt_time TEXT,
-      score_reading_writing INTEGER DEFAULT 0,
-      score_listening INTEGER DEFAULT 0,
-      total_auto_score INTEGER DEFAULT 0,
-      max_auto_score INTEGER DEFAULT 0,
-      writing_part6 TEXT,
-      writing_part7 TEXT,
-      speaking_audio_url TEXT,
-      raw_answers_json TEXT NOT NULL DEFAULT '{}',
-      submitted_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
-    )
-  `);
-
-
-
-  // Migraciones defensivas (Safe Alter) para asegurar que bases de datos existentes no fallen jamás
-  const safeAlter = async (sql) => {
-    try { await client.execute(sql); } catch (e) { /* Columna ya existe */ }
-  };
-
-  await safeAlter(`ALTER TABLE students ADD COLUMN username TEXT;`);
-  await safeAlter(`ALTER TABLE students ADD COLUMN last_login_at TEXT;`);
-  await safeAlter(`ALTER TABLE submissions ADD COLUMN attempt_time TEXT;`);
-  await safeAlter(`ALTER TABLE submissions ADD COLUMN score_reading_writing INTEGER DEFAULT 0;`);
-  await safeAlter(`ALTER TABLE submissions ADD COLUMN score_listening INTEGER DEFAULT 0;`);
-  await safeAlter(`ALTER TABLE submissions ADD COLUMN total_auto_score INTEGER DEFAULT 0;`);
-  await safeAlter(`ALTER TABLE submissions ADD COLUMN max_auto_score INTEGER DEFAULT 0;`);
-  await safeAlter(`ALTER TABLE submissions ADD COLUMN writing_part6 TEXT;`);
-  await safeAlter(`ALTER TABLE submissions ADD COLUMN writing_part7 TEXT;`);
-  await safeAlter(`ALTER TABLE submissions ADD COLUMN speaking_audio_url TEXT;`);
-  await safeAlter(`ALTER TABLE submissions ADD COLUMN raw_answers_json TEXT DEFAULT '{}';`);
-
-  // Índices para búsquedas rápidas
+// Inicialización asíncrona defensiva en segundo plano (sin bloquear peticiones)
+async function verifyTursoSchema(client) {
   try {
     await client.execute(`
-      CREATE UNIQUE INDEX IF NOT EXISTS idx_students_username ON students(username) WHERE username IS NOT NULL AND username != ''
+      CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        grade TEXT NOT NULL,
+        username TEXT,
+        last_login_at TEXT,
+        created_at TEXT DEFAULT (datetime('now'))
+      )
     `);
-  } catch (e) {}
 
-  // Eliminar tablas bonus si existen (limpieza)
-  try { await client.execute(`DROP TABLE IF EXISTS bonus_submissions`); } catch (e) {}
-  try { await client.execute(`DROP TABLE IF EXISTS bonus_students`); } catch (e) {}
-
-  console.log('✅ Base de Datos Turso (libSQL en la nube) conectada y verificada.');
-  return client;
+    await client.execute(`
+      CREATE TABLE IF NOT EXISTS submissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER NOT NULL,
+        attempt_time TEXT,
+        score_reading_writing INTEGER DEFAULT 0,
+        score_listening INTEGER DEFAULT 0,
+        total_auto_score INTEGER DEFAULT 0,
+        max_auto_score INTEGER DEFAULT 0,
+        writing_part6 TEXT,
+        writing_part7 TEXT,
+        speaking_audio_url TEXT,
+        raw_answers_json TEXT NOT NULL DEFAULT '{}',
+        submitted_at TEXT DEFAULT (datetime('now')),
+        FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+      )
+    `);
+  } catch (e) {
+    // Ignorar si ya existen
+  }
 }
 
 // ============================================================
 // Inicialización sincrónica con detección de entorno
 // ============================================================
-const TURSO_CONFIGURED = !!process.env.TURSO_DATABASE_URL;
+function isTursoUrlValid(url) {
+  if (!url || typeof url !== 'string') return false;
+  return url.startsWith('libsql://') || url.startsWith('https://') || url.startsWith('http://');
+}
+
+const TURSO_CONFIGURED = isTursoUrlValid(process.env.TURSO_DATABASE_URL);
 
 if (TURSO_CONFIGURED) {
-  console.log('ℹ️ Usando motor Turso (libSQL en la nube)...');
+  try {
+    console.log('ℹ️ Usando motor Turso (libSQL en la nube)...');
 
-  let _tursoClient = null;
-  let _initPromise = null;
+    const client = getTursoClientSync();
+    // Verificar esquema en background sin bloquear
+    verifyTursoSchema(client).catch(() => {});
 
-  async function getTursoClient() {
-    if (_tursoClient) return _tursoClient;
-    if (_initPromise) return _initPromise;
-    _initPromise = initTurso().then(client => {
-      _tursoClient = client;
-      _initPromise = null;
-      return client;
-    });
-    return _initPromise;
+    db = {
+      isTurso: true,
+      getClient: async () => client,
+
+      async execute(sql, args = []) {
+        return client.execute({ sql, args });
+      },
+
+      async queryAll(sql, args = []) {
+        const result = await this.execute(sql, args);
+        return result && result.rows ? result.rows : [];
+      },
+
+      async queryOne(sql, args = []) {
+        const result = await this.execute(sql, args);
+        return result && result.rows && result.rows[0] ? result.rows[0] : null;
+      },
+
+      async run(sql, args = []) {
+        const result = await this.execute(sql, args);
+        return {
+          lastInsertRowid: result.lastInsertRowid,
+          changes: result.rowsAffected
+        };
+      }
+    };
+  } catch (tursoErr) {
+    console.warn('⚠️ No se pudo inicializar Turso, usando SQLite local:', tursoErr.message);
   }
+}
 
-  db = {
-    isTurso: true,
-    getClient: getTursoClient,
-
-    async execute(sql, args = []) {
-      const client = await getTursoClient();
-      return client.execute({ sql, args });
-    },
-
-    async queryAll(sql, args = []) {
-      const result = await this.execute(sql, args);
-      return result && result.rows ? result.rows : [];
-    },
-
-    async queryOne(sql, args = []) {
-      const result = await this.execute(sql, args);
-      return result && result.rows && result.rows[0] ? result.rows[0] : null;
-    },
-
-    async run(sql, args = []) {
-      const result = await this.execute(sql, args);
-      return {
-        lastInsertRowid: result.lastInsertRowid,
-        changes: result.rowsAffected
-      };
-    }
-  };
-
-  getTursoClient().catch(err => {
-    console.error('❌ Error al conectar con Turso:', err.message);
-  });
-
-} else {
+if (!db) {
   // Fallback: SQLite nativo para desarrollo local
   try {
     const Database = require('better-sqlite3');

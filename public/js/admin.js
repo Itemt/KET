@@ -393,6 +393,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const badgeP7 = document.getElementById('badge-wordcount-p7');
         if (badgeP7) badgeP7.textContent = `${p7Words} palabras ${p7Words >= 35 ? '✅ (Completado)' : '(mín. 35)'}`;
 
+        // Grabación de Speaking (si el alumno grabó audio)
+        const speakingContainer = document.getElementById('modal-speaking-container');
+        const speakingAudio = document.getElementById('modal-speaking-audio');
+        if (speakingContainer && speakingAudio) {
+          if (sub.speaking_audio_url && sub.speaking_audio_url.trim() !== '') {
+            speakingAudio.src = sub.speaking_audio_url;
+            speakingContainer.style.display = 'block';
+          } else {
+            speakingAudio.removeAttribute('src');
+            speakingContainer.style.display = 'none';
+          }
+        }
+
         const questionMap = buildQuestionMap(sub.fullExamData);
 
         // Renderizar las respuestas individuales de Listening (125 Preguntas)

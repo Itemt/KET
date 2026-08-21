@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+require('dotenv').config({ path: '.env.local' });
 require('dotenv').config();
 
 // Inicializar la base de datos
@@ -17,8 +18,16 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Servir archivos estáticos del cliente
-app.use(express.static(path.join(__dirname, 'public')));
+// Servir archivos estáticos del cliente con caché optimizado y soporte de Range requests
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1d',
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.mp3')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.setHeader('Accept-Ranges', 'bytes');
+    }
+  }
+}));
 
 // Servir carpeta de archivos subidos (audios grabados)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -44,28 +53,32 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, message: 'Ocurrió un error interno en el servidor.' });
 });
 
-// Iniciar servidor Express con puerto dinámico en caso de conflicto
-const server = app.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(`🚀 Servidor KET A2 Mock Exam corriendo en: http://localhost:${PORT}`);
-  console.log(`🏫 Listo para estudiantes de 6to Grado.`);
-  console.log(`🔑 PIN de Panel de Administración por defecto: "ket2026"`);
-  console.log(`====================================================`);
-});
+// Iniciar servidor Express cuando se ejecuta directamente (node server.js o npm start)
+if (require.main === module) {
+  const server = app.listen(PORT, () => {
+    console.log(`====================================================`);
+    console.log(`🚀 Servidor KET A2 Mock Exam corriendo en: http://localhost:${PORT}`);
+    console.log(`🏫 Listo para estudiantes de 6to Grado.`);
+    console.log(`🔑 PIN de Panel de Administración por defecto: "ket2026"`);
+    console.log(`====================================================`);
+  });
 
-server.on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
-    const ALT_PORT = 3001;
-    console.log(`⚠️ El puerto ${PORT} está ocupado. Iniciando en puerto alternativo ${ALT_PORT}...`);
-    app.listen(ALT_PORT, () => {
-      console.log(`====================================================`);
-      console.log(`🚀 Servidor KET A2 Mock Exam corriendo en: http://localhost:${ALT_PORT}`);
-      console.log(`🏫 Listo para estudiantes de 6to Grado.`);
-      console.log(`🔑 PIN de Panel de Administración por defecto: "ket2026"`);
-      console.log(`====================================================`);
-    });
-  } else {
-    console.error('❌ Error de servidor:', err);
-  }
-});
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      const ALT_PORT = 3001;
+      console.log(`⚠️ El puerto ${PORT} está ocupado. Iniciando en puerto alternativo ${ALT_PORT}...`);
+      app.listen(ALT_PORT, () => {
+        console.log(`====================================================`);
+        console.log(`🚀 Servidor KET A2 Mock Exam corriendo en: http://localhost:${ALT_PORT}`);
+        console.log(`🏫 Listo para estudiantes de 6to Grado.`);
+        console.log(`🔑 PIN de Panel de Administración por defecto: "ket2026"`);
+        console.log(`====================================================`);
+      });
+    } else {
+      console.error('❌ Error de servidor:', err);
+    }
+  });
+}
+
+module.exports = app;
 
